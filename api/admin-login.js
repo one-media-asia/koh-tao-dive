@@ -13,7 +13,16 @@ export default async function handler(req, res) {
 
   if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
     // In production, set a secure cookie or JWT here
-    res.status(200).json({ success: true, message: 'Login successful' });
+    res.status(200).json({
+      success: true,
+      message: 'Login successful',
+      user: {
+        email,
+        role: 'admin',
+        name: 'Admin User'
+        // Add more fields as needed
+      }
+    });
   } else {
     res.status(401).json({ success: false, error: 'Invalid credentials' });
   }
