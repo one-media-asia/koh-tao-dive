@@ -1,30 +1,61 @@
-import { useState } from 'react';
-// ...existing code...
+import React, { useState } from 'react';
 
 export default function ContactForm() {
-  const [result, setResult] = useState("");
+  const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const [status, setStatus] = useState('');
 
-  const onSubmit = async (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    formData.append("access_key", "4ca93aa5-cd42-4902-af87-a08e1ae7c832");
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
-    const response = await fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      body: formData
-    });
-
-    const data = await response.json();
-    setResult(data.success ? "Success!" : "Error");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('Sending...');
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setStatus('Message sent!');
+        setForm({ name: '', email: '', message: '' });
+      } else {
+        setStatus(data.error || 'Error sending message');
+      }
+    } catch (err) {
+      setStatus('Network error');
+    }
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <input type="text" name="name" required/>
-      <input type="email" name="email" required/>
-      <textarea name="message" required></textarea>
-      <button type="submit">Submit</button>
-      <p>{result}</p>
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        name="name"
+        placeholder="Your Name"
+        value={form.name}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="email"
+        name="email"
+        placeholder="Your Email"
+        value={form.email}
+        onChange={handleChange}
+        required
+      />
+      <textarea
+        name="message"
+        placeholder="Your Message"
+        value={form.message}
+        onChange={handleChange}
+        required
+      />
+      <button type="submit">Send</button>
+      <div>{status}</div>
     </form>
   );
 }
