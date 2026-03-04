@@ -19,7 +19,7 @@ export default async function handler(req, res) {
     // Use Web3Forms to send the email
     const payload = {
       access_key: '4ca93aa5-cd42-4902-af87-a08e1ae7c832', // Use your Web3Forms access key
-      to: 'contact@prodivig.asia', // Set your recipient email here
+      to: 'contact@prodiving.asia', // Set your recipient email here
       subject: subject || 'Contact Form Submission',
       name,
       email,
@@ -31,7 +31,15 @@ export default async function handler(req, res) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
-    const data = await response.json().catch(() => ({}));
+
+    let data = {};
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      data = await response.json();
+    } else {
+      data = { error: await response.text() };
+    }
+
     if (response.ok && data.success) {
       res.status(200).json({ success: true });
     } else {
