@@ -1,4 +1,5 @@
-// Vercel Serverless Function: Contact Form Example
+
+import nodemailer from 'nodemailer';
 
 export default async function handler(req, res) {
   try {
@@ -16,37 +17,34 @@ export default async function handler(req, res) {
       return;
     }
 
-    // Match the booking form payload structure for Web3Forms
-    const payload = {
-      access_key: '4ca93aa5-cd42-4902-af87-a08e1ae7c832',
-      to: 'contact@prodiving.asia',
-      subject: subject || 'Contact Form Submission',
-      name,
-      email,
-      message,
-    };
+    // Use Nodemailer to send the email via your SMTP
+    const smtpHost = process.env.SMTP_HOST;
+    const smtpPort = Number(process.env.SMTP_PORT || 587);
+    const smtpUser = process.env.SMTP_USER;
+    const smtpPass = process.env.SMTP_PASS;
 
-    const response = await fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
+    if (!smtpHost || !smtpUser || !smtpPass) {
+      res.status(500).json({ success: false, error: 'SMTP not configured' });
+      return;
+    }
+
+    const transporter = nodemailer.createTransport({
+      host: smtpHost,
+      port: smtpPort,
+      secure: smtpPort === 465,
+      auth: { user: smtpUser, pass: smtpPass },
     });
 
-    let data = {};
-    const contentType = response.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
-      data = await response.json();
-    } else {
-      data = { error: await response.text() };
-    }
+    const mailOptions = {
+      from: smtpUser,
+      to: 'contact@prodiving.asia',
+      subject: subject || 'Contact Form Submission',
+      replyTo: email,
+      text: `Name: ${name}\nEmail: ${email}\nSubject: ${subject}\nMessage:\n${message}`,
+    };
 
-    if (response.ok && data.success) {
-      res.status(200).json({ success: true });
-    } else {
-      const errMsg = data?.error || `HTTP ${response.status}`;
-      console.error('Web3Forms error:', errMsg, data);
-      res.status(500).json({ success: false, error: errMsg });
-    }
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ success: true });
   } catch (error) {
     console.error('Contact API error:', error);
     res.status(500).json({ success: false, error: 'Internal server error' });
