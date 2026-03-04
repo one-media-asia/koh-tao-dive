@@ -16,14 +16,14 @@ export default async function handler(req, res) {
       return;
     }
 
-    // Use Web3Forms to send the email
+    // Match the booking form payload structure for Web3Forms
     const payload = {
-      access_key: '4ca93aa5-cd42-4902-af87-a08e1ae7c832', // Use your Web3Forms access key
-      to: 'contact@prodiving.asia', // Set your recipient email here
+      access_key: '4ca93aa5-cd42-4902-af87-a08e1ae7c832',
+      to: 'contact@prodiving.asia',
       subject: subject || 'Contact Form Submission',
       name,
       email,
-      message
+      message,
     };
 
     const response = await fetch('https://api.web3forms.com/submit', {
