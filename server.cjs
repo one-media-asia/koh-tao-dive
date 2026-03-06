@@ -5,6 +5,10 @@ const path = require('path');
 require('dotenv').config();
 
 const app = express();
+
+// Compatibility shim: some legacy routes referenced `ensureAirtable`.
+// Return true to allow Supabase-based handlers to run during migration.
+const ensureAirtable = (res) => true;
 const 
 PORT = process.env.PORT || 3001;
 
