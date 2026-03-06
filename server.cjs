@@ -103,25 +103,18 @@ const mapAffiliateClick = (record) => {
 };
 
 const findBookingRecordById = async (id) => {
-  const escapedId = escapeFormulaValue(id);
-  const runLookup = async (formula) => {
-    const params = new URLSearchParams();
-    params.set('maxRecords', '1');
-    params.set('filterByFormula', formula);
+  try {
+    const { data, error } = await supabase.from('bookings').select('*').eq('id', id).limit(1);
+    if (error) throw error;
+    if (data && data.length) return data[0];
 
-    return { response, payload };
-  };
-
-  let { response, payload } = await runLookup(`OR({id}='${escapedId}',RECORD_ID()='${escapedId}')`);
-
-  if (!response.ok && String(payload?.error?.message || '').includes('Unknown field name: "id"')) {
-    ({ response, payload } = await runLookup(`RECORD_ID()='${escapedId}'`));
+    // Fallback: try matching on a `record_id` column if present
+    const { data: data2, error: error2 } = await supabase.from('bookings').select('*').eq('record_id', id).limit(1);
+    if (error2) throw error2;
+    return data2?.[0] || null;
+  } catch (err) {
+    throw new Error(err.message || 'Failed to query booking');
   }
-
-  if (!response.ok) {
-    throw new Error(payload?.error?.message || 'Failed to query booking');
-  }
-  return payload.records?.[0] || null;
 };
 
 // Routes
