@@ -1,5 +1,24 @@
 {
   "version": 2,
+  "builds": [
+    { "src": "package.json", "use": "@vercel/static-build", "config": { "distDir": "dist" } },
+    { "src": "api/**/*.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ],
+  "env": {
+    "SUPABASE_URL": "@SUPABASE_URL",
+    "SUPABASE_SERVICE_ROLE_KEY": "@SUPABASE_SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_URL": "@VITE_SUPABASE_URL",
+    "VITE_SUPABASE_ANON_KEY": "@VITE_SUPABASE_ANON_KEY",
+    "VITE_API_BASE_URL": "@VITE_API_BASE_URL",
+    "VITE_ADMIN_EMAILS": "@VITE_ADMIN_EMAILS"
+  }
+}
+{
+  "version": 2,
   "routes": [
     { "src": "/api/bookings/([^/]+)/status", "dest": "/api/bookings/[id]/status.js?id=$1" },
     { "src": "/api/bookings/([^/]+)", "dest": "/api/bookings/[id]/index.js?id=$1" },
