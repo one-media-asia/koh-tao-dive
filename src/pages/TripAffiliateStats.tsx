@@ -91,11 +91,16 @@ const TripAffiliateStats = () => {
         throw new Error(data?.error || 'Failed to fetch affiliate clicks');
       }
 
-      const rows = extractClickRows(Array.isArray(data) ? data : data?.rows ?? []);
+      // Always treat the response as an array of rows
+      const rows = extractClickRows(data);
       setRawCount(rows.length);
       setApiTableUsed(data?.meta?.tableUsed || null);
-      const filteredRows = rows.filter(isTripClick);
-      setClicks(filteredRows.length > 0 ? filteredRows : rows);
+      let filteredRows = rows.filter(isTripClick);
+      // If filter returns nothing, show all rows
+      if (filteredRows.length === 0 && rows.length > 0) {
+        filteredRows = rows;
+      }
+      setClicks(filteredRows);
     } catch (err: any) {
       setError(err?.message || 'Failed to fetch affiliate clicks');
       setRawCount(0);
