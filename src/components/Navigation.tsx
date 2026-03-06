@@ -79,7 +79,7 @@ const Navigation = () => {
     viewpoints: isDutch ? 'Uitzichtpunten' : 'Viewpoints',
     weatherKohTao: isDutch ? 'Weer op Koh Tao' : 'Koh Tao weather',
     login: isDutch ? 'Inloggen' : 'Login',
-    // signup: isDutch ? 'Registreren' : 'Sign up',
+    signup: isDutch ? 'Registreren' : 'Sign up',
   };
 
   const courseCategories = [
@@ -449,7 +449,12 @@ const Navigation = () => {
                     </li>
                     <li>
                       <Link
-                        {/* Sign up removed from menu */}
+                        {/* Sign up menu item restored but hidden */}
+                        <span style={{ display: 'none' }}>
+                          <Link to="/signup" className="block py-2 px-3 text-sm text-gray-300 hover:text-white hover:bg-[#1a3a5c] transition-all duration-150 rounded">
+                            {labels.signup}
+                          </Link>
+                        </span>
                     </li>
                   </ul>
                 </div>
@@ -634,7 +639,12 @@ const Navigation = () => {
                     <Link to="/login" className="block px-3 py-1.5 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsOpen(false)}>
                       {labels.login}
                     </Link>
-                    {/* Sign up removed from mobile menu */}
+                    {/* Sign up mobile menu item restored but hidden */}
+                    <span style={{ display: 'none' }}>
+                      <Link to="/signup" className="block px-3 py-1.5 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsOpen(false)}>
+                        {labels.signup}
+                      </Link>
+                    </span>
                   </div>
                 )}
               </div>
