@@ -13,8 +13,6 @@ import Courses from './components/Courses';
 
 import Index from './pages/Index';
 import NotFound from './pages/NotFound';
-import AffiliateStats from './pages/AffiliateStats';
-import TripAffiliateStats from './pages/TripAffiliateStats';
 import BookingAffiliate from './pages/BookingAffiliate';
 import TripAffiliate from './pages/TripAffiliate';
 import BookingPage from './pages/BookingPage';
@@ -160,12 +158,6 @@ const App = () => (
 
             <Route path="/accommodation-booking" element={<BookingAffiliate />} />
             <Route path="/trip-booking" element={<TripAffiliate />} />
-            <Route path="/admin/affiliate-stats" element={<RequireAdmin><AffiliateStats /></RequireAdmin>} />
-            <Route path="/admin/trip-affiliate-stats" element={<RequireAdmin><TripAffiliateStats /></RequireAdmin>} />
-            <Route path="/admin/affiliate-stats/" element={<Navigate to="/admin/affiliate-stats" replace />} />
-            <Route path="/admin/trip-affiliate-stats/" element={<Navigate to="/admin/trip-affiliate-stats" replace />} />
-            <Route path="/admin/affilate-stats" element={<Navigate to="/admin/affiliate-stats" replace />} />
-            <Route path="/admin/trip-affilate-stats" element={<Navigate to="/admin/trip-affiliate-stats" replace />} />
 
             <Route path="/booking" element={<BookingPage />} />
             {/* Admin routes removed */}

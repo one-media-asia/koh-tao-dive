@@ -497,12 +497,6 @@ const Admin = () => {
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold">Admin Dashboard</h1>
           <div className="flex gap-2">
-            <Button onClick={() => navigate('/admin/affiliate-stats')} variant="outline" size="sm">
-              Booking Stats
-            </Button>
-            <Button onClick={() => navigate('/admin/trip-affiliate-stats')} variant="outline" size="sm">
-              Trip Stats
-            </Button>
             <Button onClick={fetchBookings} variant="outline" size="sm">
               <RefreshCw className="h-4 w-4 mr-2" /> Refresh
             </Button>
@@ -514,20 +508,6 @@ const Admin = () => {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8">
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Affiliate Quick Links</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-wrap gap-2">
-            <Button onClick={() => navigate('/admin/affiliate-stats')} variant="outline">
-              Open Booking.com Stats
-            </Button>
-            <Button onClick={() => navigate('/admin/trip-affiliate-stats')} variant="outline">
-              Open Trip.com Stats
-            </Button>
-          </CardContent>
-        </Card>
-
         {/* Status Summary Cards */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
           <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setStatusFilter('all')}>
