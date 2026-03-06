@@ -449,12 +449,17 @@ const Navigation = () => {
                     </li>
                     <li>
                       <Link
-                        {/* Sign up menu item restored but hidden */}
-                        {false && (
-                          <Link to="/signup" className="block py-2 px-3 text-sm text-gray-300 hover:text-white hover:bg-[#1a3a5c] transition-all duration-150 rounded">
-                            {labels.signup}
-                          </Link>
-                        )}
+                        to="/login"
+                        className="block py-2 px-3 text-sm text-gray-300 hover:text-white hover:bg-[#1a3a5c] transition-all duration-150 rounded"
+                      >
+                        {labels.login}
+                      </Link>
+                      {/* Sign up menu item restored but hidden */}
+                      {false && (
+                        <Link to="/signup" className="block py-2 px-3 text-sm text-gray-300 hover:text-white hover:bg-[#1a3a5c] transition-all duration-150 rounded">
+                          {labels.signup}
+                        </Link>
+                      )}
                     </li>
                   </ul>
                 </div>
