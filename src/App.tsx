@@ -112,6 +112,11 @@ const RequireAdmin = ({ children }: { children: JSX.Element }) => {
   const [status, setStatus] = useState<'loading' | 'allowed' | 'denied'>('loading');
 
   useEffect(() => {
+    // In local development, bypass admin check so devs can view admin pages
+    if (import.meta.env.DEV) {
+      setStatus('allowed');
+      return;
+    }
     const checkAdmin = async () => {
       const { data: userData } = await supabase.auth.getUser();
       const user = userData.user;
