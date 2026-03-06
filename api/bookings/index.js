@@ -1,70 +1,46 @@
-import { handleOptions } from '../_lib/cors.js';
-import { applyCors, handleOptions } from '../_lib/cors.js';
-import { requireAdmin } from '../_lib/auth.js';
+import { handleOptions, applyCors } from '../_lib/cors.js';
 import { createClient } from '@supabase/supabase-js';
 
+const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+const supabase = SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
+  ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+  : null;
 
 const parseBody = (req) => {
   if (!req.body) return {};
   if (typeof req.body === 'string') {
-    try {
-      return JSON.parse(req.body);
-    } catch {
-      return {};
-    }
+    try { return JSON.parse(req.body); } catch { return {}; }
   }
   return req.body;
-// Bookings API with Supabase removed. Only accept POST to send email, no CRM/DB actions.
-import nodemailer from 'nodemailer';
-import { applyCors, handleOptions } from '../_lib/cors.js';
+};
 
 export default async function handler(req, res) {
   if (handleOptions(req, res)) return;
   applyCors(res);
 
   try {
-    if (req.method !== 'POST') {
-      res.setHeader('Allow', 'POST');
-      return res.status(405).json({ error: 'Method not allowed' });
+    if (req.method === 'GET') {
+      if (!supabase) return res.status(500).json({ error: 'Supabase not configured' });
+      const { data, error } = await supabase.from('bookings').select('*').order('created_at', { ascending: false }).limit(1000);
+      if (error) return res.status(500).json({ error: error.message });
+      return res.json(data || []);
     }
 
-    const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-    const { name, email, phone, item_type, course_title, preferred_date, experience_level, addons, addons_json, addons_total, subtotal_amount, total_payable_now, message } = body || {};
-
-    if (!name || !email) {
-      return res.status(400).json({ error: 'Missing required fields: name and email' });
+    if (req.method === 'POST') {
+      const body = parseBody(req);
+      if (!body.name || !body.email) return res.status(400).json({ error: 'Missing required fields: name and email' });
+      if (!supabase) return res.status(500).json({ error: 'Supabase not configured' });
+      const { data, error } = await supabase.from('bookings').insert([body]).select();
+      if (error) return res.status(500).json({ error: error.message });
+      return res.status(201).json((data || [])[0] || null);
     }
 
-    // Send booking email
-    const smtpHost = process.env.SMTP_HOST;
-    const smtpPort = Number(process.env.SMTP_PORT || 587);
-    const smtpUser = process.env.SMTP_USER;
-    const smtpPass = process.env.SMTP_PASS;
-
-    if (!smtpHost || !smtpUser || !smtpPass) {
-      res.status(500).json({ success: false, error: 'SMTP not configured' });
-      return;
-    }
-
-    const transporter = nodemailer.createTransport({
-      host: smtpHost,
-      port: smtpPort,
-      secure: smtpPort === 465,
-      auth: { user: smtpUser, pass: smtpPass },
-    });
-
-    const mailOptions = {
-      from: smtpUser,
-      to: 'contact@prodiving.asia',
-      subject: 'New Booking Submission',
-      replyTo: email,
-      text: `Name: ${name}\nEmail: ${email}\nPhone: ${phone || ''}\nItem Type: ${item_type || ''}\nCourse Title: ${course_title || ''}\nPreferred Date: ${preferred_date || ''}\nExperience Level: ${experience_level || ''}\nAddons: ${addons || ''}\nAddons JSON: ${addons_json || ''}\nAddons Total: ${addons_total || ''}\nSubtotal Amount: ${subtotal_amount || ''}\nTotal Payable Now: ${total_payable_now || ''}\nMessage: ${message || ''}`,
-    };
-
-    await transporter.sendMail(mailOptions);
-    res.status(200).json({ success: true });
+    res.setHeader('Allow', 'GET, POST');
+    return res.status(405).json({ error: 'Method not allowed' });
   } catch (err) {
     console.error('api/bookings error', err);
-    res.status(500).json({ error: err?.message || 'Internal error' });
+    return res.status(500).json({ error: err?.message || 'Internal error' });
   }
 }
