@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 
 const Accommodation = () => {
+    // Booking.com script injection removed
   const { i18n } = useTranslation();
   const isDutch = i18n.language.startsWith('nl');
   const content = {
@@ -82,7 +83,6 @@ const Accommodation = () => {
       </ul>
       <p className="mb-4">{pageContent.areas}</p>
       <div className="flex flex-wrap gap-4 mb-4">
-        <a href="/accommodation-booking" className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Booking.com</a>
         <a href="/trip-booking" className="inline-block bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition">Trip.com</a>
         <a href="/#contact" className="inline-block bg-cyan-600 text-white px-4 py-2 rounded hover:bg-cyan-700 transition">{pageContent.diveStay}</a>
       </div>

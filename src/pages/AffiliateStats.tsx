@@ -50,18 +50,7 @@ const extractClickRows = (payload: any): ClickRow[] => {
   return [];
 };
 
-const BOOKING_AFFILIATE_ID = '2787354';
-
-const isBookingClick = (row: ClickRow) => {
-  const affiliateId = row.affiliate_id ? String(row.affiliate_id).trim() : '';
-  if (affiliateId === BOOKING_AFFILIATE_ID) return true;
-
-  const url = row.hotel_url || '';
-  if (/(^|\.)booking\.com/i.test(url)) return true;
-  if (/[?&]aid=\d+/i.test(url)) return true;
-
-  return false;
-};
+// Booking.com logic removed
 
 const AffiliateStats = () => {
   const navigate = useNavigate();
@@ -79,12 +68,13 @@ const AffiliateStats = () => {
   const apiBase = apiBaseNormalized.replace(/\/+$/, '');
   const apiUrl = (path: string) => `${apiBase}${path}`;
 
+  const TRIP_COM_AFFILIATE_ID = '295439656';
   const fetchClicks = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(apiUrl('/api/affiliate-clicks?limit=500&debug=1'));
+      const response = await fetch(apiUrl(`/api/affiliate-clicks?limit=500&debug=1&affiliate_id=${TRIP_COM_AFFILIATE_ID}`));
       const data = await response.json().catch(() => []);
 
       if (!response.ok) {
@@ -94,8 +84,7 @@ const AffiliateStats = () => {
       const rows = extractClickRows(data?.rows ?? data);
       setRawCount(rows.length);
       setApiTableUsed(data?.meta?.tableUsed || null);
-      const filteredRows = rows.filter(isBookingClick);
-      setClicks(filteredRows.length > 0 ? filteredRows : rows);
+      setClicks(rows);
     } catch (err: any) {
       setError(err?.message || 'Failed to fetch affiliate clicks');
       setRawCount(0);
@@ -107,6 +96,8 @@ const AffiliateStats = () => {
 
   useEffect(() => {
     fetchClicks();
+
+    // Booking.com script injection removed
   }, []);
 
   // Aggregate clicks by hotel
@@ -302,9 +293,7 @@ const AffiliateStats = () => {
           </CardContent>
         </Card>
 
-        <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg text-sm text-green-800">
-          <strong>✓ Booking.com affiliate ID is set.</strong> Clicks are being tracked and commission will be attributed on completed bookings.
-        </div>
+        {/* Booking.com affiliate ID notice removed */}
       </div>
     </div>
   );

@@ -93,11 +93,9 @@ const getPriceColor = (price: string) => {
   }
 };
 
-const buildTripUrl = (hotelName?: string) => {
-  const base = hotelName
-    ? `https://www.trip.com/hotels/list?keyword=${encodeURIComponent(hotelName + ' Koh Tao')}`
-    : `https://www.trip.com/hotels/list?keyword=Koh+Tao+Thailand`;
-  return `${base}&allianceid=${ALLIANCE_ID}&sid=${SID}`;
+const buildTripUrl = () => {
+  // Always use the provided affiliate link
+  return 'https://www.trip.com/t/rbNBauS6mT2';
 };
 
 const TripAffiliate = () => {
@@ -151,11 +149,11 @@ const TripAffiliate = () => {
 
   const handleHotelClick = async (hotel: typeof hotels[0]) => {
     setClicking(hotel.name);
-    const affiliateUrl = buildTripUrl(hotel.name);
+    const affiliateUrl = buildTripUrl(); // Always use the provided link
     await trackAffiliateClick({
       hotel_name: hotel.name,
       hotel_url: affiliateUrl,
-      affiliate_id: ALLIANCE_ID,
+      affiliate_id: 'rbNBauS6mT2',
       referrer: document.referrer || null,
       user_agent: navigator.userAgent,
     });
@@ -169,7 +167,7 @@ const TripAffiliate = () => {
     await trackAffiliateClick({
       hotel_name: 'Search All Koh Tao – Trip.com',
       hotel_url: searchUrl,
-      affiliate_id: ALLIANCE_ID,
+      affiliate_id: 'rbNBauS6mT2',
       referrer: document.referrer || null,
       user_agent: navigator.userAgent,
     });
