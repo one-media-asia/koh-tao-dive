@@ -153,7 +153,7 @@ const TripAffiliate = () => {
     await trackAffiliateClick({
       hotel_name: hotel.name,
       hotel_url: affiliateUrl,
-      affiliate_id: 'rbNBauS6mT2',
+      affiliate_id: '7864578',
       referrer: document.referrer || null,
       user_agent: navigator.userAgent,
     });
@@ -167,7 +167,7 @@ const TripAffiliate = () => {
     await trackAffiliateClick({
       hotel_name: 'Search All Koh Tao – Trip.com',
       hotel_url: searchUrl,
-      affiliate_id: 'rbNBauS6mT2',
+      affiliate_id: '7864578',
       referrer: document.referrer || null,
       user_agent: navigator.userAgent,
     });

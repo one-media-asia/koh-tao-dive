@@ -68,7 +68,7 @@ const AffiliateStats = () => {
   const apiBase = apiBaseNormalized.replace(/\/+$/, '');
   const apiUrl = (path: string) => `${apiBase}${path}`;
 
-  const TRIP_COM_AFFILIATE_ID = '295439656';
+  const TRIP_COM_AFFILIATE_ID = '7864578';
   const fetchClicks = async () => {
     setLoading(true);
     setError(null);
