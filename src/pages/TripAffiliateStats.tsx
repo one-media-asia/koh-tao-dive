@@ -70,13 +70,14 @@ const TripAffiliateStats = () => {
   const [apiTableUsed, setApiTableUsed] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const apiBaseRaw = (import.meta.env.VITE_API_BASE_URL || '').trim();
-  const apiBaseNormalized = apiBaseRaw
-    ? (apiBaseRaw.startsWith('http://') || apiBaseRaw.startsWith('https://')
-        ? apiBaseRaw
-        : `https://${apiBaseRaw}`)
+  const apiBaseFromEnv = (import.meta.env.VITE_API_BASE_URL || '').trim();
+  const apiBaseNormalized = apiBaseFromEnv
+    ? (apiBaseFromEnv.startsWith('http://') || apiBaseFromEnv.startsWith('https://')
+        ? apiBaseFromEnv
+        : `https://${apiBaseFromEnv}`)
     : '';
-  const apiBase = apiBaseNormalized.replace(/\/+$/, '');
+  const isLocalhostDev = typeof window !== 'undefined' && import.meta.env.DEV && /(localhost|127\.0\.0\.1)/.test(window.location.hostname);
+  const apiBase = isLocalhostDev ? '' : apiBaseNormalized.replace(/\/+$/, '');
   const apiUrl = (path: string) => `${apiBase}${path}`;
 
   const fetchClicks = async () => {
