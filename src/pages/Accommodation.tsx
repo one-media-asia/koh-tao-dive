@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
 
 const Accommodation = () => {
@@ -83,7 +84,7 @@ const Accommodation = () => {
       </ul>
       <p className="mb-4">{pageContent.areas}</p>
       <div className="flex flex-wrap gap-4 mb-4">
-        <a href="/agoda-hotels" className="inline-block bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition">Agoda</a>
+        <Link to="/agoda-hotels" className="inline-block bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition">Agoda</Link>
         <a href="/#contact" className="inline-block bg-cyan-600 text-white px-4 py-2 rounded hover:bg-cyan-700 transition">{pageContent.diveStay}</a>
       </div>
       <p className="text-sm text-gray-500">{pageContent.tip}</p>

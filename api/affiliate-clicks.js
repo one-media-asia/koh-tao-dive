@@ -1,14 +1,30 @@
 const affiliateClicksStore = [];
 const MAX_AFFILIATE_CLICK_EVENTS = 2000;
 
-function setCors(res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+const ALLOWED_ORIGINS = new Set([
+  'https://www.divinginasia.com',
+  'https://divinginasia.com',
+  'http://localhost:3000',
+  'http://localhost:5173',
+]);
+
+function setCors(req, res) {
+  const origin = req.headers && typeof req.headers.origin === 'string' ? req.headers.origin : '';
+
+  if (origin && ALLOWED_ORIGINS.has(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Vary', 'Origin');
+  } else {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  }
+
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 }
 
 export default async function handler(req, res) {
-  setCors(res);
+  setCors(req, res);
 
   if (req.method === 'OPTIONS') {
     res.status(204).end();
