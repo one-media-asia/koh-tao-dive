@@ -2,6 +2,7 @@ import React from 'react';
 import Navigation from './Navigation';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { trackAffiliateClick } from '@/lib/affiliateTracking';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
@@ -23,6 +24,17 @@ const buildTripFooterUrl = () => {
 const Footer: React.FC = () => {
   const { i18n } = useTranslation();
   const isDutch = i18n.language.startsWith('nl');
+  const tripUrl = buildTripFooterUrl();
+
+  const handleTripClick = () => {
+    trackAffiliateClick({
+      provider: 'trip',
+      destinationUrl: tripUrl,
+      placement: 'footer-link',
+      hotelName: 'Trip.com Footer',
+      affiliateId: TRIP_ALLIANCE_ID || TRIP_SITE_ID || null,
+    });
+  };
 
   return (
   <footer className="bg-[#0b1e3d] text-white mt-12">
@@ -77,7 +89,13 @@ const Footer: React.FC = () => {
             <li><Link to="/MedicalServices" className="hover:text-white transition">{isDutch ? 'Medisch' : 'Medical'}</Link></li>
             <li><Link to="/accommodation-booking" className="hover:text-white transition">Booking.com</Link></li>
             <li>
-              <a href={buildTripFooterUrl()} target="_blank" rel="noopener noreferrer" className="hover:text-white transition">
+              <a
+                href={tripUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={handleTripClick}
+                className="hover:text-white transition"
+              >
                 Trip.com
               </a>
             </li>

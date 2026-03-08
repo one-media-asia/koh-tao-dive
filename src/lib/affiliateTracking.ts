@@ -1,9 +1,9 @@
-type AffiliateProvider = 'agoda' | 'booking';
+type AffiliateProvider = 'agoda' | 'booking' | 'trip';
 
 type AffiliateClickInput = {
   provider: AffiliateProvider;
   destinationUrl: string;
-  placement: 'hotel-card' | 'search-all';
+  placement: 'hotel-card' | 'search-all' | 'footer-link';
   hotelName?: string;
   affiliateId?: string | null;
 };
@@ -70,7 +70,7 @@ export const trackAffiliateClick = (input: AffiliateClickInput) => {
     headers: { 'Content-Type': 'application/json' },
     body,
     keepalive: true,
-      credentials: 'omit',
+    credentials: 'omit',
   }).catch(() => {
     // Ignore tracking failures so user navigation is never blocked.
   });
