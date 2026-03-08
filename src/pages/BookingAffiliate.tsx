@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { trackAffiliateClick } from '@/lib/affiliateTracking';
 import { ExternalLink, Star, MapPin, Wifi, UtensilsCrossed, Waves, DollarSign } from 'lucide-react';
 
 const hotels = [
@@ -104,6 +105,12 @@ const BookingAffiliate = () => {
     setClicking(hotel.slug);
 
     const bookingUrl = `https://www.booking.com/hotel/th/${hotel.slug}.html?lang=en-gb`;
+    trackAffiliateClick({
+      provider: 'booking',
+      destinationUrl: bookingUrl,
+      placement: 'hotel-card',
+      hotelName: hotel.name,
+    });
     // Open Booking.com in new tab (no affiliate tracking)
     window.open(bookingUrl, '_blank', 'noopener,noreferrer');
     setClicking(null);
@@ -111,6 +118,11 @@ const BookingAffiliate = () => {
 
   const handleSearchAll = async () => {
     const searchUrl = `https://www.booking.com/searchresults.html?ss=Koh+Tao%2C+Thailand&dest_type=city&lang=en-gb`;
+    trackAffiliateClick({
+      provider: 'booking',
+      destinationUrl: searchUrl,
+      placement: 'search-all',
+    });
     window.open(searchUrl, '_blank', 'noopener,noreferrer');
   };
 
@@ -197,7 +209,7 @@ const BookingAffiliate = () => {
         </div>
 
         {/* Bottom CTA */}
-        <div className="grid md:grid-cols-2 gap-6 mt-16">
+        <div className="grid md:grid-cols-3 gap-6 mt-16">
           <div className="text-center p-8 bg-blue-50 rounded-2xl">
             <h3 className="text-2xl font-bold mb-3">Can't find what you're looking for?</h3>
             <p className="text-gray-600 mb-6">Browse all available accommodations on Koh Tao with real-time prices and availability.</p>
@@ -212,6 +224,14 @@ const BookingAffiliate = () => {
             <Button onClick={() => window.open('/trip-hotels', '_self')} size="lg" className="bg-orange-500 hover:bg-orange-600 text-white">
               <ExternalLink className="w-4 h-4 mr-2" />
               View on Trip.com
+            </Button>
+          </div>
+          <div className="text-center p-8 bg-emerald-50 rounded-2xl">
+            <h3 className="text-2xl font-bold mb-3">Also check Agoda</h3>
+            <p className="text-gray-600 mb-6">Compare one more provider to increase your chances of finding the best rate.</p>
+            <Button onClick={() => window.open('/agoda-hotels', '_self')} size="lg" className="bg-emerald-600 hover:bg-emerald-700 text-white">
+              <ExternalLink className="w-4 h-4 mr-2" />
+              View on Agoda
             </Button>
           </div>
         </div>

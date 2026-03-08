@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { trackAffiliateClick } from '@/lib/affiliateTracking';
 import { ExternalLink, Star, MapPin } from 'lucide-react';
 
 const hotels = [
@@ -96,11 +97,22 @@ const TripHotels = () => {
 
   const handleHotelClick = async (hotel: typeof hotels[0]) => {
     setClicking(hotel.name);
+    trackAffiliateClick({
+      provider: 'trip',
+      destinationUrl: TRIP_BASE_URL,
+      placement: 'hotel-card',
+      hotelName: hotel.name,
+    });
     window.open(TRIP_BASE_URL, '_blank', 'noopener,noreferrer');
     setClicking(null);
   };
 
   const handleSearchAll = async () => {
+    trackAffiliateClick({
+      provider: 'trip',
+      destinationUrl: TRIP_BASE_URL,
+      placement: 'search-all',
+    });
     window.open(TRIP_BASE_URL, '_blank', 'noopener,noreferrer');
   };
 
