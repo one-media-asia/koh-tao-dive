@@ -94,27 +94,27 @@ const AgodaHotels = () => {
 
   const handleHotelClick = async (hotel: typeof hotels[0]) => {
     setClicking(hotel.name);
-    const agodaUrl = buildAgodaUrl();
-    trackAffiliateClick({
-      provider: 'agoda',
-      destinationUrl: agodaUrl,
-      placement: 'hotel-card',
-      hotelName: hotel.name,
-      affiliateId: AGODA_PARTNER_ID || null,
-    });
-    window.open(agodaUrl, '_blank', 'noopener,noreferrer');
+      const agodaUrl = buildAgodaUrl();
+      trackAffiliateClick({
+        provider: 'agoda',
+        destinationUrl: agodaUrl,
+        placement: 'hotel-card',
+        hotelName: hotel.name,
+        affiliateId: AGODA_PARTNER_ID || null,
+      });
+      window.open(agodaUrl, '_blank', 'noopener,noreferrer');
     setClicking(null);
   };
 
   const handleSearchAll = async () => {
-    const agodaUrl = buildAgodaUrl();
-    trackAffiliateClick({
-      provider: 'agoda',
-      destinationUrl: agodaUrl,
-      placement: 'search-all',
-      affiliateId: AGODA_PARTNER_ID || null,
-    });
-    window.open(agodaUrl, '_blank', 'noopener,noreferrer');
+      const agodaUrl = buildAgodaUrl();
+      trackAffiliateClick({
+        provider: 'agoda',
+        destinationUrl: agodaUrl,
+        placement: 'search-all',
+        affiliateId: AGODA_PARTNER_ID || null,
+      });
+      window.open(agodaUrl, '_blank', 'noopener,noreferrer');
   };
 
   return (

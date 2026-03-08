@@ -70,6 +70,7 @@ export const trackAffiliateClick = (input: AffiliateClickInput) => {
     headers: { 'Content-Type': 'application/json' },
     body,
     keepalive: true,
+      credentials: 'omit',
   }).catch(() => {
     // Ignore tracking failures so user navigation is never blocked.
   });
