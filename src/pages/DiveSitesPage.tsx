@@ -2,13 +2,13 @@ import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import BookingForm from '../components/BookingForm';
 import { MapPin, Waves, Fish, Anchor, Eye, Clock } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 const DiveSitesPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { i18n } = useTranslation();
   const isDutch = i18n.language.startsWith('nl');
   const content = {
