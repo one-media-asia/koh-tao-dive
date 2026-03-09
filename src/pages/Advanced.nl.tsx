@@ -1,32 +1,20 @@
 import Contact from '../components/Contact';
 
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 
-const imageList = [
-  '/images/photo-1613853250147-2f73e55c1561.avif',
-  '/images/photo-1618865181016-a80ad83a06d3.avif',
-  '/images/photo-1647825194145-2d94e259c745.avif',
-  '/images/photo-1659518893171-b15e20a8e201.avif',
-  '/images/photo-1682686580849-3e7f67df4015.avif',
-  '/images/photo-1682687982423-295485af248a.avif',
-  '/images/turtle.avif',
-];
+const heroImage = '/images/openwater/adv.png';
 
 const Advanced: React.FC = () => {
   const navigate = useNavigate();
   const bookingUrl = '/booking?item=Advanced%20Open%20Water&type=course&price=10000&currency=THB';
-  // Pick a random image on each render
-  const randomImage = useMemo(() => {
-    return imageList[Math.floor(Math.random() * imageList.length)];
-  }, []);
   return (
     <div className="min-h-screen bg-background">
       <section className="relative h-72 md:h-96 flex items-center overflow-hidden">
-        <img src={randomImage} alt="Advanced Open Water" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={heroImage} alt="Advanced Open Water" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-black/35" />
         <div className="container mx-auto px-4 text-white z-10">
           <h1 className="text-4xl md:text-5xl font-bold">Advanced Open Water</h1>

@@ -26,7 +26,7 @@ const OpenWater: React.FC = () => {
       </section>
 
       <main className="container mx-auto px-4 py-12">
-        <ImageRow images={["/images/photo-1659518893171-b15e20a8e201.avif","/images/photo-1682686580849-3e7f67df4015.avif","/images/photo-1647825194145-2d94e259c745.avif"]} />
+        <ImageRow images={["/images/openwater/downtheline.jpg","/images/photo-1682686580849-3e7f67df4015.avif","/images/photo-1647825194145-2d94e259c745.avif"]} />
         <div className="grid md:grid-cols-3 gap-8">
           <div className="md:col-span-2">
             <h2 className="text-2xl font-bold mb-4">Course Overview</h2>
