@@ -101,3 +101,10 @@
     @apply bg-background text-foreground;
   }
 }
+
+.instructor-hero-bg {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+    url('/images/photo-1618865181016-a80ad83a06d3.avif');
+  background-size: cover;
+  background-position: center;
+}

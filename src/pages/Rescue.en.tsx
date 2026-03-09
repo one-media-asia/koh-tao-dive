@@ -18,7 +18,7 @@ const imageList = [
 
 const Rescue: React.FC = () => {
   const navigate = useNavigate();
-  const bookingUrl = '/booking?item=PADI%20Rescue%20Diver&type=course&price=10500&currency=THB';
+  const bookingUrl = '/booking?item=PADI%20Rescue%20Diver&type=course&price=10000&currency=THB';
   const randomImage = useMemo(() => {
     return imageList[Math.floor(Math.random() * imageList.length)];
   }, []);
@@ -83,7 +83,7 @@ const Rescue: React.FC = () => {
                 <CardDescription>3 days · Pool & open water · Certification</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold text-sky-600 mb-3">฿10,500</p>
+                <p className="text-2xl font-bold text-sky-600 mb-3">฿10,000</p>
                 <p className="text-sm text-muted-foreground mb-4">Includes EFR prerequisite if required</p>
                 <Button onClick={() => navigate(bookingUrl)}>Book Rescue</Button>
               </CardContent>

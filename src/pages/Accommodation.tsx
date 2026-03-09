@@ -1,106 +1,512 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { trackAffiliateClick } from '@/lib/affiliateTracking';
 
+const TRIP_ALLIANCE_ID = import.meta.env.VITE_TRIP_ALLIANCE_ID as string | undefined;
+const TRIP_SITE_ID = import.meta.env.VITE_TRIP_SITE_ID as string | undefined;
+const AGODA_PARTNER_ID = import.meta.env.VITE_AGODA_PARTNER_ID as string | undefined;
+
+type RoomCard = {
+  name: string;
+  price: string;
+  desc: string;
+  features: string[];
+  image: string;
+  gallery: string[];
+};
 
 const Accommodation = () => {
-    // Booking.com script injection removed
   const { i18n } = useTranslation();
+  const navigate = useNavigate();
   const isDutch = i18n.language.startsWith('nl');
-  const content = {
-    nl: {
-      title: 'Accommodatie op Koh Tao',
-      subtitle: 'Vind je perfecte verblijf, van luxe resorts tot budgethostels en alles ertussenin.',
-      whereTitle: 'Waar overnachten',
-      intro:
-        'Koh Tao biedt een breed aanbod aan accommodaties voor elke stijl en elk budget. Of je nu zoekt naar een villa aan het strand, een knusse bungalow of een sociaal hostel: op het eiland is volop keuze.',
-      options: [
-        { label: 'Luxe resorts:', text: 'Geniet van zeezicht, infinity pools en spa-behandelingen bij topaccommodaties.' },
-        { label: 'Strandbungalows:', text: 'Stap direct vanuit je kamer het zand op — perfect voor een tropische sfeer.' },
-        { label: 'Hostels & guesthouses:', text: 'Ideaal voor backpackers en solo-reizigers, met sociale ruimtes en betaalbare prijzen.' },
-        { label: 'Familiehotels:', text: 'Ervaar lokale gastvrijheid en comfort in de dorpen van het eiland.' },
-        { label: 'Eco-lodges:', text: 'Verblijf duurzaam in accommodaties midden in de natuur.' },
-      ],
-      areas:
-        'Populaire gebieden zijn Sairee Beach (levendig, veel restaurants en uitgaan), Mae Haad (handig voor de ferry) en Chalok Baan Kao (rustig en relaxed).',
-      diveStay: 'Boek duiken + verblijf',
-      tip: 'Tip: boek vroeg voor de beste keuze, vooral in december–april en juli–augustus.',
-      inspirationTitle: 'Inspiratie nodig?',
-      inspiration: [
-        'Reis je met vrienden? Kies een strandbungalow voor een gezellige sfeer.',
-        'Beperkt budget? Hostels en guesthouses in Mae Haad en Sairee bieden veel waarde.',
-        'Op zoek naar romantiek? Boek een villa op de heuvel met zonsondergangzicht.',
-      ],
-      moreTips: 'Voor meer tips kun je contact opnemen via',
-    },
-    en: {
-      title: 'Accommodation on Koh Tao',
-      subtitle: 'Find your perfect stay, from luxury resorts to budget hostels and everything in between.',
-      whereTitle: 'Where to stay',
-      intro:
-        'Koh Tao offers a wide range of accommodation for every style and budget. Whether you are looking for a beachfront villa, a cozy bungalow, or a social hostel, the island has plenty of options.',
-      options: [
-        { label: 'Luxury resorts:', text: 'Enjoy sea views, infinity pools, and spa treatments at top accommodations.' },
-        { label: 'Beach bungalows:', text: 'Step straight from your room onto the sand — perfect for a tropical atmosphere.' },
-        { label: 'Hostels & guesthouses:', text: 'Ideal for backpackers and solo travelers, with social spaces and affordable prices.' },
-        { label: 'Family hotels:', text: 'Experience local hospitality and comfort in the island’s villages.' },
-        { label: 'Eco lodges:', text: 'Stay sustainably in accommodations surrounded by nature.' },
-      ],
-      areas:
-        'Popular areas include Sairee Beach (lively, with many restaurants and nightlife), Mae Haad (convenient for the ferry), and Chalok Baan Kao (quiet and relaxed).',
-      diveStay: 'Book diving + stay',
-      tip: 'Tip: book early for the best choice, especially in December–April and July–August.',
-      inspirationTitle: 'Need inspiration?',
-      inspiration: [
-        'Traveling with friends? Choose a beach bungalow for a fun and social atmosphere.',
-        'On a tighter budget? Hostels and guesthouses in Mae Haad and Sairee offer great value.',
-        'Looking for romance? Book a hillside villa with sunset views.',
-      ],
-      moreTips: 'For more tips, contact us via',
-    },
+
+  const labels = isDutch
+    ? {
+        heroTitle: 'Verblijf bij ons op Koh Tao',
+        heroSubtitle:
+          'Kies uit gezellige kamers, familiekamers en bungalows op toplocaties vlak bij onze duikactiviteiten.',
+        viewRooms: 'Bekijk kamers',
+        bookStay: 'Boek verblijf',
+        roomsTitle: 'Onze kamers',
+        roomsIntro:
+          'Of je nu een budgetvriendelijke kamer zoekt of een ruimere familiekamer, we helpen je graag met de beste match voor jouw reis.',
+        pricingNote:
+          'Prijzen variëren per seizoen. Neem contact op voor actuele beschikbaarheid en tarieven.',
+        featuresTitle: 'Wat je kunt verwachten',
+        whyStayTitle: 'Waarom bij ons verblijven?',
+        whyStayBody:
+          'Je verblijft dicht bij het duikcentrum, boten en restaurants. Dat betekent minder reistijd en meer tijd om van Koh Tao te genieten.',
+        ctaTitle: 'Klaar om je verblijf te plannen?',
+        ctaBody: 'Voeg accommodatie toe aan je duiktrip en stuur direct je aanvraag.',
+        ctaButton: 'Stay with us at our resort accommodation',
+        viewPictures: 'Bekijk foto\'s',
+        close: 'Sluiten',
+        chooseBooking: 'Kies je accommodatie-optie',
+        chooseBookingBody: 'Kies Book Our Accommodation om hieronder je kamergegevens in te vullen.',
+        bookOurAccommodation: 'Book Our Accommodation',
+        accommodationType: 'Accommodatietype',
+        people: 'Aantal personen',
+        nights: 'Aantal nachten',
+        details: 'Extra details',
+        continueBooking: 'Ga verder naar boekingsformulier',
+      }
+    : {
+        heroTitle: 'Stay With Us In Koh Tao',
+        heroSubtitle:
+          'Choose from cozy rooms, family-friendly suites, and bungalows in great locations close to our diving operations.',
+        viewRooms: 'View Rooms',
+        bookStay: 'Book Your Stay',
+        roomsTitle: 'Our Rooms',
+        roomsIntro:
+          'Whether you are looking for a budget-friendly room or more space for family travel, we can match you with the right option.',
+        pricingNote:
+          'Rates vary by season. Contact us for current availability and exact pricing.',
+        featuresTitle: 'What To Expect',
+        whyStayTitle: 'Why stay with us?',
+        whyStayBody:
+          'You stay close to the dive center, boats, and restaurants. Less travel time means more time enjoying Koh Tao.',
+        ctaTitle: 'Ready to plan your stay?',
+        ctaBody: 'Add accommodation to your dive trip and send your request directly.',
+        ctaButton: 'Stay with us at our resort accommodation',
+        viewPictures: 'View Pictures',
+        close: 'Close',
+        chooseBooking: 'Choose your accommodation option',
+        chooseBookingBody: 'Choose Book Our Accommodation to fill your room details below.',
+        bookOurAccommodation: 'Book Our Accommodation',
+        accommodationType: 'Accommodation type',
+        people: 'Number of people',
+        nights: 'Number of nights',
+        details: 'Additional details',
+        continueBooking: 'Continue to booking form',
+      };
+
+  const roomCards: RoomCard[] = isDutch
+    ? [
+        {
+          name: 'Familie Bungalow (tot 5 personen)',
+          price: 'THB 4,000 - 6,000 / nacht',
+          desc: 'Ruime bungalow voor gezinnen of kleine groepen met comfortabele indeling.',
+          features: ['Airco', 'Warme douche', 'Wi-Fi', 'TV', 'Tuinzicht'],
+          image: '/images/accommodation/family-bungalow-1.jpeg',
+          gallery: [
+            '/images/accommodation/family-bungalow-1.jpeg',
+            '/images/accommodation/family-bungalow-2.jpeg',
+            '/images/accommodation/family-bungalow-3.jpeg',
+          ],
+        },
+        {
+          name: 'Basic Room (2 personen)',
+          price: 'THB 1,450 - 1,650 / nacht',
+          desc: 'Praktische en nette kamer voor koppels of duikbuddy’s die slim willen reizen.',
+          features: ['Airco', 'Wi-Fi', 'Warme douche', 'Tuinzicht'],
+          image: '/images/accommodation/basic-room-1.jpeg',
+          gallery: [
+            '/images/accommodation/basic-room-1.jpeg',
+            '/images/accommodation/basic-room-2.jpeg',
+            '/images/accommodation/basic-room-3.jpeg',
+          ],
+        },
+        {
+          name: 'Bungalow (2 personen)',
+          price: 'THB 1,600 - 2,000 / nacht',
+          desc: 'Rustige bungalow met meer privacy en korte toegang tot strand en centrum.',
+          features: ['Airco', 'Wi-Fi', 'Tuinzicht', 'Privater gevoel'],
+          image: '/images/accommodation/bungalow-1.jpeg',
+          gallery: [
+            '/images/accommodation/bungalow-1.jpeg',
+            '/images/accommodation/bungalow-2.jpeg',
+            '/images/accommodation/bungalow-3.jpeg',
+          ],
+        },
+      ]
+    : [
+        {
+          name: 'Family Bungalow (up to 5 guests)',
+          price: 'THB 4,000 - 6,000 / night',
+          desc: 'Spacious setup for families or small groups with a comfortable layout.',
+          features: ['Air conditioning', 'Hot shower', 'Wi-Fi', 'TV', 'Garden view'],
+          image: '/images/accommodation/family-bungalow-1.jpeg',
+          gallery: [
+            '/images/accommodation/family-bungalow-1.jpeg',
+            '/images/accommodation/family-bungalow-2.jpeg',
+            '/images/accommodation/family-bungalow-3.jpeg',
+          ],
+        },
+        {
+          name: 'Basic Room (2 guests)',
+          price: 'THB 1,450 - 1,650 / night',
+          desc: 'Clean, practical room for couples or dive buddies who want value.',
+          features: ['Air conditioning', 'Wi-Fi', 'Hot shower', 'Garden view'],
+          image: '/images/accommodation/basic-room-1.jpeg',
+          gallery: [
+            '/images/accommodation/basic-room-1.jpeg',
+            '/images/accommodation/basic-room-2.jpeg',
+            '/images/accommodation/basic-room-3.jpeg',
+          ],
+        },
+        {
+          name: 'Bungalow (2 guests)',
+          price: 'THB 1,600 - 2,000 / night',
+          desc: 'Quiet bungalow with extra privacy and easy access to beach and town.',
+          features: ['Air conditioning', 'Wi-Fi', 'Garden view', 'More privacy'],
+          image: '/images/accommodation/bungalow-1.jpeg',
+          gallery: [
+            '/images/accommodation/bungalow-1.jpeg',
+            '/images/accommodation/bungalow-2.jpeg',
+            '/images/accommodation/bungalow-3.jpeg',
+          ],
+        },
+      ];
+
+  const bookingHref = '/booking?item=Resort%20Accommodation&type=stay&currency=THB';
+  const [selectedRoomName, setSelectedRoomName] = useState<string>('');
+  const [selectedGallery, setSelectedGallery] = useState<string[]>([]);
+  const [selectedPhoto, setSelectedPhoto] = useState<string>('');
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [showAltAccommodationPopup, setShowAltAccommodationPopup] = useState(false);
+  const [bookingSource, setBookingSource] = useState<'our' | 'trip' | 'agoda' | ''>('');
+  const [accommodationType, setAccommodationType] = useState<'family' | 'basic' | 'bungalow'>('family');
+  const [peopleCount, setPeopleCount] = useState<number>(2);
+  const [nightCount, setNightCount] = useState<number>(2);
+  const [accommodationDetails, setAccommodationDetails] = useState<string>('');
+
+  const openRoomGallery = (room: RoomCard) => {
+    setSelectedRoomName(room.name);
+    setSelectedGallery(room.gallery);
+    setSelectedPhoto(room.gallery[0] || room.image);
+    setGalleryOpen(true);
   };
-  const pageContent = isDutch ? content.nl : content.en;
+
+  const currentPhoto = useMemo(() => {
+    if (!selectedPhoto && selectedGallery.length > 0) return selectedGallery[0];
+    return selectedPhoto;
+  }, [selectedPhoto, selectedGallery]);
+
+  const openOurAccommodationForm = () => {
+    setBookingSource('our');
+    const formSection = document.getElementById('accommodation-booking-options');
+    if (formSection) {
+      formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const openAlternativeAccommodationPopup = (source: 'trip' | 'agoda') => {
+    setBookingSource(source);
+    setShowAltAccommodationPopup(true);
+  };
+
+  const buildTripUrl = () => {
+    const baseUrl = 'https://www.trip.com/hotels/koh-tao-hotels/';
+    const params = new URLSearchParams();
+    params.set('locale', 'en-US');
+    params.set('curr', 'THB');
+    
+    if (TRIP_ALLIANCE_ID) params.set('allianceid', TRIP_ALLIANCE_ID);
+    if (TRIP_SITE_ID) params.set('sid', TRIP_SITE_ID);
+
+    const query = params.toString();
+    return query ? `${baseUrl}?${query}` : baseUrl;
+  };
+
+  const buildAgodaUrl = () => {
+    const baseUrl = 'https://www.agoda.com/search';
+    const params = new URLSearchParams();
+    params.set('city', '13170'); // Koh Tao city ID
+    params.set('checkIn', '');
+    params.set('checkOut', '');
+    params.set('rooms', '1');
+    params.set('adults', '2');
+    params.set('children', '0');
+    
+    if (AGODA_PARTNER_ID) params.set('cid', AGODA_PARTNER_ID);
+
+    return `${baseUrl}?${params.toString()}`;
+  };
+
+  const handleExternalBooking = () => {
+    const url = bookingSource === 'trip' ? buildTripUrl() : buildAgodaUrl();
+    
+    // Track affiliate click
+    trackAffiliateClick({
+      provider: bookingSource === 'trip' ? 'trip' : 'agoda',
+      destinationUrl: url,
+      placement: 'accommodation-page',
+      hotelName: `${bookingSource === 'trip' ? 'Trip.com' : 'Agoda'} - Accommodation Page`,
+      affiliateId: bookingSource === 'trip' ? (TRIP_ALLIANCE_ID || TRIP_SITE_ID || null) : (AGODA_PARTNER_ID || null),
+    });
+    
+    // Open in new tab
+    window.open(url, '_blank', 'noopener,noreferrer');
+    
+    // Close the popup
+    setShowAltAccommodationPopup(false);
+  };
+
+  const handleStayWithResort = () => {
+    // Close popup and open our accommodation form
+    setShowAltAccommodationPopup(false);
+    openOurAccommodationForm();
+  };
+
+  const continueToBookingForm = () => {
+    const roomLabel = accommodationType === 'family'
+      ? 'Family Bungalow'
+      : accommodationType === 'basic'
+        ? 'Basic Room'
+        : 'Bungalow';
+    const message = encodeURIComponent(
+      `Accommodation request: ${roomLabel}. Guests: ${peopleCount}. Nights: ${nightCount}. Details: ${accommodationDetails || 'None'}`
+    );
+    navigate(`/booking?item=Resort%20Accommodation%20-%20${encodeURIComponent(roomLabel)}&type=stay&currency=THB&people=${peopleCount}&nights=${nightCount}&message=${message}`);
+  };
 
   return (
-  <main className="max-w-4xl mx-auto">
-    {/* Hero Section */}
-    <section className="relative h-64 md:h-96 flex items-center justify-center mb-8 overflow-hidden">
-      <div className="absolute inset-0 bg-[url('/images/acc-head.jpg')] bg-cover bg-center" />
-      <div className="absolute inset-0 bg-black/35" />
-      <div className="text-center text-white z-10 relative">
-        <h1 className="text-4xl md:text-5xl font-bold drop-shadow-lg">{pageContent.title}</h1>
-        <p className="mt-4 text-lg max-w-2xl mx-auto drop-shadow">{pageContent.subtitle}</p>
-      </div>
-    </section>
+    <main className="min-h-screen bg-slate-50">
+      <section className="relative h-[65vh] min-h-[460px] overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/images/acc-head.jpg')] bg-cover bg-center" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/45 to-black/25" />
+        <div className="relative z-10 h-full max-w-6xl mx-auto px-4 flex items-center">
+          <div className="max-w-3xl text-white">
+            <p className="uppercase tracking-[0.2em] text-sm text-cyan-200 mb-4">Accommodation</p>
+            <h1 className="text-4xl md:text-6xl font-bold leading-tight">{labels.heroTitle}</h1>
+            <p className="mt-5 text-lg md:text-xl text-white/90">{labels.heroSubtitle}</p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <a href="#rooms" className="inline-block bg-white text-slate-900 px-5 py-3 rounded-md font-semibold hover:bg-slate-100 transition">
+                {labels.viewRooms}
+              </a>
+              <Button onClick={openOurAccommodationForm} className="bg-cyan-600 hover:bg-cyan-700 text-white">
+                {labels.bookStay}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    {/* Main Content */}
-    <section className="bg-white rounded-lg shadow p-6 md:p-10 mb-8">
-      <h2 className="text-2xl font-semibold mb-4">{pageContent.whereTitle}</h2>
-      <p className="mb-4">{pageContent.intro}</p>
-      <ul className="list-disc pl-6 mb-4">
-        {pageContent.options.map((option) => (
-          <li key={option.label + option.text}><strong>{option.label}</strong> {option.text}</li>
-        ))}
-      </ul>
-      <p className="mb-4">{pageContent.areas}</p>
-      <div className="flex flex-wrap gap-4 mb-4">
-        <Link to="/agoda-hotels" className="inline-block bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition">Agoda</Link>
-        <a href="/#contact" className="inline-block bg-cyan-600 text-white px-4 py-2 rounded hover:bg-cyan-700 transition">{pageContent.diveStay}</a>
-      </div>
-      <p className="text-sm text-gray-500">{pageContent.tip}</p>
-    </section>
+      <section id="accommodation-booking-options" className="max-w-6xl mx-auto px-4 py-10">
+        <Card className="border-slate-200">
+          <CardHeader>
+            <CardTitle>{labels.chooseBooking}</CardTitle>
+            <CardDescription>{labels.chooseBookingBody}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-3 mb-6">
+              <Button type="button" className="bg-cyan-600 hover:bg-cyan-700 text-white" onClick={openOurAccommodationForm}>
+                {labels.bookOurAccommodation}
+              </Button>
+              <Button type="button" variant="outline" onClick={() => openAlternativeAccommodationPopup('trip')}>
+                Trip.com
+              </Button>
+              <Button type="button" variant="outline" onClick={() => openAlternativeAccommodationPopup('agoda')}>
+                Agoda
+              </Button>
+            </div>
 
-    {/* Inspiration Section */}
-    <section className="bg-gray-50 rounded-lg shadow p-6 md:p-10">
-      <h3 className="text-xl font-semibold mb-2">{pageContent.inspirationTitle}</h3>
-      <ul className="list-disc pl-6 mb-2">
-        {pageContent.inspiration.map((item) => (
-          <li key={item}>{item}</li>
-        ))}
-      </ul>
-      <p className="mt-2">{pageContent.moreTips} <a href="mailto:contact@divinginasia.com" className="text-blue-600 underline hover:text-blue-800">contact@divinginasia.com</a>.</p>
-    </section>
-  </main>
+            {bookingSource === 'our' && (
+              <div className="grid md:grid-cols-2 gap-4 p-4 rounded-lg border bg-slate-50">
+                <div>
+                  <label htmlFor="accommodationType" className="block text-sm font-medium mb-2">{labels.accommodationType}</label>
+                  <select
+                    id="accommodationType"
+                    title={labels.accommodationType}
+                    value={accommodationType}
+                    onChange={(e) => setAccommodationType(e.target.value as 'family' | 'basic' | 'bungalow')}
+                    className="w-full h-10 rounded-md border px-3 bg-white"
+                  >
+                    <option value="family">Family Bungalow</option>
+                    <option value="basic">Basic Room</option>
+                    <option value="bungalow">Bungalow</option>
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="peopleCount" className="block text-sm font-medium mb-2">{labels.people}</label>
+                  <input
+                    id="peopleCount"
+                    title={labels.people}
+                    type="number"
+                    min={1}
+                    max={20}
+                    value={peopleCount}
+                    onChange={(e) => setPeopleCount(Math.max(1, Number(e.target.value) || 1))}
+                    className="w-full h-10 rounded-md border px-3 bg-white"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="nightCount" className="block text-sm font-medium mb-2">{labels.nights}</label>
+                  <input
+                    id="nightCount"
+                    title={labels.nights}
+                    type="number"
+                    min={1}
+                    max={60}
+                    value={nightCount}
+                    onChange={(e) => setNightCount(Math.max(1, Number(e.target.value) || 1))}
+                    className="w-full h-10 rounded-md border px-3 bg-white"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label htmlFor="accommodationDetails" className="block text-sm font-medium mb-2">{labels.details}</label>
+                  <textarea
+                    id="accommodationDetails"
+                    title={labels.details}
+                    rows={3}
+                    value={accommodationDetails}
+                    onChange={(e) => setAccommodationDetails(e.target.value)}
+                    placeholder="Arrival date, room preferences, child bed request, etc."
+                    className="w-full rounded-md border px-3 py-2 bg-white"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <Button type="button" className="bg-cyan-600 hover:bg-cyan-700 text-white" onClick={continueToBookingForm}>
+                    {labels.continueBooking}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </section>
+
+      <section id="rooms" className="max-w-6xl mx-auto px-4 py-14">
+        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">{labels.roomsTitle}</h2>
+        <p className="text-slate-600 max-w-3xl mb-2">{labels.roomsIntro}</p>
+        <p className="text-sm text-slate-500 mb-8">{labels.pricingNote}</p>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {roomCards.map((room) => (
+            <Card key={room.name} className="overflow-hidden h-full border-slate-200">
+              <img src={room.image} alt={room.name} className="h-44 w-full object-cover" />
+              <CardHeader>
+                <CardTitle className="text-xl">{room.name}</CardTitle>
+                <CardDescription>{room.desc}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Badge className="mb-3 bg-emerald-100 text-emerald-800 hover:bg-emerald-100">{room.price}</Badge>
+                <div className="flex flex-wrap gap-2">
+                  {room.features.map((feature) => (
+                    <Badge key={feature} variant="outline" className="border-slate-300 text-slate-700">
+                      {feature}
+                    </Badge>
+                  ))}
+                </div>
+                <div className="mt-4 flex gap-2">
+                  <Button type="button" variant="outline" className="flex-1" onClick={() => openRoomGallery(room)}>
+                    {labels.viewPictures}
+                  </Button>
+                  <Button type="button" className="flex-1 bg-cyan-600 hover:bg-cyan-700" onClick={openOurAccommodationForm}>
+                    {labels.bookStay}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      <section className="max-w-6xl mx-auto px-4 pb-14">
+        <div className="grid md:grid-cols-2 gap-6">
+          <Card className="border-slate-200">
+            <CardHeader>
+              <CardTitle>{labels.featuresTitle}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-2 text-slate-700 text-sm">
+                <li>Air conditioning and fan options</li>
+                <li>Wi-Fi in rooms and common areas</li>
+                <li>Hot shower and private bathrooms on selected units</li>
+                <li>Short distance to beach, dive shop, and restaurants</li>
+              </ul>
+            </CardContent>
+          </Card>
+
+          <Card className="border-slate-200">
+            <CardHeader>
+              <CardTitle>{labels.whyStayTitle}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-slate-700 text-sm">{labels.whyStayBody}</p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      <section className="bg-slate-900 text-white py-14">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <h3 className="text-3xl font-bold mb-3">{labels.ctaTitle}</h3>
+          <p className="text-slate-300 mb-7">{labels.ctaBody}</p>
+          <Button
+            size="lg"
+            className="bg-cyan-500 hover:bg-cyan-600 text-white"
+            onClick={openOurAccommodationForm}
+          >
+            {labels.ctaButton}
+          </Button>
+        </div>
+      </section>
+
+      <AlertDialog open={showAltAccommodationPopup} onOpenChange={setShowAltAccommodationPopup}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Alternative Accommodation</AlertDialogTitle>
+            <AlertDialogDescription>
+              If you choose alternative accommodation, please give us the details so we can arrange all necessary arangements.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <AlertDialogCancel onClick={handleStayWithResort} className="mt-0">
+              No thanks, I'll stay with your resort
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleExternalBooking}>
+              OK - Take me to {bookingSource === 'trip' ? 'Trip.com' : 'Agoda'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <Dialog open={galleryOpen} onOpenChange={setGalleryOpen}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>{selectedRoomName}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {currentPhoto && (
+              <img src={currentPhoto} alt={selectedRoomName} className="w-full h-[420px] object-cover rounded-md" />
+            )}
+            <div className="grid grid-cols-3 gap-3">
+              {selectedGallery.map((img) => (
+                <button
+                  key={img}
+                  type="button"
+                  className={`rounded-md overflow-hidden border-2 ${img === currentPhoto ? 'border-cyan-500' : 'border-transparent'}`}
+                  onClick={() => setSelectedPhoto(img)}
+                >
+                  <img src={img} alt={selectedRoomName} className="h-24 w-full object-cover" />
+                </button>
+              ))}
+            </div>
+            <div className="text-right">
+              <Button type="button" variant="outline" onClick={() => setGalleryOpen(false)}>
+                {labels.close}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </main>
   );
 };
 

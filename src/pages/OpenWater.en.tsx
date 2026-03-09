@@ -1,32 +1,20 @@
 import Contact from '../components/Contact';
 
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import ImageRow from '@/components/ImageRow';
-
-const imageList = [
-  '/images/photo-1613853250147-2f73e55c1561.avif',
-  '/images/photo-1618865181016-a80ad83a06d3.avif',
-  '/images/photo-1647825194145-2d94e259c745.avif',
-  '/images/photo-1659518893171-b15e20a8e201.avif',
-  '/images/photo-1682686580849-3e7f67df4015.avif',
-  '/images/photo-1682687982423-295485af248a.avif',
-  '/images/turtle.avif',
-];
+import openWaterHero from '../../images/openwater/openwater.jpg';
 
 const OpenWater: React.FC = () => {
   const navigate = useNavigate();
-  const bookingUrl = '/booking?item=PADI%20Open%20Water%20Course&type=course&price=12900&currency=THB';
-  const randomImage = useMemo(() => {
-    return imageList[Math.floor(Math.random() * imageList.length)];
-  }, []);
+  const bookingUrl = '/booking?item=PADI%20Open%20Water%20Course&type=course&price=11000&currency=THB';
   return (
     <div className="min-h-screen bg-background">
       <section className="relative h-72 md:h-96 flex items-center overflow-hidden">
-        <img src={randomImage} alt="Open Water" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={openWaterHero} alt="Open Water" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-black/35" />
         <div className="container mx-auto px-4 text-white z-10">
           <h1 className="text-4xl md:text-5xl font-bold">PADI Open Water Course</h1>
@@ -100,7 +88,7 @@ const OpenWater: React.FC = () => {
                 <CardDescription>3-4 days · 4 open water dives · Certification included</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold text-sky-600 mb-3">฿12,900</p>
+                <p className="text-2xl font-bold text-sky-600 mb-3">฿11,000</p>
                 <p className="text-sm text-muted-foreground mb-4">Includes materials & equipment</p>
                 <ul className="text-sm mb-4">
                   <li>• Small groups</li>

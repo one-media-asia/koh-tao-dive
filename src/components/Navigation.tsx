@@ -105,6 +105,8 @@ const Navigation = () => {
       items: [
         { name: 'PADI Open Water Course', to: '/courses/open-water' },
         { name: 'PADI Scuba Diver Course', to: '/courses/scuba-diver' },
+        { name: isDutch ? 'Discover Scuba Diving (DSD)' : 'Discover Scuba Diving (DSD)', to: '/courses/discover-scuba' },
+        { name: isDutch ? 'Discover Scuba Diving Deluxe' : 'Discover Scuba Diving Deluxe', to: '/courses/discover-scuba-deluxe' },
       ],
     },
     {
@@ -366,6 +368,22 @@ const Navigation = () => {
                         className="block py-1.5 text-sm text-gray-300 hover:text-white hover:pl-1 transition-all duration-150"
                       >
                         Fun diving Koh Tao
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/courses/discover-scuba"
+                        className="block py-1.5 text-sm text-gray-300 hover:text-white hover:pl-1 transition-all duration-150"
+                      >
+                        Discover Scuba (DSD)
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/courses/discover-scuba-deluxe"
+                        className="block py-1.5 text-sm text-gray-300 hover:text-white hover:pl-1 transition-all duration-150"
+                      >
+                        Discover Scuba Deluxe
                       </Link>
                     </li>
                     <li>
@@ -633,6 +651,12 @@ const Navigation = () => {
                   <div className="pl-4 space-y-1 bg-gray-50 rounded-lg mx-2 py-2">
                     <Link to="/fun-diving-koh-tao" className="block px-3 py-1.5 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsOpen(false)}>
                       Fun diving Koh Tao
+                    </Link>
+                    <Link to="/courses/discover-scuba" className="block px-3 py-1.5 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsOpen(false)}>
+                      Discover Scuba (DSD)
+                    </Link>
+                    <Link to="/courses/discover-scuba-deluxe" className="block px-3 py-1.5 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsOpen(false)}>
+                      Discover Scuba Deluxe
                     </Link>
                     <a href="/fun-diving-koh-tao#schedule" className="block px-3 py-1.5 text-sm text-gray-600 hover:text-blue-600" onClick={(e) => handleAnchorClick(e, '/fun-diving-koh-tao#schedule')}>
                       {labels.boatSchedule}

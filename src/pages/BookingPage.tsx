@@ -6,6 +6,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Calendar, User, Mail, Phone, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -62,6 +71,8 @@ const ADDONS = [
   { id: 'lunch', label: 'Lunch & drinks', amount: 200 },
 ];
 
+type BookingItemType = 'course' | 'dive' | 'stay';
+
 const       BookingPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -75,23 +86,64 @@ const       BookingPage: React.FC = () => {
   const apiUrl = (path: string) => `${apiBase}${path}`;
   const courseSlug = (searchParams.get('course') || '').trim();
   const fallbackCourse = courseSlug ? COURSE_FALLBACKS[courseSlug] : undefined;
-  const itemTitle = searchParams.get('item') || fallbackCourse?.item || 'Booking';
-  const itemType = (searchParams.get('type') as 'course' | 'dive') || 'course';
+  const hasDirectBookingContext = Boolean(
+    searchParams.get('item') ||
+    searchParams.get('type') ||
+    searchParams.get('price') ||
+    fallbackCourse
+  );
+  const itemTitle = searchParams.get('item') || fallbackCourse?.item || (hasDirectBookingContext ? 'Booking' : 'Fun Dive');
+  const rawType = (searchParams.get('type') || '').trim();
+  const itemType: BookingItemType = rawType === 'dive' || rawType === 'stay' || rawType === 'course'
+    ? rawType
+    : (hasDirectBookingContext ? 'course' : 'dive');
   const isDiveBooking = itemType === 'dive';
+  const isCourseBooking = itemType === 'course';
+  const isStayBooking = itemType === 'stay';
   const rawPrice = searchParams.get('price');
   const parsedPrice = rawPrice ? Number(rawPrice) : NaN;
-  const courseCostMajor = Number.isFinite(parsedPrice) ? parsedPrice : (fallbackCourse?.price || 0);
-  const depositFromQuery = Number(searchParams.get('deposit') || '0');
-  const depositMajor = itemType === 'course'
-    ? (courseCostMajor > 0 ? Math.round(courseCostMajor * COURSE_DEPOSIT_RATE) : depositFromQuery)
-    : depositFromQuery;
+  const baseCourseCostMajor = Number.isFinite(parsedPrice)
+    ? parsedPrice
+    : (fallbackCourse?.price || (!hasDirectBookingContext ? 2000 : 0));
+  const parsedDeposit = Number(searchParams.get('deposit') || '0');
+  const depositFromQuery = Number.isFinite(parsedDeposit) ? parsedDeposit : 0;
   const depositCurrency = searchParams.get('currency') || fallbackCourse?.currency || 'THB';
+  const isFunDiveBooking = isDiveBooking && /fun dive/i.test(itemTitle);
+  const isDiscoverScubaBooking = isDiveBooking && /(discover scuba|dsd)/i.test(itemTitle);
+
+  const initialDiveCount = Math.min(20, Math.max(1, Number(searchParams.get('dives') || '2') || 2));
+  const [funDiveCount, setFunDiveCount] = useState<number>(initialDiveCount);
+  const initialCourseFunDiveCount = Math.min(10, Math.max(0, Number(searchParams.get('courseFunDives') || '0') || 0));
+  const [courseFunDiveCount, setCourseFunDiveCount] = useState<number>(initialCourseFunDiveCount);
+  const [stayWithUs, setStayWithUs] = useState<boolean>(searchParams.get('stay') === 'yes');
+  const [showStayPopup, setShowStayPopup] = useState(false);
+
+  const getFunDiveRate = (dives: number) => {
+    if (dives >= 10) return 800;
+    if (dives >= 2) return 900;
+    return 1000;
+  };
+
+  const courseCostMajor = isFunDiveBooking
+    ? getFunDiveRate(funDiveCount) * funDiveCount
+    : baseCourseCostMajor;
+  const courseFunDiveCostMajor = isCourseBooking && courseFunDiveCount > 0
+    ? getFunDiveRate(courseFunDiveCount) * courseFunDiveCount
+    : 0;
+  const totalItemCostMajor = isCourseBooking ? courseCostMajor + courseFunDiveCostMajor : courseCostMajor;
+  const depositFromPrice = totalItemCostMajor > 0 ? Math.round(totalItemCostMajor * COURSE_DEPOSIT_RATE) : 0;
+  const depositMajor = depositFromPrice > 0 ? depositFromPrice : depositFromQuery;
 
   const [selectedAddons, setSelectedAddons] = useState<Record<string, boolean>>({});
+  const availableAddons = useMemo(() => {
+    if (!isDiveBooking) return [];
+    return ADDONS.filter((addon) => !(isDiscoverScubaBooking && addon.id === 'equipment'));
+  }, [isDiveBooking, isDiscoverScubaBooking]);
+
   const totalAddons = useMemo(() => {
     if (!isDiveBooking) return 0;
-    return ADDONS.reduce((sum, a) => sum + (selectedAddons[a.id] ? a.amount : 0), 0);
-  }, [isDiveBooking, selectedAddons]);
+    return availableAddons.reduce((sum, a) => sum + (selectedAddons[a.id] ? a.amount : 0), 0);
+  }, [isDiveBooking, availableAddons, selectedAddons]);
 
   const form = useForm<BookingFormData>({
     resolver: zodResolver(bookingSchema),
@@ -101,8 +153,8 @@ const       BookingPage: React.FC = () => {
       phone: '',
       preferred_date: new Date().toISOString().slice(0, 10),
       experience_level: '',
-      message: '',
-      paymentChoice: itemType === 'course' ? 'now' : 'none',
+      message: searchParams.get('message') || '',
+      paymentChoice: itemType === 'course' || itemType === 'dive' ? 'now' : 'none',
     },
   });
 
@@ -114,23 +166,28 @@ const       BookingPage: React.FC = () => {
     console.log('Form validation errors:', form.formState.errors);
     setIsSubmitting(true);
     try {
-      const amountMajor = depositMajor + totalAddons;
+      const amountMajor = (isStayBooking ? 0 : depositMajor) + totalAddons;
       const selectedAddonsList = isDiveBooking
-        ? ADDONS.filter((addon) => selectedAddons[addon.id]).map((addon) => ({
+        ? availableAddons.filter((addon) => selectedAddons[addon.id]).map((addon) => ({
             id: addon.id,
             label: addon.label,
             amount: addon.amount,
           }))
         : [];
+      const bookingItemTitle = isFunDiveBooking
+        ? `${itemTitle} (${funDiveCount} dives)`
+        : (isCourseBooking && courseFunDiveCount > 0
+          ? `${itemTitle} + ${courseFunDiveCount} Fun Dives`
+          : itemTitle);
       const addonsText = isDiveBooking
-        ? (ADDONS.filter(a => selectedAddons[a.id]).map(a => a.label).join(', ') || 'None')
+        ? (availableAddons.filter(a => selectedAddons[a.id]).map(a => a.label).join(', ') || 'None')
         : 'N/A (course booking)';
 
       // Prepare Web3Forms payload
       const payload = {
         access_key: '4ca93aa5-cd42-4902-af87-a08e1ae7c832',
         to: 'petergreaney@proton.me',
-        subject: `Booking Inquiry: ${itemTitle}`,
+        subject: `Booking Inquiry: ${bookingItemTitle}`,
         name: data.name,
         email: data.email,
         phone: data.phone || 'N/A',
@@ -138,8 +195,15 @@ const       BookingPage: React.FC = () => {
         experience_level: data.experience_level || 'N/A',
         payment_choice: data.paymentChoice === 'now' ? 'Pay deposit now via PayPal' : 'Pay later (inquire only)',
         paypal_link: data.paymentChoice === 'now' ? `${PAYPAL_LINK}/${amountMajor}THB` : null,
-        item_title: itemTitle,
-        deposit_amount: `฿${amountMajor}`,
+        item_title: bookingItemTitle,
+        full_price: totalItemCostMajor > 0 ? `฿${totalItemCostMajor}` : (isStayBooking ? 'Quote on request' : 'N/A'),
+        dive_count: isFunDiveBooking ? funDiveCount : 'N/A',
+        course_fun_dive_count: isCourseBooking ? courseFunDiveCount : 'N/A',
+        course_fun_dive_cost: isCourseBooking && courseFunDiveCostMajor > 0 ? `฿${courseFunDiveCostMajor}` : 'N/A',
+        stay_with_us: isCourseBooking
+          ? (stayWithUs ? 'Yes - accommodation free with course' : 'No')
+          : (isDiveBooking ? (stayWithUs ? 'Yes - accommodation requested with dive booking' : 'No') : 'N/A'),
+        deposit_amount: amountMajor > 0 ? `฿${amountMajor}` : 'Quote on request',
         addons: addonsText,
         message: data.message || 'No additional message',
       };
@@ -197,13 +261,25 @@ const       BookingPage: React.FC = () => {
               {itemType === 'course' ? (
                 <>
                   <div className="text-lg font-semibold">Course cost</div>
+                  <div className="text-2xl font-bold">{totalItemCostMajor > 0 ? `฿${totalItemCostMajor}` : 'Contact us'}</div>
+                  {courseFunDiveCostMajor > 0 && (
+                    <div className="text-sm text-muted-foreground mt-1">
+                      Includes Fun Dives add-on: ฿{courseFunDiveCostMajor}
+                    </div>
+                  )}
+                  <div className="text-sm text-muted-foreground mt-1">Deposit payable now (20%): {depositMajor > 0 ? `฿${depositMajor}` : 'Contact us'}</div>
+                </>
+              ) : itemType === 'dive' ? (
+                <>
+                  <div className="text-lg font-semibold">Dive price</div>
                   <div className="text-2xl font-bold">{courseCostMajor > 0 ? `฿${courseCostMajor}` : 'Contact us'}</div>
                   <div className="text-sm text-muted-foreground mt-1">Deposit payable now (20%): {depositMajor > 0 ? `฿${depositMajor}` : 'Contact us'}</div>
                 </>
               ) : (
                 <>
-                  <div className="text-lg font-semibold">Deposit</div>
-                  <div className="text-2xl font-bold">{depositMajor > 0 ? `฿${depositMajor}` : 'No deposit required'}</div>
+                  <div className="text-lg font-semibold">Accommodation request</div>
+                  <div className="text-2xl font-bold">Custom quote</div>
+                  <div className="text-sm text-muted-foreground mt-1">We will confirm room options and exact seasonal pricing.</div>
                 </>
               )}
             </div>
@@ -216,9 +292,106 @@ const       BookingPage: React.FC = () => {
           </div>
         </div>
 
+        <div className="mb-6 p-4 border rounded-lg bg-muted/20">
+          <h3 className="font-semibold mb-3">Quick booking options</h3>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                if (isCourseBooking || isDiveBooking) {
+                  setStayWithUs(true);
+                  setShowStayPopup(true);
+                  return;
+                }
+                navigate('/booking?item=Resort%20Accommodation&type=stay&currency=THB');
+              }}
+            >
+              Stay with us at our resort accommodation
+            </Button>
+          </div>
+        </div>
+
+        {(isCourseBooking || isDiveBooking) && (
+          <div className="mb-6 p-3 border rounded-lg bg-amber-50 border-amber-200 text-amber-900 text-sm">
+            If you choose alternative accommodation, please give us the details so we can arrange all necessary arangements.
+          </div>
+        )}
+
+        {isCourseBooking && (
+          <div className="mb-6 p-4 border rounded-lg bg-muted/30">
+            <h3 className="font-semibold mb-3">Add Fun Dives to your course</h3>
+            <div className="grid grid-cols-3 sm:grid-cols-6 md:grid-cols-11 gap-2 mb-3">
+              {Array.from({ length: 11 }, (_, i) => i).map((count) => (
+                <button
+                  key={count}
+                  type="button"
+                  onClick={() => setCourseFunDiveCount(count)}
+                  className={`px-3 py-2 rounded border text-sm font-medium transition ${courseFunDiveCount === count ? 'bg-blue-600 text-white border-blue-600' : 'bg-white hover:bg-blue-50 border-border'}`}
+                >
+                  {count}
+                </button>
+              ))}
+            </div>
+            <p className="text-sm text-muted-foreground mb-3">
+              Pricing: 1 dive = ฿1,000, 2-9 dives = ฿900 per dive, 10+ dives = ฿800 per dive.
+              Selected add-on: {courseFunDiveCount} dives{courseFunDiveCount > 0 ? ` (฿${courseFunDiveCostMajor})` : ''}.
+            </p>
+
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={stayWithUs}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  setStayWithUs(checked);
+                  if (checked) {
+                    setShowStayPopup(true);
+                  }
+                }}
+              />
+              Stay with us (accommodation)
+            </label>
+          </div>
+        )}
+
+        {isCourseBooking && stayWithUs && (
+          <div className="mb-6 p-3 border rounded-lg bg-emerald-50 border-emerald-200 text-emerald-800 text-sm">
+            Accommodation is FREE with this course. Course pricing remains unchanged.
+          </div>
+        )}
+
+        {isDiveBooking && stayWithUs && (
+          <div className="mb-6 p-3 border rounded-lg bg-blue-50 border-blue-200 text-blue-900 text-sm">
+            Deposit payable now for your dives and accommodation total pricing to be confirmed. Please leave details in the form below and we will contact to confirm your total amount payable on arrival or deposit before arriving.
+          </div>
+        )}
+
+        {isFunDiveBooking && (
+          <div className="mb-6 p-4 border rounded-lg bg-muted/30">
+            <h3 className="font-semibold mb-3">Choose number of dives</h3>
+            <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-10 gap-2 mb-3">
+              {Array.from({ length: 10 }, (_, i) => i + 1).map((count) => (
+                <button
+                  key={count}
+                  type="button"
+                  onClick={() => setFunDiveCount(count)}
+                  className={`px-3 py-2 rounded border text-sm font-medium transition ${funDiveCount === count ? 'bg-blue-600 text-white border-blue-600' : 'bg-white hover:bg-blue-50 border-border'}`}
+                >
+                  {count} {count === 1 ? 'dive' : 'dives'}
+                </button>
+              ))}
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Pricing: 1 dive = ฿1,000, 2-9 dives = ฿900 per dive, 10+ dives = ฿800 per dive.
+              Current rate: ฿{getFunDiveRate(funDiveCount)} per dive.
+            </p>
+          </div>
+        )}
+
         {isDiveBooking && (
           <div className="grid md:grid-cols-2 gap-6 mb-6">
-            {ADDONS.map((a) => (
+            {availableAddons.map((a) => (
               <label key={a.id} className="flex items-center gap-3 p-4 border rounded">
                 <input type="checkbox" checked={!!selectedAddons[a.id]} onChange={() => setSelectedAddons(s => ({ ...s, [a.id]: !s[a.id] }))} />
                 <div>
@@ -231,8 +404,10 @@ const       BookingPage: React.FC = () => {
         )}
 
         <div className="mb-6 text-right">
-          <div className="text-sm text-muted-foreground">{isDiveBooking ? 'Total payable now (incl. add-ons):' : 'Total payable now:'}</div>
-          <div className="text-2xl font-bold">฿{depositMajor + totalAddons}</div>
+          <div className="text-sm text-muted-foreground">
+            {isStayBooking ? 'Payment:' : (isDiveBooking ? 'Total payable now (incl. add-ons):' : 'Total payable now:')}
+          </div>
+          <div className="text-2xl font-bold">{isStayBooking ? 'Quote on request' : `฿${depositMajor + totalAddons}`}</div>
         </div>
 
         <Form {...form}>
@@ -312,7 +487,7 @@ const       BookingPage: React.FC = () => {
                         checked={field.value === 'now'}
                         onChange={() => field.onChange('now')}
                       />
-                      <span>Pay deposit now with PayPal</span>
+                      <span>{isStayBooking ? 'Pay after confirmation' : 'Pay deposit now with PayPal'}</span>
                     </label>
                     <label className="flex items-center gap-2">
                       <input
@@ -323,7 +498,7 @@ const       BookingPage: React.FC = () => {
                         checked={field.value === 'none'}
                         onChange={() => field.onChange('none')}
                       />
-                      <span>Pay later (inquire only)</span>
+                      <span>{isStayBooking ? 'Send accommodation inquiry' : 'Pay later (inquire only)'}</span>
                     </label>
                   </div>
                 </FormControl>
@@ -369,6 +544,22 @@ const       BookingPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      <AlertDialog open={showStayPopup} onOpenChange={setShowStayPopup}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{isCourseBooking ? 'Accommodation Included' : 'Accommodation Request Noted'}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {isCourseBooking
+                ? 'Accommodation free with us for courses.'
+                : 'Deposit payable now for your dives and accommodation total pricing to be confirmed. Please leave details in the form below and we will contact to confirm your total amount payable on arrival or deposit before arriving.'}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction>OK</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

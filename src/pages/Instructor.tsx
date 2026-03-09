@@ -8,10 +8,10 @@ import { useNavigate } from 'react-router-dom';
 
 const Instructor: React.FC = () => {
   const navigate = useNavigate();
-  const bookingUrl = '/booking?item=PADI%20Open%20Water%20Scuba%20Instructor&type=course&price=60000&currency=THB';
+  const bookingUrl = '/booking?item=PADI%20Open%20Water%20Scuba%20Instructor&type=course&price=68900&currency=THB';
   return (
     <div className="min-h-screen bg-background">
-      <section className="relative h-72 md:h-96 flex items-center" style={{backgroundImage: "linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('/images/photo-1682686580849-3e7f67df4015.avif')", backgroundSize: 'cover', backgroundPosition: 'center'}}>
+      <section className="instructor-hero-bg relative h-72 md:h-96 flex items-center">
         <div className="container mx-auto px-4 text-white z-10">
           <h1 className="text-4xl md:text-5xl font-bold">PADI Open Water Scuba Instructor</h1>
           <p className="mt-4 max-w-2xl">Train to become a PADI Instructor and teach divers worldwide. The Instructor Development Course (IDC) prepares candidates to lead courses and certify students.</p>
@@ -49,10 +49,37 @@ const Instructor: React.FC = () => {
             <div className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>How long is the IDC?</CardTitle>
+                  <CardTitle>How do I enrol in the IDC on Koh Tao?</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  IDC schedules vary; typical programs run 2-4 weeks including evaluation days. Contact us for current schedules.
+                  Contact us for course dates, schedule options and the application process. We can guide you step-by-step from prerequisites to enrollment.
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Can I work as a PADI Instructor right after completing IDC?</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  Yes. After completing the IDC and passing the Instructor Examination (IE), you earn the PADI Open Water Scuba Instructor certification and can teach professionally.
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Can I continue professional training after the IDC?</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  Absolutely. After instructor certification, you can continue with pro-level development such as MSDT and beyond, depending on your experience and goals.
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Why choose Koh Tao for an IDC?</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  Koh Tao combines excellent dive sites, experienced instructors, affordable living costs and a strong dive community, making it one of the best places to build a dive career.
                 </CardContent>
               </Card>
             </div>
@@ -68,7 +95,7 @@ const Instructor: React.FC = () => {
                 <CardDescription>IDC · Instructor Examination · Practical Teaching</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold text-sky-600 mb-3">฿60,000+</p>
+                <p className="text-2xl font-bold text-sky-600 mb-3">฿68,900</p>
                 <p className="text-sm text-muted-foreground mb-4">Contact us for a tailored Instructor pathway and exam dates.</p>
                 <Button onClick={() => navigate(bookingUrl)}>Enquire / Apply</Button>
               </CardContent>

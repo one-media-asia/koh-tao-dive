@@ -80,6 +80,8 @@ const FunDiving = () => {
         return 'schedule';
       case 'requirements':
         return 'requirements';
+      case 'faq':
+        return 'faq';
       case 'tips':
         return 'tips';
       case 'booking':
@@ -144,13 +146,14 @@ const FunDiving = () => {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div id="fun-dive-tabs" className="max-w-6xl mx-auto px-4 py-8">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8">
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-9">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="trips">Trips</TabsTrigger>
             <TabsTrigger value="sites">Sites</TabsTrigger>
             <TabsTrigger value="marine">Marine Life</TabsTrigger>
             <TabsTrigger value="schedule">Schedule</TabsTrigger>
             <TabsTrigger value="requirements">Requirements</TabsTrigger>
+            <TabsTrigger value="faq">FAQ</TabsTrigger>
             <TabsTrigger value="tips">Tips</TabsTrigger>
             <TabsTrigger value="booking">Booking</TabsTrigger>
           </TabsList>
@@ -161,12 +164,95 @@ const FunDiving = () => {
           <section id="fun-dive-main" className="py-16 px-4">
             <div className="max-w-6xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-4xl font-bold mb-6">Where to Go Fun Diving in Thailand</h2>
-                <p className="text-lg text-muted-foreground max-w-4xl mx-auto">
-                  Koh Tao provides all this and more at a variety of dive sites ranging from shallow coral reefs
-                  to deeper outlying granite pinnacles. Our experienced dive team will provide you with a
-                  bespoke, relaxed and enjoyable fun diving experience tailored to your skill level.
+                <h2 className="text-4xl font-bold mb-6">From Breathtaking Shipwrecks to Exotic Marine Life</h2>
+                <p className="text-lg text-muted-foreground max-w-4xl mx-auto mb-8">
+                  Koh Tao's fun dives have it all! We take pride in offering you a personalized, relaxed,
+                  and enjoyable fun diving experience. We're dedicated to showcasing the finest underwater
+                  marvels tailored to your level of training and experience, ensuring your dives align with
+                  your specific interests.
                 </p>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-8 mb-12">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Waves className="w-5 h-5 text-blue-600" />
+                      World-Class Dive Sites
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      Beneath the turquoise water surrounding Koh Tao lies a world of colorful coral reefs,
+                      teeming marine life from macro creatures to turtles and if you're lucky, the majestic
+                      whale shark. With over 25 captivating dive sites, there's boundless diversity to explore.
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Users className="w-5 h-5 text-green-600" />
+                      Expert Dive Professionals
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      Our dive team comprises seasoned and highly knowledgeable dive professionals who have
+                      immersed themselves in the local reef ecology and dive sites. Their expertise ensures
+                      a safe and enriching diving experience for you.
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Fish className="w-5 h-5 text-orange-600" />
+                      Diverse Marine Life
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      From massive whale sharks and graceful sea turtles to colorful reef fish and fascinating
+                      macro life, Koh Tao's waters host an incredible variety of marine species. Every dive
+                      brings new discoveries and unforgettable encounters.
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Clock className="w-5 h-5 text-purple-600" />
+                      Flexible Schedule
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      We run two dive trips a day - morning and afternoon - on our spacious customized dive boats.
+                      After an exhilarating day of diving, unwind with refreshing drinks and share your incredible
+                      underwater experiences over a stunning sunset.
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="bg-blue-50 p-8 rounded-lg text-center">
+                <h3 className="text-2xl font-bold mb-4">Ready to Explore?</h3>
+                <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+                  Whether you're a newly certified Open Water diver or an experienced technical diver,
+                  we have the perfect dive sites and packages for you. Book your fun diving adventure today!
+                </p>
+                <div className="flex flex-wrap gap-4 justify-center">
+                  <Button size="lg" onClick={() => setActiveTab('schedule')} className="bg-blue-600 hover:bg-blue-700">
+                    View Pricing & Schedule
+                  </Button>
+                  <Button size="lg" variant="outline" onClick={() => setActiveTab('sites')}>
+                    Explore Dive Sites
+                  </Button>
+                </div>
               </div>
             </div>
           </section>
@@ -194,7 +280,7 @@ const FunDiving = () => {
                       <li>Premium equipment</li>
                       <li>Max 4 divers per guide</li>
                     </ul>
-                          <Button variant="secondary" onClick={() => { navigate(`/booking?item=${encodeURIComponent('Fun Dive')}&type=dive&deposit=500&currency=THB`); }}>Inquire / Book</Button>
+                          <Button variant="secondary" onClick={() => { navigate(`/booking?item=${encodeURIComponent('Fun Dive')}&type=dive&price=2000&currency=THB`); }}>Inquire / Book</Button>
                   </CardContent>
                 </Card>
 
@@ -214,7 +300,12 @@ const FunDiving = () => {
                       <li>Friendly instructors</li>
                       <li>Equipment & photos available</li>
                     </ul>
-                    <Button variant="secondary" onClick={() => { navigate(`/booking?item=${encodeURIComponent('Discover Scuba')}&type=dive&deposit=1000&currency=THB`); }}>Inquire / Book</Button>
+                    <div className="flex gap-2">
+                      <Button variant="outline" asChild>
+                        <Link to="/courses/discover-scuba">View Program</Link>
+                      </Button>
+                      <Button variant="secondary" onClick={() => { navigate(`/booking?item=${encodeURIComponent('Discover Scuba')}&type=dive&price=2500&currency=THB`); }}>Inquire / Book</Button>
+                    </div>
                   </CardContent>
                 </Card>
 
@@ -234,7 +325,7 @@ const FunDiving = () => {
                       <li>Experienced guides and briefings</li>
                       <li>Pickup & return to Koh Tao</li>
                     </ul>
-                    <Button variant="secondary" onClick={() => { navigate(`/booking?item=${encodeURIComponent('Sail Rock Special')}&type=dive&deposit=1500&currency=THB`); }}>Inquire / Book</Button>
+                    <Button variant="secondary" onClick={() => { navigate(`/booking?item=${encodeURIComponent('Sail Rock Special')}&type=dive&price=2900&currency=THB`); }}>Inquire / Book</Button>
                   </CardContent>
                 </Card>
               </div>
@@ -329,17 +420,25 @@ const FunDiving = () => {
               <div className="grid lg:grid-cols-2 gap-12">
                 <div>
                   <h2 className="text-4xl font-bold mb-8">Fun Diving Boat Schedule</h2>
+                  <p className="text-muted-foreground mb-6">
+                    We run two dive trips a day on our spacious customised dive boats where we adventure
+                    out to explore the coral reefs. Each trip includes 2 dives at carefully selected sites
+                    based on conditions and certification levels.
+                  </p>
                   <div className="space-y-4">
                     <Card>
                       <CardHeader>
                         <div className="flex items-center gap-2">
                           <Clock className="w-5 h-5 text-blue-600" />
-                          <CardTitle className="text-lg">Morning Trips</CardTitle>
+                          <CardTitle className="text-lg">Morning Trip</CardTitle>
                         </div>
                       </CardHeader>
                       <CardContent>
-                        <p>Daily departures at 8:00 AM and 10:00 AM</p>
-                        <p className="text-sm text-muted-foreground mt-2">2 dives per trip</p>
+                        <p className="font-semibold mb-2">Departure: 8:00 AM</p>
+                        <p className="text-sm text-muted-foreground">2 dives - Return by 1:00 PM</p>
+                        <p className="text-sm text-muted-foreground mt-2">
+                          Perfect for early birds who want to see the reef at its most active
+                        </p>
                       </CardContent>
                     </Card>
 
@@ -347,19 +446,22 @@ const FunDiving = () => {
                       <CardHeader>
                         <div className="flex items-center gap-2">
                           <Clock className="w-5 h-5 text-blue-600" />
-                          <CardTitle className="text-lg">Afternoon Trips</CardTitle>
+                          <CardTitle className="text-lg">Afternoon Trip</CardTitle>
                         </div>
                       </CardHeader>
                       <CardContent>
-                        <p>Daily departures at 1:00 PM</p>
-                        <p className="text-sm text-muted-foreground mt-2">2 dives per trip</p>
+                        <p className="font-semibold mb-2">Departure: 1:00 PM</p>
+                        <p className="text-sm text-muted-foreground">2 dives - Return by 6:00 PM</p>
+                        <p className="text-sm text-muted-foreground mt-2">
+                          Ideal for those who prefer a relaxed morning or want to dive twice in one day
+                        </p>
                       </CardContent>
                     </Card>
 
-                    <Card>
+                    <Card className="border-2 border-purple-200">
                       <CardHeader>
                         <div className="flex items-center gap-2">
-                          <Clock className="w-5 h-5 text-blue-600" />
+                          <Clock className="w-5 h-5 text-purple-600" />
                           <CardTitle className="text-lg">
                             <Link to="/dive-sites/sail-rock" className="hover:text-blue-600 underline-offset-4 hover:underline">
                               Sail Rock Special
@@ -368,8 +470,11 @@ const FunDiving = () => {
                         </div>
                       </CardHeader>
                       <CardContent>
-                        <p>Wednesday & Saturday at 6:30 AM</p>
-                        <p className="text-sm text-muted-foreground mt-2">Full day trip with lunch</p>
+                        <p className="font-semibold mb-2">Wednesday & Saturday: 6:30 AM</p>
+                        <p className="text-sm text-muted-foreground">3 dives - Full day with meals</p>
+                        <p className="text-sm text-muted-foreground mt-2">
+                          Our premium trip to Koh Tao's most famous dive site
+                        </p>
                       </CardContent>
                     </Card>
                   </div>
@@ -378,22 +483,39 @@ const FunDiving = () => {
                 <div>
                   <h2 id="pricing" className="text-4xl font-bold mb-8">Pricing</h2>
                   <div className="space-y-4">
-                    <Card>
+                    <Card className="border-2 border-blue-200 bg-blue-50">
                       <CardHeader>
                         <div className="flex items-center gap-2">
                           <DollarSign className="w-5 h-5 text-green-600" />
-                          <CardTitle className="text-lg">Standard Fun Dive</CardTitle>
+                          <CardTitle className="text-lg">Fun Diving Packages</CardTitle>
                         </div>
+                        <CardDescription>Volume discounts available</CardDescription>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-2xl font-bold text-green-600">฿2,000</p>
-                        <p className="text-sm text-muted-foreground">per trip (2 dives)</p>
-                        <ul className="mt-4 space-y-2 text-sm">
-                          <li>• Premium Aqualung equipment</li>
-                          <li>• Experienced dive guide</li>
-                          <li>• Freshwater showers</li>
-                          <li>• Maximum 4 divers per guide</li>
-                        </ul>
+                        <div className="space-y-3 mb-4">
+                          <div className="flex justify-between items-center pb-2 border-b">
+                            <span className="font-medium">1 Dive</span>
+                            <span className="text-xl font-bold text-blue-600">฿1,000 <span className="text-sm text-muted-foreground">/dive</span></span>
+                          </div>
+                          <div className="flex justify-between items-center pb-2 border-b">
+                            <span className="font-medium">2-9 Dives</span>
+                            <span className="text-xl font-bold text-blue-600">฿900 <span className="text-sm text-muted-foreground">/dive</span></span>
+                          </div>
+                          <div className="flex justify-between items-center pb-2 border-b bg-green-50 p-2 rounded">
+                            <span className="font-medium">10+ Dives</span>
+                            <span className="text-xl font-bold text-green-600">฿800 <span className="text-sm text-muted-foreground">/dive</span></span>
+                          </div>
+                        </div>
+                        <div className="bg-white p-4 rounded-lg">
+                          <p className="font-semibold mb-2">Includes:</p>
+                          <ul className="space-y-1 text-sm">
+                            <li>✓ Certified scuba dive guide</li>
+                            <li>✓ Use of all scuba equipment</li>
+                            <li>✓ Maximum 4 divers per guide</li>
+                            <li>✓ Freshwater showers</li>
+                          </ul>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-3">Prerequisite: Open Water certification or equivalent</p>
                         <div className="mt-4">
                           <Link to="/koh-tao-dive-sites" className="text-sm font-medium text-blue-600 hover:underline underline-offset-4">
                             View all dive sites overview
@@ -406,12 +528,12 @@ const FunDiving = () => {
                       <CardHeader>
                         <div className="flex items-center gap-2">
                           <DollarSign className="w-5 h-5 text-green-600" />
-                          <CardTitle className="text-lg">Sail Rock Trip</CardTitle>
+                          <CardTitle className="text-lg">Sail Rock Special Trip</CardTitle>
                         </div>
                       </CardHeader>
                       <CardContent>
                         <p className="text-2xl font-bold text-green-600">฿2,900</p>
-                        <p className="text-sm text-muted-foreground">full day excursion</p>
+                        <p className="text-sm text-muted-foreground">full day excursion (3 dives)</p>
                         <ul className="mt-4 space-y-2 text-sm">
                           <li>• Breakfast & lunch included</li>
                           <li>• Premium equipment</li>
@@ -489,6 +611,103 @@ const FunDiving = () => {
             </div>
           </section>
         </TabsContent>
+
+        {/* FAQ Section */}
+        <TabsContent value="faq" className="transition-none">
+          <section id="faq" className="py-16 px-4 bg-muted/50">
+            <div className="max-w-4xl mx-auto">
+              <h2 className="text-4xl font-bold text-center mb-4">Frequently Asked Questions</h2>
+              <p className="text-center text-muted-foreground mb-12">
+                Everything you need to know before diving with us on Koh Tao
+              </p>
+              <div className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Do I need to be a certified diver to go fun diving on Koh Tao?</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      Yes, you need to be a certified diver to participate in fun diving. Koh Tao offers diving
+                      for all certification levels, so whether you're Open Water certified or have advanced training,
+                      there are dive sites suitable for you. If you're not certified yet, check out our{' '}
+                      <Link to="/courses" className="text-blue-600 hover:underline">PADI certification courses</Link>.
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">What can I expect during a fun dive on Koh Tao?</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      A typical fun dive on Koh Tao includes a guided dive with a certified dive professional,
+                      who will lead you to explore the diverse marine life, coral reefs, and underwater landscapes
+                      that make the island famous. We run two dive trips a day - morning and afternoon - on our
+                      spacious customized dive boats where we adventure out to explore the coral reefs.
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">How deep will we dive during fun diving on Koh Tao?</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      Dive sites on Koh Tao cater to various skill levels. Depths can vary, but many dive sites
+                      are suitable for Open Water Divers and range from 12 meters (40 feet) to 18 meters (60 feet).
+                      For more experienced divers, there are deeper sites available from 30 to 40 meters.
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Is it necessary to book fun diving in advance?</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      While it's not always necessary to book in advance, especially during non-peak times,
+                      it's advisable to let us know when you are planning to come dive with us to secure your
+                      spot and have the best experience. During high season (December-February), we recommend
+                      booking at least a day in advance.
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">What marine life can I see while fun diving?</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      Beneath the turquoise water surrounding Koh Tao lies a world of colorful coral reefs,
+                      teeming marine life from macro creatures to sea turtles, and if you're lucky, the majestic
+                      whale shark. With over 25 captivating dive sites, there's plenty to see including barracuda,
+                      groupers, triggerfish, cuttlefish, octopus, and a stunning variety of tropical reef fish.
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">What's included in the fun diving price?</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      Our fun diving packages include: certified scuba dive guide, use of all scuba equipment
+                      (BCD, regulator, wetsuit, mask, fins), dive computer, weights, tank, and maximum 4 divers
+                      per guide for a personalized experience. Freshwater showers are available after your dive.
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </section>
+        </TabsContent>
+
+        {/* bsContent>
 
         {/* Choosing a Dive Center */}
         <TabsContent value="tips" className="transition-none">
@@ -580,7 +799,12 @@ const FunDiving = () => {
                   <a href="https://www.divinginasia.com/#contact" target="_blank" rel="noopener noreferrer" className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded font-semibold mb-2">Get in touch to book/enquire</a>
                   <div className="text-muted-foreground text-sm mb-4">Or use the form below to send a booking request directly.</div>
                 </div>
-                <Button size="lg" onClick={() => navigate('/booking')}>Send Booking Request</Button>
+                <Button
+                  size="lg"
+                  onClick={() => navigate('/booking?item=Fun%20Dive&type=dive&price=2000&currency=THB&dives=2')}
+                >
+                  Send Booking Request
+                </Button>
             </div>
           </section>
         </TabsContent>

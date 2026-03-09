@@ -1,7 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { useNavigate } from 'react-router-dom';
 import { MapPin, Waves, Fish, Clock, Eye, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -47,7 +57,18 @@ const DiveSiteDetail: React.FC<DiveSiteDetailProps> = ({
   const navigate = useNavigate();
   const { i18n } = useTranslation();
   const isDutch = i18n.language.startsWith('nl');
+  const [showBookingWarning, setShowBookingWarning] = useState(false);
+  
   const hero = images && images.length > 0 ? images[0] : '/images/photo-1682686580849-3e7f67df4015.avif';
+  
+  const handleBookingClick = () => {
+    setShowBookingWarning(true);
+  };
+  
+  const confirmBooking = () => {
+    navigate(`/booking?item=${encodeURIComponent(name)}&type=dive`);
+  };
+  
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case 'Beginner':
@@ -88,6 +109,10 @@ const DiveSiteDetail: React.FC<DiveSiteDetailProps> = ({
         bookTitle: `Boek je duik bij ${name}`,
         bookBody: 'Klaar om deze geweldige duiklocatie te verkennen? Neem contact op om je duikavontuur te regelen.',
         bookPage: 'Ga naar boekingspagina',
+        warningTitle: 'Belangrijke mededeling',
+        warningMessage: 'Vanwege het weer en ons bootschema is deze specifieke locatie mogelijk niet beschikbaar. Neem contact met ons op om te bevestigen dat we u deze specifieke locatie kunnen aanbieden. Dank u.',
+        continueBooking: 'Doorgaan met boeking',
+        cancel: 'Annuleren',
       }
     : {
         back: 'Back to dive sites',
@@ -111,6 +136,10 @@ const DiveSiteDetail: React.FC<DiveSiteDetailProps> = ({
         bookTitle: `Book your dive at ${name}`,
         bookBody: 'Ready to explore this incredible dive site? Contact us to arrange your diving adventure.',
         bookPage: 'Go to booking page',
+        warningTitle: 'Important Notice',
+        warningMessage: 'Due to weather and our boat schedule this specific site may not be available, please contact us to confirm we can offer you this specific site. Thank you.',
+        continueBooking: 'Continue Booking',
+        cancel: 'Cancel',
       };
 
   return (
@@ -269,7 +298,7 @@ const DiveSiteDetail: React.FC<DiveSiteDetailProps> = ({
                   <p className="text-sm text-muted-foreground mb-4">
                     {labels.readyBody}
                   </p>
-                  <Button className="w-full" size="lg" onClick={() => navigate(`/booking?item=${encodeURIComponent(name)}&type=dive`)}>
+                  <Button className="w-full" size="lg" onClick={handleBookingClick}>
                     {labels.bookSite}
                   </Button>
                 </CardContent>
@@ -300,10 +329,26 @@ const DiveSiteDetail: React.FC<DiveSiteDetailProps> = ({
             <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
               {labels.bookBody}
             </p>
-            <Button onClick={() => navigate(`/booking?item=${encodeURIComponent(name)}&type=dive`)} className="px-6 py-3 bg-blue-600 text-white rounded-lg">{labels.bookPage}</Button>
+            <Button onClick={handleBookingClick} className="px-6 py-3 bg-blue-600 text-white rounded-lg">{labels.bookPage}</Button>
           </div>
         </section>
       </div>
+      
+      {/* Booking Warning Dialog */}
+      <AlertDialog open={showBookingWarning} onOpenChange={setShowBookingWarning}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{labels.warningTitle}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {labels.warningMessage}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{labels.cancel}</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmBooking}>{labels.continueBooking}</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

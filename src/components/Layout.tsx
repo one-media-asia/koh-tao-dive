@@ -59,6 +59,8 @@ const Footer: React.FC = () => {
           <h4 className="text-cyan-400 text-xs font-bold uppercase tracking-wider mb-4">{isDutch ? 'Duiken' : 'Diving'}</h4>
           <ul className="space-y-2 text-sm text-gray-400">
             <li><Link to="/courses/open-water" className="hover:text-white transition">Open Water</Link></li>
+            <li><Link to="/courses/discover-scuba" className="hover:text-white transition">{isDutch ? 'Discover Scuba (DSD)' : 'Discover Scuba (DSD)'}</Link></li>
+            <li><Link to="/courses/discover-scuba-deluxe" className="hover:text-white transition">{isDutch ? 'Discover Scuba Deluxe' : 'Discover Scuba Deluxe'}</Link></li>
             <li><Link to="/courses/advanced" className="hover:text-white transition">Advanced</Link></li>
             <li><Link to="/courses/rescue" className="hover:text-white transition">Rescue Diver</Link></li>
             <li><Link to="/fun-diving-koh-tao" className="hover:text-white transition">Fun Diving</Link></li>

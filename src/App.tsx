@@ -29,6 +29,8 @@ import Divemaster from './pages/Divemaster';
 import Instructor from './pages/Instructor';
 import ScubaReview from './pages/ScubaReview';
 import ScubaDiver from './pages/ScubaDiver';
+import DiscoverScuba from './pages/DiscoverScuba';
+import DiscoverScubaDeluxe from './pages/DiscoverScubaDeluxe';
 import ProLevelCourses from './pages/ProLevelCourses';
 import SpecialtyDetail from './pages/SpecialtyDetail';
 
@@ -178,6 +180,10 @@ const App = () => (
             <Route path="/courses/msdt-program" element={<MSDTProgram />} />
             <Route path="/courses/scuba-review" element={<ScubaReview />} />
             <Route path="/courses/scuba-diver" element={<ScubaDiver />} />
+            <Route path="/courses/discover-scuba" element={<DiscoverScuba />} />
+            <Route path="/courses/dsd" element={<DiscoverScuba />} />
+            <Route path="/courses/discover-scuba-deluxe" element={<DiscoverScubaDeluxe />} />
+            <Route path="/courses/dsd-deluxe" element={<DiscoverScubaDeluxe />} />
             <Route path="/courses/pro-level" element={<ProLevelCourses />} />
             <Route path="/courses/specialties/:slug" element={<SpecialtyDetail />} />
 
@@ -232,6 +238,7 @@ const App = () => (
             <Route path="/marine-life/nudibranchs" element={<Nudibranchs />} />
 
             <Route path="/Accommodation" element={<Accommodation />} />
+            <Route path="/accommodation" element={<Accommodation />} />
             <Route path="/koh-tao-info" element={<KohTaoInfo />} />
             <Route path="/ThingsToDo" element={<ThingsToDo />} />
             <Route path="/BanksKohTao" element={<BanksKohTao />} />

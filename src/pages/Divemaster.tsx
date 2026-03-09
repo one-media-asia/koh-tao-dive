@@ -18,7 +18,7 @@ const imageList = [
 
 const Divemaster: React.FC = () => {
   const navigate = useNavigate();
-  const bookingUrl = '/booking?item=PADI%20Divemaster%20Course&type=course&price=35000&currency=THB';
+  const bookingUrl = '/booking?item=PADI%20Divemaster%20Course&type=course&price=41000&currency=THB';
   const randomImage = useMemo(() => {
     return imageList[Math.floor(Math.random() * imageList.length)];
   }, []);
@@ -81,8 +81,8 @@ const Divemaster: React.FC = () => {
                 <CardDescription>2-4 weeks · Practical & theory · PADI Divemaster</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold text-sky-600 mb-3">฿35,000+</p>
-                <p className="text-sm text-muted-foreground mb-4">Price varies by program length and experience level. Contact us for tailored pricing.</p>
+                <p className="text-2xl font-bold text-sky-600 mb-3">฿41,000</p>
+                <p className="text-sm text-muted-foreground mb-4">Includes all training, materials, PADI certification and equipment</p>
                 <Button onClick={() => navigate(bookingUrl)}>Enquire / Apply</Button>
               </CardContent>
             </Card>

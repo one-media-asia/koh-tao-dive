@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 const MSDTProgram: React.FC = () => {
   const navigate = useNavigate();
+  const bookingUrl = '/booking?item=PADI%20Master%20Scuba%20Diver%20Trainer%20(MSDT)%20Program&type=course&currency=THB';
   return (
     <div className="min-h-screen bg-background">
       <section className="py-20">
@@ -79,7 +80,7 @@ const MSDTProgram: React.FC = () => {
             </CardHeader>
             <CardContent>
               <p className="mb-4">Ready to become a PADI Master Scuba Diver Trainer? Contact us for course dates, pricing, and to discuss your specialty choices.</p>
-              <Button onClick={() => navigate('/booking')}>Enquire / Book Now</Button>
+              <Button onClick={() => navigate(bookingUrl)}>Enquire / Book Now</Button>
             </CardContent>
           </Card>
         </div>

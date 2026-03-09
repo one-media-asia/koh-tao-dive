@@ -120,11 +120,9 @@ const AgodaHotels = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white">
       <div
-        className="relative min-h-[50vh] flex items-center justify-center"
+        className="relative min-h-[50vh] flex items-center justify-center bg-cover bg-center"
         style={{
           backgroundImage: `linear-gradient(rgba(0,30,60,0.55), rgba(0,70,45,0.55)), url('/images/staykohtai.png')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
         }}
       >
         <div className="text-center text-white px-4 max-w-3xl">

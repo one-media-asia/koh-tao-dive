@@ -80,6 +80,8 @@ const FunDiving = () => {
         return 'schedule';
       case 'requirements':
         return 'requirements';
+      case 'faq':
+        return 'faq';
       case 'tips':
         return 'tips';
       case 'booking':
@@ -144,13 +146,14 @@ const FunDiving = () => {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div id="fun-dive-tabs" className="max-w-6xl mx-auto px-4 py-8">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8">
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-9">
             <TabsTrigger value="overview">Overzicht</TabsTrigger>
             <TabsTrigger value="trips">Trips</TabsTrigger>
             <TabsTrigger value="sites">Locaties</TabsTrigger>
             <TabsTrigger value="marine">Marien</TabsTrigger>
             <TabsTrigger value="schedule">Schema</TabsTrigger>
             <TabsTrigger value="requirements">Vereisten</TabsTrigger>
+            <TabsTrigger value="faq">FAQ</TabsTrigger>
             <TabsTrigger value="tips">Tips</TabsTrigger>
             <TabsTrigger value="booking">Boeken</TabsTrigger>
           </TabsList>
@@ -161,12 +164,95 @@ const FunDiving = () => {
           <section id="fun-dive-main" className="py-16 px-4">
             <div className="max-w-6xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-4xl font-bold mb-6">Waar je kunt fun diven in Thailand</h2>
-                <p className="text-lg text-muted-foreground max-w-4xl mx-auto">
-                  Koh Tao biedt dit en meer op een grote variatie aan duiklocaties, van ondiepe koraalriffen
-                  tot dieper gelegen granieten pinnacles. Ons ervaren duikteam zorgt voor een
-                  persoonlijke, ontspannen en plezierige fun dive-ervaring afgestemd op jouw niveau.
+                <h2 className="text-4xl font-bold mb-6">Van adembenemende scheepswrakken tot exotisch onderwaterleven</h2>
+                <p className="text-lg text-muted-foreground max-w-4xl mx-auto mb-8">
+                  Koh Tao's fun dives hebben het allemaal! We zijn trots op het bieden van een persoonlijke,
+                  ontspannen en plezierige fun dive-ervaring. We tonen je de mooiste onderwaterwereld
+                  afgestemd op jouw trainingsniveau en ervaring, zodat je duiken perfect aansluiten bij
+                  je specifieke interesses.
                 </p>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-8 mb-12">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Waves className="w-5 h-5 text-blue-600" />
+                      Wereldklasse duiklocaties
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      Onder het turquoise water rond Koh Tao ligt een wereld van kleurrijke koraalriffen,
+                      bruisend onderwaterleven van macro-wezens tot schildpadden en als je geluk hebt, de
+                      majestueuze walvishaai. Met meer dan 25 fascinerende duiklocaties is er eindeloze diversiteit.
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Users className="w-5 h-5 text-green-600" />
+                      Expert duikprofessionals
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      Ons duikteam bestaat uit ervaren en zeer deskundige duikprofessionals die zich volledig
+                      hebben verdiept in de lokale rifecologie en duiklocaties. Hun expertise zorgt voor
+                      een veilige en verrijkende duikervaring.
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Fish className="w-5 h-5 text-orange-600" />
+                      Divers onderwaterleven
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      Van enorme walvishaaien en sierlijke zeeschildpadden tot kleurrijke rifvissen en
+                      fascinerend macro-leven, de wateren van Koh Tao herbergen een ongelooflijke variëteit
+                      aan mariene soorten. Elke duik brengt nieuwe ontdekkingen en onvergetelijke ontmoetingen.
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Clock className="w-5 h-5 text-purple-600" />
+                      Flexibel schema
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      We organiseren twee duiktrips per dag - ochtend en middag - op onze ruime, aangepaste
+                      duikboten. Na een spannende dag duiken kun je ontspannen met verfrissende drankjes en
+                      je ongelooflijke onderwaterervaringen delen tijdens een prachtige zonsondergang.
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="bg-blue-50 p-8 rounded-lg text-center">
+                <h3 className="text-2xl font-bold mb-4">Klaar om te verkennen?</h3>
+                <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+                  Of je nu een pas gecertificeerde Open Water duiker bent of een ervaren technisch duiker,
+                  we hebben de perfecte duiklocaties en pakketten voor jou. Boek vandaag nog je fun diving-avontuur!
+                </p>
+                <div className="flex flex-wrap gap-4 justify-center">
+                  <Button size="lg" onClick={() => setActiveTab('schedule')} className="bg-blue-600 hover:bg-blue-700">
+                    Bekijk prijzen & schema
+                  </Button>
+                  <Button size="lg" variant="outline" onClick={() => setActiveTab('sites')}>
+                    Ontdek duiklocaties
+                  </Button>
+                </div>
               </div>
             </div>
           </section>
@@ -194,7 +280,7 @@ const FunDiving = () => {
                       <li>Premium uitrusting</li>
                       <li>Maximaal 4 duikers per gids</li>
                     </ul>
-                          <Button variant="secondary" onClick={() => { navigate(`/booking?item=${encodeURIComponent('Fun Dive')}&type=dive&deposit=500&currency=THB`); }}>Informatie / Boeken</Button>
+                          <Button variant="secondary" onClick={() => { navigate(`/booking?item=${encodeURIComponent('Fun Dive')}&type=dive&price=2000&currency=THB`); }}>Informatie / Boeken</Button>
                   </CardContent>
                 </Card>
 
@@ -214,7 +300,12 @@ const FunDiving = () => {
                       <li>Vriendelijke instructeurs</li>
                       <li>Uitrusting & foto's beschikbaar</li>
                     </ul>
-                    <Button variant="secondary" onClick={() => { navigate(`/booking?item=${encodeURIComponent('Discover Scuba')}&type=dive&deposit=1000&currency=THB`); }}>Informatie / Boeken</Button>
+                    <div className="flex gap-2">
+                      <Button variant="outline" asChild>
+                        <Link to="/courses/discover-scuba">Bekijk programma</Link>
+                      </Button>
+                      <Button variant="secondary" onClick={() => { navigate(`/booking?item=${encodeURIComponent('Discover Scuba')}&type=dive&price=2500&currency=THB`); }}>Informatie / Boeken</Button>
+                    </div>
                   </CardContent>
                 </Card>
 
@@ -234,7 +325,7 @@ const FunDiving = () => {
                       <li>Ervaren gidsen en briefings</li>
                       <li>Ophalen en terugbrengen op Koh Tao</li>
                     </ul>
-                    <Button variant="secondary" onClick={() => { navigate(`/booking?item=${encodeURIComponent('Sail Rock Special')}&type=dive&deposit=1500&currency=THB`); }}>Informatie / Boeken</Button>
+                    <Button variant="secondary" onClick={() => { navigate(`/booking?item=${encodeURIComponent('Sail Rock Special')}&type=dive&price=2900&currency=THB`); }}>Informatie / Boeken</Button>
                   </CardContent>
                 </Card>
               </div>
@@ -376,24 +467,41 @@ const FunDiving = () => {
                 </div>
 
                 <div>
-                  <h2 id="pricing" className="text-4xl font-bold mb-8">Prijs</h2>
+                  <h2 id="pricing" className="text-4xl font-bold mb-8">Prijzen</h2>
                   <div className="space-y-4">
-                    <Card>
+                    <Card className="border-2 border-blue-200 bg-blue-50">
                       <CardHeader>
                         <div className="flex items-center gap-2">
                           <DollarSign className="w-5 h-5 text-green-600" />
-                          <CardTitle className="text-lg">Standaard Fun Dive</CardTitle>
+                          <CardTitle className="text-lg">Fun Diving-pakketten</CardTitle>
                         </div>
+                        <CardDescription>Volumekortingen beschikbaar</CardDescription>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-2xl font-bold text-green-600">฿2,000</p>
-                        <p className="text-sm text-muted-foreground">per trip (2 dives)</p>
-                        <ul className="mt-4 space-y-2 text-sm">
-                          <li>• Premium Aqualung equipment</li>
-                          <li>• Experienced dive guide</li>
-                          <li>• Freshwater showers</li>
-                          <li>• Maximum 4 divers per guide</li>
-                        </ul>
+                        <div className="space-y-3 mb-4">
+                          <div className="flex justify-between items-center pb-2 border-b">
+                            <span className="font-medium">1 duik</span>
+                            <span className="text-xl font-bold text-blue-600">฿1.000 <span className="text-sm text-muted-foreground">/duik</span></span>
+                          </div>
+                          <div className="flex justify-between items-center pb-2 border-b">
+                            <span className="font-medium">2-9 duiken</span>
+                            <span className="text-xl font-bold text-blue-600">฿900 <span className="text-sm text-muted-foreground">/duik</span></span>
+                          </div>
+                          <div className="flex justify-between items-center pb-2 border-b bg-green-50 p-2 rounded">
+                            <span className="font-medium">10+ duiken</span>
+                            <span className="text-xl font-bold text-green-600">฿800 <span className="text-sm text-muted-foreground">/duik</span></span>
+                          </div>
+                        </div>
+                        <div className="bg-white p-4 rounded-lg">
+                          <p className="font-semibold mb-2">Inbegrepen:</p>
+                          <ul className="space-y-1 text-sm">
+                            <li>✓ Gecertificeerde duikgids</li>
+                            <li>✓ Gebruik van alle duikuitrusting</li>
+                            <li>✓ Maximaal 4 duikers per gids</li>
+                            <li>✓ Zoetwaterdouches</li>
+                          </ul>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-3">Vereiste: Open Water-certificering of equivalent</p>
                         <div className="mt-4">
                           <Link to="/koh-tao-dive-sites" className="text-sm font-medium text-blue-600 hover:underline underline-offset-4">
                             Bekijk overzicht van alle duiklocaties
@@ -406,17 +514,17 @@ const FunDiving = () => {
                       <CardHeader>
                         <div className="flex items-center gap-2">
                           <DollarSign className="w-5 h-5 text-green-600" />
-                          <CardTitle className="text-lg">Sail Rock-trip</CardTitle>
+                          <CardTitle className="text-lg">Sail Rock Special-trip</CardTitle>
                         </div>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-2xl font-bold text-green-600">฿2,900</p>
-                        <p className="text-sm text-muted-foreground">hele dagexcursie</p>
+                        <p className="text-2xl font-bold text-green-600">฿2.900</p>
+                        <p className="text-sm text-muted-foreground">hele dagexcursie (3 duiken)</p>
                         <ul className="mt-4 space-y-2 text-sm">
-                          <li>• Breakfast & lunch included</li>
-                          <li>• Premium equipment</li>
-                          <li>• Expert guide</li>
-                          <li>• Whale shark opportunities</li>
+                          <li>• Ontbijt & lunch inbegrepen</li>
+                          <li>• Premium uitrusting</li>
+                          <li>• Expert gids</li>
+                          <li>• Kans op walvishaaien</li>
                         </ul>
                         <div className="mt-4">
                           <Link to="/dive-sites/sail-rock" className="text-sm font-medium text-blue-600 hover:underline underline-offset-4">
@@ -482,6 +590,104 @@ const FunDiving = () => {
                     <p className="text-muted-foreground">
                       Jouw veiligheid heeft prioriteit. Door weersomstandigheden kunnen trips
                       op korte termijn worden uitgesteld of verplaatst.
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </section>
+        </TabsContent>
+
+        {/* FAQ Section */}
+        <TabsContent value="faq" className="transition-none">
+          <section id="faq" className="py-16 px-4 bg-muted/50">
+            <div className="max-w-4xl mx-auto">
+              <h2 className="text-4xl font-bold text-center mb-4">Veelgestelde vragen</h2>
+              <p className="text-center text-muted-foreground mb-12">
+                Alles wat je moet weten voordat je met ons gaat duiken op Koh Tao
+              </p>
+              <div className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Moet ik een gecertificeerde duiker zijn om fun diving op Koh Tao te doen?</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      Ja, je moet een gecertificeerde duiker zijn om deel te nemen aan fun diving. Koh Tao biedt
+                      duiken voor alle certificeringsniveaus, dus of je nu Open Water-gecertificeerd bent of
+                      geavanceerde training hebt, er zijn geschikte duiklocaties voor jou. Als je nog niet
+                      gecertificeerd bent, bekijk dan onze{' '}
+                      <Link to="/courses" className="text-blue-600 hover:underline">PADI-certificeringscursussen</Link>.
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Wat kan ik verwachten tijdens een fun dive op Koh Tao?</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      Een typische fun dive op Koh Tao omvat een begeleide duik met een gecertificeerde
+                      duikprofessional, die je meeneemt om het diverse onderwaterleven, koraalriffen en
+                      onderwaterlandschappen te verkennen die het eiland beroemd maken. We organiseren twee
+                      duiktrips per dag - ochtend en middag - op onze ruime, aangepaste duikboten.
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Hoe diep duiken we tijdens fun diving op Koh Tao?</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      Duiklocaties op Koh Tao zijn geschikt voor verschillende vaardigheidsniveaus. Dieptes
+                      variëren, maar veel duiklocaties zijn geschikt voor Open Water-duikers en variëren van
+                      12 meter (40 voet) tot 18 meter (60 voet). Voor meer ervaren duikers zijn er diepere
+                      locaties beschikbaar van 30 tot 40 meter.
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Is het nodig om fun diving van tevoren te boeken?</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      Hoewel het niet altijd noodzakelijk is om van tevoren te boeken, vooral tijdens niet-piekperiodes,
+                      is het raadzaam om ons te laten weten wanneer je van plan bent om met ons te komen duiken om
+                      je plek te verzekeren en de beste ervaring te hebben. Tijdens het hoogseizoen (december-februari)
+                      raden we aan om minstens een dag van tevoren te boeken.
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Welk onderwaterleven kan ik zien tijdens fun diving?</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      Onder het turquoise water rond Koh Tao ligt een wereld van kleurrijke koraalriffen,
+                      bruisend onderwaterleven van macro-wezens tot zeeschildpadden en als je geluk hebt,
+                      de majestueuze walvishaai. Met meer dan 25 fascinerende duiklocaties is er veel te zien,
+                      waaronder barracuda's, grondels, trekervissen, inktvissen, octopussen en een verbluffende
+                      variëteit aan tropische rifvissen.
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Wat is inbegrepen in de fun diving-prijs?</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      Onze fun diving-pakketten omvatten: gecertificeerde duikgids, gebruik van alle duikuitrusting
+                      (BCD, ademautomaat, wetsuit, masker, vinnen), duikcomputer, gewichten, tank en maximaal
+                      4 duikers per gids voor een persoonlijke ervaring. Zoetwaterdouches zijn beschikbaar na je duik.
                     </p>
                   </CardContent>
                 </Card>
@@ -580,7 +786,12 @@ const FunDiving = () => {
                   <a href="https://www.divinginasia.com/#contact" target="_blank" rel="noopener noreferrer" className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded font-semibold mb-2">Neem contact op om te boeken/informatie aan te vragen</a>
                   <div className="text-muted-foreground text-sm mb-4">Of gebruik het formulier hieronder om direct een boekingsaanvraag te sturen.</div>
                 </div>
-                <Button size="lg" onClick={() => navigate('/booking')}>Verstuur boekingsaanvraag</Button>
+                <Button
+                  size="lg"
+                  onClick={() => navigate('/booking?item=Fun%20Dive&type=dive&price=2000&currency=THB&dives=2')}
+                >
+                  Verstuur boekingsaanvraag
+                </Button>
             </div>
           </section>
         </TabsContent>

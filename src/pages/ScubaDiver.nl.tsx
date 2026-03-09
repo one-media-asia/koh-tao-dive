@@ -10,9 +10,7 @@ const ScubaDiver: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <section className="relative h-72 md:h-96 flex items-center overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/images/photo-1618865181016-a80ad83a06d3.avif')] bg-cover bg-center" />
-        <div className="absolute inset-0 bg-black/35" />
+      <section className="instructor-hero-bg relative h-72 md:h-96 flex items-center overflow-hidden">
         <div className="container mx-auto px-4 text-white z-10">
           <h1 className="text-4xl md:text-5xl font-bold">PADI Scuba Diver-cursus</h1>
           <p className="mt-4 max-w-2xl">Ontdek de onderwaterwereld met vertrouwen. De PADI Scuba Diver-cursus is perfect voor wie duiken wil proberen voordat je voor volledige certificering gaat.</p>

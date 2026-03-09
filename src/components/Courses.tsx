@@ -13,8 +13,9 @@ import {
 } from "@/components/ui/accordion";
 
 const Courses = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const isDutch = i18n.language.startsWith('nl');
 
   const parsePriceMajor = (priceLabel: string) => {
     const digits = priceLabel.replace(/[^\d]/g, '');
@@ -118,6 +119,52 @@ const Courses = () => {
       icon: "🎓",
       depositMajor: 10000,
       depositCurrency: 'THB'
+    },
+    {
+      key: 'discoverScuba',
+      path: '/courses/discover-scuba',
+      title: isDutch ? 'Discover Scuba Diving (DSD)' : 'Discover Scuba Diving (DSD)',
+      level: isDutch ? 'Beginner' : 'Beginner',
+      duration: isDutch ? '1 dag' : '1 day',
+      maxDepth: '12m',
+      price: '฿2,500',
+      description: isDutch
+        ? 'Geen brevet nodig. De ideale eerste stap om veilig kennis te maken met duiken.'
+        : 'No certification required. The perfect first step to experience scuba diving safely.',
+      fullDescription: isDutch
+        ? 'Discover Scuba Diving is ontworpen voor beginners. Je leert basisvaardigheden in een veilige omgeving en maakt daarna je eerste buitenwaterduik met een professional.'
+        : 'Discover Scuba Diving is designed for beginners. You learn core skills in a safe environment and then complete your first open water dive with a professional.',
+      includes: isDutch
+        ? ['Gecertificeerde duikprofessional', 'Alle uitrusting inbegrepen', 'Kleine groepen (max 4)', 'Extra duiken mogelijk']
+        : ['Certified scuba dive professional', 'All equipment included', 'Small groups (max 4)', 'Additional dives available'],
+      courseImages: ['photo-1659518893171-b15e20a8e201.avif'],
+      icon: '🐠',
+      depositMajor: 1000,
+      depositCurrency: 'THB',
+      bookingType: 'dive'
+    },
+    {
+      key: 'discoverScubaDeluxe',
+      path: '/courses/discover-scuba-deluxe',
+      title: isDutch ? 'Discover Scuba Diving Deluxe' : 'Discover Scuba Diving Deluxe',
+      level: isDutch ? 'Beginner' : 'Beginner',
+      duration: isDutch ? '1-2 dagen' : '1-2 days',
+      maxDepth: '12m',
+      price: '฿5,000',
+      description: isDutch
+        ? 'Uitgebreide DSD met 3 duiken voor meer onderwatertijd en een relaxter tempo.'
+        : 'Extended DSD with 3 dives for more underwater time and a more relaxed pace.',
+      fullDescription: isDutch
+        ? 'DSD Deluxe bevat zwembad/confined training plus een kustduik en twee bootduiken rond Koh Tao. Perfect als je meer ervaring wilt voordat je beslist over Open Water.'
+        : 'DSD Deluxe includes confined training plus one shore dive and two boat dives around Koh Tao. Ideal if you want more experience before deciding on Open Water.',
+      includes: isDutch
+        ? ['3 begeleide duiken', 'Alle uitrusting inbegrepen', 'Gecertificeerde instructeur', 'Kleine groepen (max 4)']
+        : ['3 guided dives', 'All equipment included', 'Certified instructor', 'Small groups (max 4)'],
+      courseImages: ['photo-1682687982423-295485af248a.avif'],
+      icon: '🌊',
+      depositMajor: 1500,
+      depositCurrency: 'THB',
+      bookingType: 'dive'
     }
   ];
 
@@ -238,7 +285,7 @@ const Courses = () => {
                     <Button variant="outline" className="w-full">{t('courses.viewCourse', 'View course')}</Button>
                   </Link>
                   <button
-                    onClick={() => navigate(`/booking?item=${encodeURIComponent(course.title)}&type=course&price=${parsePriceMajor(course.price)}&currency=${course.depositCurrency}`)}
+                    onClick={() => navigate(`/booking?item=${encodeURIComponent(course.title)}&type=${course.bookingType || 'course'}&price=${parsePriceMajor(course.price)}&currency=${course.depositCurrency}`)}
                     className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-semibold"
                   >
                     {t('courses.bookButton')}

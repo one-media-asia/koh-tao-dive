@@ -18,7 +18,7 @@ const imageList = [
 
 const Advanced: React.FC = () => {
   const navigate = useNavigate();
-  const bookingUrl = '/booking?item=Advanced%20Open%20Water&type=course&price=8500&currency=THB';
+  const bookingUrl = '/booking?item=Advanced%20Open%20Water&type=course&price=10000&currency=THB';
   // Pick a random image on each render
   const randomImage = useMemo(() => {
     return imageList[Math.floor(Math.random() * imageList.length)];
@@ -82,7 +82,7 @@ const Advanced: React.FC = () => {
                 <CardDescription>2-3 days · 5 dives · Certification</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold text-sky-600 mb-3">฿8,500</p>
+                <p className="text-2xl font-bold text-sky-600 mb-3">฿10,000</p>
                 <p className="text-sm text-muted-foreground mb-4">Includes materials & equipment</p>
                 <Button onClick={() => navigate(bookingUrl)}>Book Advanced</Button>
               </CardContent>
