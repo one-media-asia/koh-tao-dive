@@ -36,6 +36,7 @@ type BookingFormData = z.infer<typeof bookingSchema>;
 
 const PAYPAL_LINK = 'https://paypal.me/divinginasia';
 const COURSE_DEPOSIT_RATE = 0.2;
+const SKIP_PAYMENT_MESSAGE = 'Inquiry sent! We will contact you to arrange your deposit which ca be paid via Paypal or Stripe or Visa or Bank Transfer.';
 
 const COURSE_FALLBACKS: Record<string, { item: string; price?: number; currency?: string }> = {
   'wreck-diver': { item: 'PADI Wreck Diver Specialty', price: 8000, currency: 'THB' },
@@ -162,6 +163,7 @@ const       BookingPage: React.FC = () => {
   });
 
   const [showPaymentLinks, setShowPaymentLinks] = useState(false);
+  const [showSkipPaymentPopup, setShowSkipPaymentPopup] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onSubmit = async (data: BookingFormData) => {
@@ -233,11 +235,8 @@ const       BookingPage: React.FC = () => {
         if (data.paymentChoice === 'now' && amountMajor > 0) {
           setShowPaymentLinks(true);
         } else {
-          toast.success('Inquiry sent! We will contact you to arrange your deposit which ca be paid via Paypal or Stripe or Visa or Bank Transfer.', {
-            duration: 12000,
-          });
           form.reset();
-          navigate('/');
+          setShowSkipPaymentPopup(true);
         }
       } else {
         const errMsg = responseData?.message || responseData?.error || `HTTP ${res.status}`;
@@ -613,6 +612,24 @@ const       BookingPage: React.FC = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogAction>OK</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={showSkipPaymentPopup}
+        onOpenChange={(open) => {
+          setShowSkipPaymentPopup(open);
+          if (!open) navigate('/');
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Inquiry Sent</AlertDialogTitle>
+            <AlertDialogDescription>{SKIP_PAYMENT_MESSAGE}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => navigate('/')}>OK</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
