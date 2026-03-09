@@ -254,7 +254,7 @@ const       BookingPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background py-16">
-      <div className="max-w-4xl mx-auto bg-background rounded-xl shadow-lg p-8">
+      <div className="max-w-4xl mx-auto bg-background rounded-xl shadow-xl shadow-blue-900/20 p-8">
         <div className="flex items-start justify-between gap-4">
           <h1 className="text-2xl font-bold mb-2">Book: {itemTitle}</h1>
         </div>

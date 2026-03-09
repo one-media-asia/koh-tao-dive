@@ -239,8 +239,8 @@ const BeachesKohTao = () => {
       <p className="text-blue-100 max-w-xl mx-auto mb-8">{pageContent.ctaText}</p>
       <div className="flex flex-wrap justify-center gap-4">
         <a href="/koh-tao-dive-sites" className="bg-background text-blue-600 font-semibold px-6 py-3 rounded-lg hover:bg-blue-50 transition">{pageContent.ctaSites}</a>
-        <a href="/marine-life" className="bg-blue-500 text-white font-semibold px-6 py-3 rounded-lg border border-blue-400 hover:bg-blue-400 transition">{pageContent.ctaMarineLife}</a>
-        <a href="/#contact" className="bg-teal-500 text-white font-semibold px-6 py-3 rounded-lg hover:bg-teal-400 transition">{pageContent.ctaBook}</a>
+        <a href="/marine-life" className="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg border border-blue-500 hover:bg-blue-700 transition">{pageContent.ctaMarineLife}</a>
+        <a href="/#contact" className="bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-800 transition">{pageContent.ctaBook}</a>
       </div>
     </section>
   </main>

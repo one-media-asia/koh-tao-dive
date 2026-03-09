@@ -42,7 +42,7 @@ const Signup: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center py-16">
-      <div className="max-w-md w-full bg-background rounded-xl shadow-lg p-8">
+      <div className="max-w-md w-full bg-background rounded-xl shadow-xl shadow-blue-900/20 p-8">
         <h2 className="text-2xl font-bold mb-4">Create an account</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
