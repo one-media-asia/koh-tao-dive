@@ -91,7 +91,6 @@ export const PageManager: React.FC = () => {
 
   const loadPageMetadata = async () => {
     try {
-      // @ts-expect-error - page_metadata table will be available after migration
       const { data, error } = await supabase
         .from('page_metadata')
         .select('page_slug, has_seo, is_secured, updated_at');
@@ -202,6 +201,8 @@ export const PageManager: React.FC = () => {
             />
           </div>
           <select
+            aria-label="Filter pages by category"
+            title="Filter pages by category"
             value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value)}
             className="px-3 py-2 border rounded-md bg-white"
