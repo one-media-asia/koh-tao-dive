@@ -505,6 +505,26 @@ const Navigation = () => {
                         {isAdmin && (
                           <li>
                             <Link
+                              to="/admin"
+                              className="block py-2 px-3 text-sm text-green-400 hover:text-green-300 hover:bg-[#1a3a5c] transition-all duration-150 rounded font-medium"
+                            >
+                              Admin Dashboard
+                            </Link>
+                          </li>
+                        )}
+                        {isAdmin && (
+                          <li>
+                            <Link
+                              to="/admin#pages"
+                              className="block py-2 px-3 text-sm text-emerald-400 hover:text-emerald-300 hover:bg-[#1a3a5c] transition-all duration-150 rounded font-medium"
+                            >
+                              Pages Manager
+                            </Link>
+                          </li>
+                        )}
+                        {isAdmin && (
+                          <li>
+                            <Link
                               to="/clicks-dashboard"
                               className="block py-2 px-3 text-sm text-blue-400 hover:text-blue-300 hover:bg-[#1a3a5c] transition-all duration-150 rounded font-medium"
                             >

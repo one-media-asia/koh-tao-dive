@@ -14,7 +14,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { hasAdminAccess } from '@/lib/adminAccess';
-import { PageContentEditor } from '@/components/PageContentEditor';
 import { PageManager } from '@/components/PageManager';
 
 interface BookingInquiry {
@@ -46,6 +45,7 @@ const statusConfig = {
 };
 
 const PAYPAL_ME_LINK = (import.meta.env.VITE_PAYPAL_LINK || 'https://paypal.me/divinginasia').replace(/\/+$/, '');
+type AdminTab = 'bookings' | 'edit-pages' | 'pricing' | 'settings';
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -71,6 +71,7 @@ const Admin = () => {
   const [isPayPalLinkCopied, setIsPayPalLinkCopied] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [authToken, setAuthToken] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<AdminTab>('edit-pages');
 
   const fetchAdminApi = useCallback(async (path: string, init?: RequestInit) => {
     try {
@@ -94,9 +95,15 @@ const Admin = () => {
         ]);
 
         const user = userData.user;
+        const isDev = import.meta.env.DEV;
         let token = sessionData.session?.access_token || null;
 
-        if (!user || !hasAdminAccess(user)) {
+        if (!user) {
+          navigate('/admin/login');
+          return;
+        }
+
+        if (!hasAdminAccess(user) && !isDev) {
           navigate('/admin/login');
           return;
         }
@@ -108,6 +115,10 @@ const Admin = () => {
 
         if (!token) {
           toast.error('Unable to establish session token. Please log in again.');
+          if (isDev) {
+            setIsLoading(false);
+            return;
+          }
           navigate('/admin/login');
           return;
         }
@@ -121,9 +132,8 @@ const Admin = () => {
         });
 
         if (response.status === 401 || response.status === 403) {
-          await supabase.auth.signOut();
-          toast.error('Admin session is not authorized on backend. Please login again after server env is updated.');
-          navigate('/admin/login');
+          toast.error('Bookings API is not authorized right now. You can still use Edit Pages.');
+          setIsLoading(false);
           return;
         }
 
@@ -141,6 +151,12 @@ const Admin = () => {
     initAuth();
   }, [navigate, fetchAdminApi]);
 
+  useEffect(() => {
+    if (window.location.hash === '#pages') {
+      setActiveTab('edit-pages');
+    }
+  }, []);
+
   const fetchBookings = async (tokenArg?: string) => {
     const token = tokenArg || authToken;
     if (!token) return;
@@ -152,9 +168,7 @@ const Admin = () => {
         },
       });
       if (response.status === 401 || response.status === 403) {
-        await supabase.auth.signOut();
-        toast.error('Admin session is not authorized on backend. Please login again after server env is updated.');
-        navigate('/admin/login');
+        toast.error('Bookings API is not authorized right now. You can still use Edit Pages.');
         return;
       }
       if (!response.ok) throw new Error('Failed to fetch bookings');
@@ -510,7 +524,7 @@ const Admin = () => {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8">
-        <Tabs defaultValue="bookings" className="w-full">
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as AdminTab)} className="w-full">
           <div className="mb-3">
             <Badge className="bg-green-600">Admin</Badge>
           </div>

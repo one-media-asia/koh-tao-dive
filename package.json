@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"node server.cjs\" \"vite --host\"",
-    "dev:web": "vite --host",
-    "dev:full": "concurrently \"node server.cjs\" \"vite --host\"",
+    "dev": "concurrently \"node server.cjs\" \"vite --host --port 8081 --strictPort\"",
+    "dev:web": "vite --host --port 8081 --strictPort",
+    "dev:full": "concurrently \"node server.cjs\" \"vite --host --port 8081 --strictPort\"",
     "dev:single": "concurrently \"node server.cjs\" \"vite --host --port 3000\"",
     "deploy:vercel": "vercel --prod",
     "build": "vite build",
