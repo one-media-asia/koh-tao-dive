@@ -1,4 +1,3 @@
-This file has been removed to eliminate admin functionality.
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
