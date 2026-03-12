@@ -559,7 +559,6 @@ export const PageContentEditor: React.FC<PageContentEditorProps> = ({ pageSlug, 
     try {
       const { data: { user } } = await supabase.auth.getUser();
       await ensureMetadata('published');
-
       const upserts = contentItems.map((item) => ({
         page_slug: pageSlug,
         locale,
@@ -568,41 +567,13 @@ export const PageContentEditor: React.FC<PageContentEditorProps> = ({ pageSlug, 
         content_value: item.content_value,
         updated_by: user?.email || null,
       }));
-
       // Debug: log locale and upsert payload
       // eslint-disable-next-line no-console
       console.log('[DEBUG] Publishing content with locale:', locale, 'upserts:', upserts);
       const { error } = await supabase
         .from('page_content')
         .upsert(upserts, { onConflict: 'page_slug,locale,section_key' });
-      if (error) {
-        const message = getErrorMessage(error);
-        throw error;
-
-      // @ts-expect-error - page_metadata table will be available after migration
-      const { error: metadataError } = await supabase
-        .from('page_metadata')
-        .upsert({
-          page_slug: pageSlug,
-          draft_status: 'published',
-          published_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        }, { onConflict: 'page_slug' });
-
-      if (metadataError) {
-        const message = getErrorMessage(metadataError);
-        const missingDraftColumns = message.includes('draft_status') || message.includes('published_at');
-        if (!missingDraftColumns) throw metadataError;
-        // Backward-compatible metadata update when new columns are not yet migrated.
-        const { error: legacyMetadataError } = await supabase
-          .from('page_metadata')
-          .upsert({
-            page_slug: pageSlug,
-            updated_at: new Date().toISOString(),
-          }, { onConflict: 'page_slug' });
-        if (legacyMetadataError) throw legacyMetadataError;
-      }
-
+      if (error) throw error;
       setDraftStatus('published');
       setLastUpdated(new Date().toISOString());
       toast.success('Changes published successfully');
