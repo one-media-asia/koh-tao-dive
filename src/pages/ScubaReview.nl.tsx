@@ -3,21 +3,21 @@ import CoursePageTemplate from '@/components/CoursePageTemplate';
 
 const ScubaReviewNl: React.FC = () => {
   return (
-    <CoursePageTemplate
-      pageSlug="scuba-review"
-      locale="nl"
-      fallbackContent={{
-        hero_title: 'Scuba Review-cursus',
-        hero_subtitle: 'Fris je duikvaardigheden en kennis op met onze complete opfriscursus.',
-        course_overview: 'De Scuba Review-cursus is bedoeld voor gebrevetteerde duikers die hun vaardigheden willen opfrissen, hun kennis willen bijwerken of zich willen voorbereiden op gevorderde trainingen. Deze cursus behandelt essentiele duikprincipes, veiligheidsprocedures en praktische vaardigheden zodat je weer zelfverzekerd en bekwaam onder water bent.',
-        price_thb: '2500',
-        duration: '1-2 dagen',
-      }}
-      heroImage="/images/scubareview.png"
-      images={["/images/scubareview.png"]}
-      level="Opfriscursus"
-      bookingItemName="Scuba Review Course"
-      sections={[
+      <CoursePageTemplate
+        pageSlug="scuba-review"
+        locale="nl"
+        fallbackContent={{
+          hero_title: 'Scuba Review-cursus',
+          hero_subtitle: 'Fris je duikvaardigheden en kennis op met onze complete opfriscursus.',
+          course_overview: 'De Scuba Review-cursus is bedoeld voor gebrevetteerde duikers die hun vaardigheden willen opfrissen, hun kennis willen bijwerken of zich willen voorbereiden op gevorderde trainingen. Deze cursus behandelt essentiele duikprincipes, veiligheidsprocedures en praktische vaardigheden zodat je weer zelfverzekerd en bekwaam onder water bent.',
+          price_thb: '2500',
+          duration: '1-2 dagen',
+        }}
+        heroImage="/images/scuba-review.png"
+        images={["/images/scubareview.png"]}
+        level="Opfriscursus"
+        bookingItemName="Scuba Review Course"
+        sections={[
         {
           title: 'Wat je herhaalt',
           content: [
