@@ -593,16 +593,13 @@ export const PageContentEditor: React.FC<PageContentEditorProps> = ({ pageSlug, 
         const message = getErrorMessage(metadataError);
         const missingDraftColumns = message.includes('draft_status') || message.includes('published_at');
         if (!missingDraftColumns) throw metadataError;
-
         // Backward-compatible metadata update when new columns are not yet migrated.
-        // @ts-expect-error - page_metadata table will be available after migration
         const { error: legacyMetadataError } = await supabase
           .from('page_metadata')
           .upsert({
             page_slug: pageSlug,
             updated_at: new Date().toISOString(),
           }, { onConflict: 'page_slug' });
-
         if (legacyMetadataError) throw legacyMetadataError;
       }
 
