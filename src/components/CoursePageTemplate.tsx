@@ -75,12 +75,10 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
     }).format(amount);
 
   const priceThb = content.price_thb || fallbackContent.price_thb || '0';
+  const priceUsd = content.price_usd || fallbackContent.price_usd || '';
+  const priceEur = content.price_eur || fallbackContent.price_eur || '';
   const duration = content.duration || fallbackContent.duration || 'Contact us';
   const thbAmount = parseAmount(priceThb);
-  // Dynamic currency rates
-  const { rates, loading: ratesLoading, error: ratesError } = useCurrencyRates();
-  const usdAmount = rates ? thbAmount * rates.USD : null;
-  const eurAmount = rates ? thbAmount * rates.EUR : null;
   const bookingUrl = `/booking?item=${encodeURIComponent(bookingName)}&type=${bookingType}&price=${thbAmount}&currency=THB`;
 
   const heroImageUrl = heroImage || images[0];
@@ -167,14 +165,11 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
                   </div>
                   <div className="space-y-1">
                     <p className="text-2xl font-bold text-sky-600">{formatCurrency(thbAmount, 'THB')}</p>
-                      <p className="text-2xl font-bold text-sky-600">{formatCurrency(thbAmount, 'THB')}</p>
-                      {ratesLoading ? (
-                        <p className="text-sm text-muted-foreground">Loading live rates...</p>
-                      ) : ratesError ? (
-                        <p className="text-sm text-red-500">Live rates unavailable</p>
-                      ) : (
-                        <p className="text-sm text-muted-foreground">{formatCurrency(usdAmount || 0, 'USD')} / {formatCurrency(eurAmount || 0, 'EUR')}</p>
-                      )}
+                    <p className="text-sm text-muted-foreground">
+                      {priceUsd && <span>{formatCurrency(Number(priceUsd), 'USD')}</span>}
+                      {priceUsd && priceEur && <span> / </span>}
+                      {priceEur && <span>{formatCurrency(Number(priceEur), 'EUR')}</span>}
+                    </p>
                   </div>
                 </div>
                 <p className="text-sm text-muted-foreground">
