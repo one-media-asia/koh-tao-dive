@@ -6,12 +6,40 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Fish, Waves, MapPin, Clock, DollarSign, Users } from 'lucide-react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { tryAutoScroll, scrollToWithOffset } from '@/lib/scroll';
+import { usePageContent } from '@/hooks/usePageContent';
 
 const FunDiving = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
+  const locale = 'en';
+  const fallbackContent = useMemo(() => ({
+    fun_diving_hero_title: 'Fun Diving Koh Tao',
+    fun_diving_hero_subtitle: "Experience the best of Koh Tao's underwater world with our professionally guided fun dive trips. Discover colorful coral reefs, meet amazing marine life, and make unforgettable memories.",
+    fun_diving_hero_cta: 'Go Fun Diving Koh Tao',
+    fun_diving_hero_cta2: 'Book a Course',
+    fun_diving_overview_title: 'From Breathtaking Shipwrecks to Exotic Marine Life',
+    fun_diving_overview_body: "Koh Tao's fun dives have it all! We take pride in offering you a personalized, relaxed, and enjoyable fun diving experience. We're dedicated to showcasing the finest underwater marvels tailored to your level of training and experience, ensuring your dives align with your specific interests.",
+    fun_diving_world_class_title: 'World-Class Dive Sites',
+    fun_diving_world_class_body: "Beneath the turquoise water surrounding Koh Tao lies a world of colorful coral reefs, teeming marine life from macro creatures to turtles and if you're lucky, the majestic whale shark. With over 25 captivating dive sites, there's boundless diversity to explore.",
+    fun_diving_expert_title: 'Expert Dive Professionals',
+    fun_diving_expert_body: 'Our dive team comprises seasoned and highly knowledgeable dive professionals who have immersed themselves in the local reef ecology and dive sites. Their expertise ensures a safe and enriching diving experience for you.',
+    fun_diving_marine_life_title: 'Diverse Marine Life',
+    fun_diving_marine_life_body: "From massive whale sharks and graceful sea turtles to colorful reef fish and fascinating macro life, Koh Tao's waters host an incredible variety of marine species. Every dive brings new discoveries and unforgettable encounters.",
+    fun_diving_flexible_title: 'Flexible Schedule',
+    fun_diving_flexible_body: 'We run two dive trips a day - morning and afternoon - on our spacious customized dive boats. After an exhilarating day of diving, unwind with refreshing drinks and share your incredible underwater experiences over a stunning sunset.',
+    fun_diving_ready_title: 'Ready to Explore?',
+    fun_diving_ready_body: "Whether you're a newly certified Open Water diver or an experienced technical diver, we have the perfect dive sites and packages for you. Book your fun diving adventure today!",
+    fun_diving_ready_cta1: 'View Pricing & Schedule',
+    fun_diving_ready_cta2: 'Explore Dive Sites',
+    fun_diving_trips_title: 'Trips & Programs',
+    fun_diving_sites_title: 'Best Koh Tao Fun Diving Trips',
+    fun_diving_all_sites_title: 'All Dive Sites',
+    fun_diving_marine_tab_title: 'Discover the Underwater World',
+    // ...add more as needed for other tabs
+  }), []);
+  const { content } = usePageContent({ pageSlug: 'fun-diving', locale, fallbackContent });
   const diveSites = [
     {
       name: "Sail Rock",
@@ -117,17 +145,13 @@ const FunDiving = () => {
         <div className="absolute inset-0 bg-[url('/images/photo-1682687982423-295485af248a.avif')] bg-cover bg-center" />
         <div className="absolute inset-0 bg-black/50" />
         <div className="relative z-10 text-center text-white px-4">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6">Fun Diving Koh Tao</h1>
-          <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
-            Experience the best of Koh Tao's underwater world with our professionally guided fun dive trips.
-            Discover colorful coral reefs, meet amazing marine life, and make unforgettable memories.
-          </p>
+          <h1 className="text-5xl md:text-7xl font-bold mb-6">{content.fun_diving_hero_title}</h1>
+          <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">{content.fun_diving_hero_subtitle}</p>
           <div className="flex flex-col md:flex-row gap-4 justify-center mb-4">
             <Button
               size="lg"
               className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 text-lg"
               onClick={() => {
-                // If already on this page, smooth scroll with offset. Otherwise request anchor and navigate here.
                 const el = document.getElementById('fun-dive-tabs');
                 if (el) {
                   scrollToWithOffset('fun-dive-tabs');
@@ -137,9 +161,9 @@ const FunDiving = () => {
                 }
               }}
             >
-              Go Fun Diving Koh Tao
+              {content.fun_diving_hero_cta}
             </Button>
-            <Button size="lg" className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 text-lg" onClick={() => { try{ sessionStorage.setItem('scrollTo','course-openWater') }catch(_){ } ; navigate('/courses'); }}>Book a Course</Button>
+            <Button size="lg" className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 text-lg" onClick={() => { try{ sessionStorage.setItem('scrollTo','course-openWater') }catch(_){ } ; navigate('/courses'); }}>{content.fun_diving_hero_cta2}</Button>
           </div>
         </div>
       </section>
@@ -148,7 +172,7 @@ const FunDiving = () => {
         <div id="fun-dive-tabs" className="max-w-6xl mx-auto px-4 py-8">
           <TabsList className="grid w-full grid-cols-3 lg:grid-cols-9">
             <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="trips">Trips</TabsTrigger>
+            <TabsTrigger value="trips">{content.fun_diving_trips_title || 'Trips'}</TabsTrigger>
             <TabsTrigger value="sites">Sites</TabsTrigger>
             <TabsTrigger value="marine">Marine Life</TabsTrigger>
             <TabsTrigger value="schedule">Schedule</TabsTrigger>
@@ -164,12 +188,9 @@ const FunDiving = () => {
           <section id="fun-dive-main" className="py-16 px-4">
             <div className="max-w-6xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-4xl font-bold mb-6">From Breathtaking Shipwrecks to Exotic Marine Life</h2>
+                <h2 className="text-4xl font-bold mb-6">{content.fun_diving_overview_title}</h2>
                 <p className="text-lg text-muted-foreground max-w-4xl mx-auto mb-8">
-                  Koh Tao's fun dives have it all! We take pride in offering you a personalized, relaxed,
-                  and enjoyable fun diving experience. We're dedicated to showcasing the finest underwater
-                  marvels tailored to your level of training and experience, ensuring your dives align with
-                  your specific interests.
+                  {content.fun_diving_overview_body}
                 </p>
               </div>
 
@@ -178,14 +199,12 @@ const FunDiving = () => {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Waves className="w-5 h-5 text-blue-600" />
-                      World-Class Dive Sites
+                      {content.fun_diving_world_class_title}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-muted-foreground">
-                      Beneath the turquoise water surrounding Koh Tao lies a world of colorful coral reefs,
-                      teeming marine life from macro creatures to turtles and if you're lucky, the majestic
-                      whale shark. With over 25 captivating dive sites, there's boundless diversity to explore.
+                      {content.fun_diving_world_class_body}
                     </p>
                   </CardContent>
                 </Card>
@@ -194,14 +213,12 @@ const FunDiving = () => {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Users className="w-5 h-5 text-green-600" />
-                      Expert Dive Professionals
+                      {content.fun_diving_expert_title}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-muted-foreground">
-                      Our dive team comprises seasoned and highly knowledgeable dive professionals who have
-                      immersed themselves in the local reef ecology and dive sites. Their expertise ensures
-                      a safe and enriching diving experience for you.
+                      {content.fun_diving_expert_body}
                     </p>
                   </CardContent>
                 </Card>
@@ -210,14 +227,12 @@ const FunDiving = () => {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Fish className="w-5 h-5 text-orange-600" />
-                      Diverse Marine Life
+                      {content.fun_diving_marine_life_title}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-muted-foreground">
-                      From massive whale sharks and graceful sea turtles to colorful reef fish and fascinating
-                      macro life, Koh Tao's waters host an incredible variety of marine species. Every dive
-                      brings new discoveries and unforgettable encounters.
+                      {content.fun_diving_marine_life_body}
                     </p>
                   </CardContent>
                 </Card>
@@ -226,31 +241,28 @@ const FunDiving = () => {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Clock className="w-5 h-5 text-purple-600" />
-                      Flexible Schedule
+                      {content.fun_diving_flexible_title}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-muted-foreground">
-                      We run two dive trips a day - morning and afternoon - on our spacious customized dive boats.
-                      After an exhilarating day of diving, unwind with refreshing drinks and share your incredible
-                      underwater experiences over a stunning sunset.
+                      {content.fun_diving_flexible_body}
                     </p>
                   </CardContent>
                 </Card>
               </div>
 
               <div className="bg-blue-50 p-8 rounded-lg text-center">
-                <h3 className="text-2xl font-bold mb-4">Ready to Explore?</h3>
+                <h3 className="text-2xl font-bold mb-4">{content.fun_diving_ready_title}</h3>
                 <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-                  Whether you're a newly certified Open Water diver or an experienced technical diver,
-                  we have the perfect dive sites and packages for you. Book your fun diving adventure today!
+                  {content.fun_diving_ready_body}
                 </p>
                 <div className="flex flex-wrap gap-4 justify-center">
                   <Button size="lg" onClick={() => setActiveTab('schedule')} className="bg-blue-600 hover:bg-blue-700">
-                    View Pricing & Schedule
+                    {content.fun_diving_ready_cta1}
                   </Button>
                   <Button size="lg" variant="outline" onClick={() => setActiveTab('sites')}>
-                    Explore Dive Sites
+                    {content.fun_diving_ready_cta2}
                   </Button>
                 </div>
               </div>
@@ -262,7 +274,7 @@ const FunDiving = () => {
         <TabsContent value="trips" className="transition-none">
           <section className="py-12 px-4 bg-background">
             <div className="max-w-6xl mx-auto">
-              <h2 className="text-4xl font-bold text-center mb-8">Trips & Programs</h2>
+              <h2 className="text-4xl font-bold text-center mb-8">{content.fun_diving_trips_title}</h2>
               <div className="grid md:grid-cols-3 gap-6">
                 <Card className="overflow-hidden">
                   <img src="/images/fun.png" alt="Fun Dive" className="w-full h-40 object-cover" />
@@ -337,7 +349,7 @@ const FunDiving = () => {
         <TabsContent value="sites" className="transition-none">
           <section id="world-class-dive-sites" className="py-16 px-4 bg-muted/50">
             <div className="max-w-6xl mx-auto">
-              <h2 className="text-4xl font-bold text-center mb-12">Best Koh Tao Fun Diving Trips</h2>
+              <h2 className="text-4xl font-bold text-center mb-12">{content.fun_diving_sites_title}</h2>
               <div className="grid md:grid-cols-2 gap-8">
                 {diveSites.map((site, index) => (
                   <Card key={index} className="overflow-hidden">
@@ -370,7 +382,7 @@ const FunDiving = () => {
               </div>
 
               <div className="mt-10">
-                <h3 className="text-2xl font-bold text-center mb-4">All Dive Sites</h3>
+                <h3 className="text-2xl font-bold text-center mb-4">{content.fun_diving_all_sites_title}</h3>
                 <div className="flex flex-wrap justify-center gap-2">
                   {allDiveSites.map((site) => (
                     <Link
@@ -391,7 +403,7 @@ const FunDiving = () => {
         <TabsContent value="marine" className="transition-none">
           <section className="py-16 px-4">
             <div className="max-w-6xl mx-auto">
-              <h2 className="text-4xl font-bold text-center mb-12">Discover the Underwater World</h2>
+              <h2 className="text-4xl font-bold text-center mb-12">{content.fun_diving_marine_tab_title}</h2>
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {marineLife.map((animal, index) => (
                   <Card key={index} className="text-center">
