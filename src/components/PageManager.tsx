@@ -133,25 +133,60 @@ export const PageManager: React.FC = () => {
 
   if (editingPage) {
     // Provide a minimal fallbackContent for the editor (can be improved per page/locale)
-    const fallbackContent: Record<string, string> = {
-      hero_title: '',
-      hero_subtitle: '',
-      course_overview: '',
-      price_thb: '',
-      price_usd: '',
-      price_eur: '',
-      duration: '',
-      about_headline: '',
-      about_sites_line: '',
-      about_map_alt: '',
-      about_title: '',
-      about_paragraph_1: '',
-      about_paragraph_2: '',
-      courses_section_title: '',
-      courses_section_subtitle: '',
-      gallery_headline: '',
-      gallery_subtitle: '',
-    };
+    let fallbackContent: Record<string, string> = {};
+    if (editingPage.slug === 'open-water' && editingPage.locale === 'en') {
+      fallbackContent = {
+        hero_title: 'PADI Open Water Course',
+        hero_subtitle: "The world's most popular scuba course. Learn the fundamentals of scuba diving and get certified to dive independently with a buddy, to 18 metres/60 feet.",
+        course_overview: "The Open Water course combines knowledge development, confined water dives (pool) and open water dives. You'll learn equipment setup, basic underwater skills, buoyancy control and dive planning. Our instructors keep groups small and emphasize safety and fun.",
+        price_thb: '11000',
+        price_usd: '320',
+        price_eur: '290',
+        duration: '3-4 days',
+        about_headline: 'Small island, 21 km², lush and surrounded by more than 15 dive sites.',
+        about_sites_line: 'WHITE ROCK - TWINS - GREEN ROCK - CHUMPHON PINNACLE - SAIL ROCK - SOUTHWEST PINNACLE - AND MORE',
+        about_map_alt: 'Map of Koh Tao and dive sites',
+        about_title: 'From PADI Open Water certifications to PADI Divemaster internships',
+        about_paragraph_1: 'Koh Tao is not only a top destination in Thailand for your diving holiday, but also ideal for completing almost all PADI dive certifications, for both beginners and experienced divers.',
+        about_paragraph_2: 'Lifetime certifications valid worldwide, at a surprisingly low price. Earn your PADI diving certification here for 9000 baht, now including 4 nights accommodation (room with private bathroom) in the course price.',
+      };
+    } else if (editingPage.slug === 'open-water' && editingPage.locale === 'nl') {
+      fallbackContent = {
+        hero_title: 'PADI Open Water-cursus',
+        hero_subtitle: 'De populairste duikcursus ter wereld. Je leert de basis van het duiken en behaalt je brevet om zelfstandig met een buddy te duiken tot 18 meter/60 voet.',
+        course_overview: 'De Open Water-cursus combineert theorie, beschut water-training (zwembad) en buitenwaterduiken. Je leert uitrusting opbouwen, basisvaardigheden onder water, drijfvermogen en duikplanning. Onze instructeurs werken met kleine groepen en leggen de nadruk op veiligheid en plezier.',
+        price_thb: '11000',
+        price_usd: '320',
+        price_eur: '290',
+        duration: '3-4 dagen',
+        about_headline: 'Klein eiland, 21 km², groen en omringd door meer dan 15 duiklocaties.',
+        about_sites_line: 'WHITE ROCK - TWINS - GREEN ROCK - CHUMPHON PINNACLE - SAIL ROCK - SOUTHWEST PINNACLE - EN MEER',
+        about_map_alt: 'Kaart van Koh Tao en duiklocaties',
+        about_title: 'Van PADI Open Water-certificering tot PADI Divemaster-internships',
+        about_paragraph_1: 'Koh Tao is niet alleen een topbestemming in Thailand voor je duikvakantie, maar ook ideaal om bijna alle PADI-duikcertificaten te behalen, voor zowel beginners als ervaren duikers.',
+        about_paragraph_2: 'Levenslange certificaten die wereldwijd geldig zijn, voor een verrassend lage prijs. Behaal je PADI-duikcertificaat hier voor 9000 baht, nu inclusief 4 overnachtingen (kamer met badkamer) in de cursusprijs.',
+      };
+    } else {
+      fallbackContent = {
+        hero_title: '',
+        hero_subtitle: '',
+        course_overview: '',
+        price_thb: '',
+        price_usd: '',
+        price_eur: '',
+        duration: '',
+        about_headline: '',
+        about_sites_line: '',
+        about_map_alt: '',
+        about_title: '',
+        about_paragraph_1: '',
+        about_paragraph_2: '',
+        courses_section_title: '',
+        courses_section_subtitle: '',
+        gallery_headline: '',
+        gallery_subtitle: '',
+      };
+    }
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-between">
