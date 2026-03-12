@@ -200,7 +200,6 @@ export const PageManager: React.FC = () => {
         <PageContentEditor 
           pageSlug={editingPage.slug} 
           locale={editingPage.locale}
-          fallbackContent={fallbackContent}
           key={`${editingPage.slug}-${editingPage.locale}`}
         />
       </div>
