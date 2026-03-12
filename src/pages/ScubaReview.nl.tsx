@@ -13,7 +13,7 @@ const ScubaReviewNl: React.FC = () => {
           price_thb: '2500',
           duration: '1-2 dagen',
         }}
-        heroImage="/images/scubareview.png"
+        heroImage="/images/scuba-review.png"
         images={["/images/scubareview.png"]}
         level="Opfriscursus"
         bookingItemName="Scuba Review Course"
