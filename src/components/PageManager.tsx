@@ -109,7 +109,7 @@ export const PageManager: React.FC = () => {
         setPages(prevPages =>
           prevPages.map(page => {
             const meta = data.find((d: any) => d.page_slug === page.slug);
-            if (meta && typeof meta === 'object' && !('message' in meta)) {
+            if (meta !== null && typeof meta === 'object' && !('message' in meta)) {
               return {
                 ...page,
                 hasSEO: 'has_seo' in meta ? meta.has_seo || false : false,
