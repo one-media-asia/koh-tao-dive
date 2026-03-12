@@ -35,7 +35,6 @@ interface BookingInquiry {
   message: string | null;
   status: string;
 // ...existing code...
-}
   useEffect(() => {
     const initAuth = async () => {
       try {
