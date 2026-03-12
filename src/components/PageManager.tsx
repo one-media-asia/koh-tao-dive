@@ -402,14 +402,14 @@ export const PageManager: React.FC = () => {
   );
 };
 
-// INSERT INTO course_prices (course, price_thb, price_usd, price_eur)
-// VALUES
-//   ('Open Water', '11000', '320', '290'),
-//   ('Advanced', '9500', '275', '250'),
-//   ('Rescue', '10000', '290', '265'),
-//   ('Divemaster', '41000', '1190', '1090'),
-//   ('Instructor', '68900', '1710', '1560'),
-//   ('Scuba Review', '2500', '72', '66'),
-//   ('Discover Scuba', '2500', '72', '66'),
-//   ('Discover Scuba Deluxe', '5000', '144', '132'),
-//   ('EFR', '3500', '130', '120');
+INSERT INTO course_prices (course, price_thb, price_usd, price_eur)
+VALUES
+  ('Open Water', '11000', '320', '290'),
+  ('Advanced', '9500', '275', '250'),
+  ('Rescue', '10000', '290', '265'),
+  ('Divemaster', '41000', '1190', '1090'),
+  ('Instructor', '68900', '1710', '1560'),
+  ('Scuba Review', '2500', '72', '66'),
+  ('Discover Scuba', '2500', '72', '66'),
+  ('Discover Scuba Deluxe', '5000', '144', '132'),
+  ('EFR', '3500', '130', '120');

@@ -34,48 +34,31 @@ interface BookingInquiry {
   internal_notes: string | null;
   message: string | null;
   status: string;
-  created_at: string;
-  updated_at: string | null;
-}
+  return (
+    <div className="container mx-auto py-8">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="mb-4">
+          <TabsTrigger value="bookings">Bookings</TabsTrigger>
+          <TabsTrigger value="edit-pages">Edit Pages</TabsTrigger>
+        </TabsList>
 
-const statusConfig = {
-  pending: { label: 'Pending', color: 'bg-yellow-100 text-yellow-800 border-yellow-200', icon: Clock },
-  confirmed: { label: 'Confirmed', color: 'bg-green-100 text-green-800 border-green-200', icon: CheckCircle },
-  completed: { label: 'Completed', color: 'bg-blue-100 text-blue-800 border-blue-200', icon: CheckCircle },
-  cancelled: { label: 'Cancelled', color: 'bg-red-100 text-red-800 border-red-200', icon: XCircle },
-};
+        <TabsContent value="bookings">
+          <Card>
+            <CardHeader>
+              <CardTitle>Bookings</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {/* ...existing code... */}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-const PAYPAL_ME_LINK = (import.meta.env.VITE_PAYPAL_LINK || 'https://paypal.me/divinginasia').replace(/\/+$/, '');
-type AdminTab = 'bookings' | 'edit-pages' | 'pricing' | 'settings';
-
-const Admin = () => {
-  const navigate = useNavigate();
-  const apiBaseRaw = (import.meta.env.VITE_API_BASE_URL || '').trim();
-  const apiBaseNormalized = apiBaseRaw
-    ? (apiBaseRaw.startsWith('http://') || apiBaseRaw.startsWith('https://')
-        ? apiBaseRaw
-        : `https://${apiBaseRaw}`)
-    : 'https://divinginasia.com';
-  const apiBase = apiBaseNormalized.replace(/\/+$/, '');
-  const apiUrl = useCallback((path: string) => `${apiBase}${path}`, [apiBase]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [bookings, setBookings] = useState<BookingInquiry[]>([]);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [notesBooking, setNotesBooking] = useState<BookingInquiry | null>(null);
-  const [notesDraft, setNotesDraft] = useState('');
-  const [isSavingNotes, setIsSavingNotes] = useState(false);
-  const [actionBooking, setActionBooking] = useState<BookingInquiry | null>(null);
-  const [isSendingInvoice, setIsSendingInvoice] = useState(false);
-  const [invoiceBooking, setInvoiceBooking] = useState<BookingInquiry | null>(null);
-  const [invoiceAmountDraft, setInvoiceAmountDraft] = useState('');
-  const [invoicePayPalLink, setInvoicePayPalLink] = useState('');
-  const [isPayPalLinkCopied, setIsPayPalLinkCopied] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [authToken, setAuthToken] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<AdminTab>('edit-pages');
-
-  const fetchAdminApi = useCallback(async (path: string, init?: RequestInit) => {
-    try {
+        <TabsContent value="edit-pages">
+          <PageManager />
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
       return await fetch(apiUrl(path), init);
     } catch (error) {
       const message = error instanceof Error ? error.message.toLowerCase() : '';
