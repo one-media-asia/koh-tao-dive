@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Fish, Waves, MapPin, Clock, DollarSign, Users } from 'lucide-react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useEffect, useState, useMemo } from 'react';
+import { usePageContent } from '@/hooks/usePageContent';
 import { tryAutoScroll, scrollToWithOffset } from '@/lib/scroll';
 
 const FunDiving = () => {
