@@ -588,9 +588,10 @@ export const PageContentEditor: React.FC<PageContentEditorProps> = ({ pageSlug, 
   };
 
   const handlePublish = async () => {
-    setIsPublishing(true);
+    setIsSaving(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
+      await ensureMetadata('draft');
 
       const upserts = contentItems.map((item) => ({
         page_slug: pageSlug,
@@ -601,15 +602,18 @@ export const PageContentEditor: React.FC<PageContentEditorProps> = ({ pageSlug, 
         updated_by: user?.email || null,
       }));
 
-      // @ts-expect-error - page_content table will be available after migration
-      const { error } = await supabase
-        .from('page_content')
-        .upsert(upserts, { onConflict: 'page_slug,locale,section_key' });
-
-      if (error) throw error;
+      // Debug: log locale and upsert payload
+      // eslint-disable-next-line no-console
+      console.log('[DEBUG] Saving draft with locale:', locale, 'upserts:', upserts);
 
       // @ts-expect-error - page_content_drafts table will be available after migration
-      await supabase
+      const { error } = await supabase
+        .from('page_content_drafts')
+        .upsert(upserts, { onConflict: 'page_slug,locale,section_key' });
+
+      if (error) {
+        const message = getErrorMessage(error);
+        /*...*/
         .from('page_content_drafts')
         .delete()
         .eq('page_slug', pageSlug)
