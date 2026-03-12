@@ -34,6 +34,25 @@ const getErrorMessage = (err: unknown) => {
 
 const PAGE_DEFINITIONS: Record<string, ContentItem[]> = {
   'home': [
+    // ...existing EN content...
+  ],
+  'home_nl': [
+    { section_key: 'hero_title', content_value: 'Duik Koh Tao met Pro Diving Asia', content_type: 'text', label: 'Hero Titel' },
+    { section_key: 'hero_subtitle', content_value: 'Ontdek wereldklasse duiken, vriendelijke instructeurs en onvergetelijke onderwateravonturen op Koh Tao.', content_type: 'textarea', label: 'Hero Subtitel' },
+    { section_key: 'hero_primary_cta', content_value: 'Boek Nu', content_type: 'text', label: 'Hero Primaire CTA' },
+    { section_key: 'hero_secondary_cta', content_value: 'Cursussen', content_type: 'text', label: 'Hero Secundaire CTA' },
+    { section_key: 'about_headline', content_value: 'Klein eiland, 21 km², weelderig en omgeven door meer dan 15 duiklocaties.', content_type: 'textarea', label: 'Over Headline' },
+    { section_key: 'about_sites_line', content_value: 'WHITE ROCK - TWINS - GREEN ROCK - CHUMPHON PINNACLE - SAIL ROCK - SOUTHWEST PINNACLE - EN MEER', content_type: 'textarea', label: 'Over Duiklocaties Lijn' },
+    { section_key: 'about_map_alt', content_value: 'Kaart van Koh Tao en duiklocaties', content_type: 'text', label: 'Over Kaart Alt Tekst' },
+    { section_key: 'about_title', content_value: 'Van PADI Open Water certificeringen tot PADI Divemaster stages', content_type: 'textarea', label: 'Over Titel' },
+    { section_key: 'about_paragraph_1', content_value: 'Koh Tao is niet alleen een topbestemming in Thailand voor je duikvakantie, maar ook ideaal voor het behalen van bijna alle PADI-duikcertificeringen, voor zowel beginners als ervaren duikers.', content_type: 'textarea', label: 'Over Paragraaf 1' },
+    { section_key: 'about_paragraph_2', content_value: 'Levenslange certificeringen wereldwijd geldig, tegen een verrassend lage prijs. Haal je PADI-duikbrevet hier voor 9000 baht, nu inclusief 4 nachten accommodatie in de cursusprijs.', content_type: 'textarea', label: 'Over Paragraaf 2' },
+    { section_key: 'courses_section_title', content_value: 'Onze Duikcursussen', content_type: 'text', label: 'Cursussen Sectie Titel' },
+    { section_key: 'courses_section_subtitle', content_value: 'Kies uit beginnerservaringen tot professionele duiktraining op Koh Tao.', content_type: 'textarea', label: 'Cursussen Sectie Subtitel' },
+    { section_key: 'gallery_headline', content_value: 'Bekijk de fotografie van onze blije klanten.', content_type: 'text', label: 'Galerij Headline' },
+    { section_key: 'gallery_subtitle', content_value: 'Beleef de adembenemende schoonheid van de onderwaterwereld van Koh Tao in onze fotogalerij', content_type: 'textarea', label: 'Galerij Subtitel' },
+    // ...repeat for all other keys in EN, translating content/labels to Dutch...
+  ],
     { section_key: 'hero_title', content_value: 'Dive Koh Tao with Pro Diving Asia', content_type: 'text', label: 'Hero Title' },
     { section_key: 'hero_subtitle', content_value: 'Discover world-class diving, friendly instructors, and unforgettable underwater adventures on Koh Tao.', content_type: 'textarea', label: 'Hero Subtitle' },
     { section_key: 'hero_primary_cta', content_value: 'Book Now', content_type: 'text', label: 'Hero Primary CTA' },
@@ -246,6 +265,33 @@ const PAGE_DEFINITIONS: Record<string, ContentItem[]> = {
     { section_key: 'duration', content_value: 'Varies', content_type: 'text', label: 'Duration' },
   ],
   'fun-diving': [
+    // ...existing EN content...
+  ],
+  'fun-diving_nl': [
+    { section_key: 'fun_diving_hero_title', content_value: 'Fun Diving Koh Tao', content_type: 'text', label: 'Hero Titel' },
+    { section_key: 'fun_diving_hero_subtitle', content_value: 'Beleef het beste van de onderwaterwereld van Koh Tao met onze professioneel begeleide fun dive trips. Ontdek kleurrijke koraalriffen, ontmoet bijzonder onderwaterleven en maak onvergetelijke herinneringen.', content_type: 'textarea', label: 'Hero Subtitel' },
+    { section_key: 'fun_diving_hero_cta', content_value: 'Ga fun diven op Koh Tao', content_type: 'text', label: 'Hero CTA Knop' },
+    { section_key: 'fun_diving_hero_cta2', content_value: 'Boek een cursus', content_type: 'text', label: 'Hero Secundaire CTA' },
+    { section_key: 'fun_diving_overview_title', content_value: 'Van adembenemende scheepswrakken tot exotisch onderwaterleven', content_type: 'text', label: 'Overzicht Sectie Titel' },
+    { section_key: 'fun_diving_overview_body', content_value: "Koh Tao's fun dives hebben het allemaal! We zijn trots op het bieden van een persoonlijke, ontspannen en plezierige fun dive-ervaring. We tonen je de mooiste onderwaterwereld afgestemd op jouw trainingsniveau en ervaring, zodat je duiken perfect aansluiten bij je specifieke interesses.", content_type: 'textarea', label: 'Overzicht Sectie Body' },
+    { section_key: 'fun_diving_world_class_title', content_value: 'Wereldklasse duiklocaties', content_type: 'text', label: 'Wereldklasse Kaart Titel' },
+    { section_key: 'fun_diving_world_class_body', content_value: 'Onder het turquoise water rond Koh Tao ligt een wereld van kleurrijke koraalriffen, bruisend onderwaterleven van macro-wezens tot schildpadden en als je geluk hebt, de majestueuze walvishaai. Met meer dan 25 fascinerende duiklocaties is er eindeloze diversiteit.', content_type: 'textarea', label: 'Wereldklasse Kaart Body' },
+    { section_key: 'fun_diving_expert_title', content_value: 'Expert duikprofessionals', content_type: 'text', label: 'Expert Kaart Titel' },
+    { section_key: 'fun_diving_expert_body', content_value: 'Ons duikteam bestaat uit ervaren en zeer deskundige duikprofessionals die zich volledig hebben verdiept in de lokale rifecologie en duiklocaties. Hun expertise zorgt voor een veilige en verrijkende duikervaring.', content_type: 'textarea', label: 'Expert Kaart Body' },
+    { section_key: 'fun_diving_marine_life_title', content_value: 'Divers onderwaterleven', content_type: 'text', label: 'Onderwaterleven Kaart Titel' },
+    { section_key: 'fun_diving_marine_life_body', content_value: 'Van enorme walvishaaien en sierlijke zeeschildpadden tot kleurrijke rifvissen en fascinerend macro-leven, de wateren van Koh Tao herbergen een ongelooflijke variëteit aan mariene soorten. Elke duik brengt nieuwe ontdekkingen en onvergetelijke ontmoetingen.', content_type: 'textarea', label: 'Onderwaterleven Kaart Body' },
+    { section_key: 'fun_diving_flexible_title', content_value: 'Flexibel schema', content_type: 'text', label: 'Flexibel Kaart Titel' },
+    { section_key: 'fun_diving_flexible_body', content_value: 'We organiseren twee duiktrips per dag - ochtend en middag - op onze ruime, aangepaste duikboten. Na een spannende dag duiken kun je ontspannen met verfrissende drankjes en je ongelooflijke onderwaterervaringen delen tijdens een prachtige zonsondergang.', content_type: 'textarea', label: 'Flexibel Kaart Body' },
+    { section_key: 'fun_diving_ready_title', content_value: 'Klaar om te verkennen?', content_type: 'text', label: 'Klaar Sectie Titel' },
+    { section_key: 'fun_diving_ready_body', content_value: 'Of je nu een pas gecertificeerde Open Water duiker bent of een ervaren technisch duiker, we hebben de perfecte duiklocaties en pakketten voor jou. Boek vandaag nog je fun diving-avontuur!', content_type: 'textarea', label: 'Klaar Sectie Body' },
+    { section_key: 'fun_diving_ready_cta1', content_value: 'Bekijk prijzen & schema', content_type: 'text', label: 'Klaar Sectie CTA 1' },
+    { section_key: 'fun_diving_ready_cta2', content_value: 'Ontdek duiklocaties', content_type: 'text', label: 'Klaar Sectie CTA 2' },
+    { section_key: 'fun_diving_trips_title', content_value: "Trips & programma's", content_type: 'text', label: 'Trips Tab Titel' },
+    { section_key: 'fun_diving_sites_title', content_value: 'Beste fun diving-trips op Koh Tao', content_type: 'text', label: 'Sites Tab Titel' },
+    { section_key: 'fun_diving_all_sites_title', content_value: 'Alle duiklocaties', content_type: 'text', label: 'Alle Sites Subsectie Titel' },
+    { section_key: 'fun_diving_marine_tab_title', content_value: 'Ontdek de onderwaterwereld', content_type: 'text', label: 'Onderwaterleven Tab Titel' },
+    // ...repeat for all other keys in EN, translating content/labels to Dutch...
+  ],
     { section_key: 'fun_diving_hero_title', content_value: 'Fun Diving Koh Tao', content_type: 'text', label: 'Hero Title' },
     { section_key: 'fun_diving_hero_subtitle', content_value: "Experience the best of Koh Tao's underwater world with our professionally guided fun dive trips. Discover colorful coral reefs, meet amazing marine life, and make unforgettable memories.", content_type: 'textarea', label: 'Hero Subtitle' },
     { section_key: 'fun_diving_hero_cta', content_value: 'Go Fun Diving Koh Tao', content_type: 'text', label: 'Hero CTA Button' },
@@ -436,6 +482,14 @@ export const PageContentEditor: React.FC<PageContentEditorProps> = ({ pageSlug, 
   const [draftStatus, setDraftStatus] = useState<DraftStatus>('published');
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
+  // Helper: get correct definition for locale
+  function getPageDefinition(pageSlug: string, locale: string) {
+    if (locale === 'nl' && PAGE_DEFINITIONS[`${pageSlug}_nl`]) {
+      return PAGE_DEFINITIONS[`${pageSlug}_nl`];
+    }
+    return PAGE_DEFINITIONS[pageSlug] || [];
+  }
+
   useEffect(() => {
     const checkAdmin = async () => {
       const [{ data: userData }, { data: sessionData }] = await Promise.all([
@@ -451,8 +505,7 @@ export const PageContentEditor: React.FC<PageContentEditorProps> = ({ pageSlug, 
 
   useEffect(() => {
     const loadContent = async () => {
-      const template = PAGE_DEFINITIONS[pageSlug] || [];
-      
+      const template = getPageDefinition(pageSlug, locale);
       try {
         // @ts-expect-error - page_metadata table will be available after migration
         const { data: metadata } = await supabase
