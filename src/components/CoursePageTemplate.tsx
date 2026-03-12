@@ -79,7 +79,7 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
   const priceEur = content.price_eur || fallbackContent.price_eur || '';
   const duration = content.duration || fallbackContent.duration || 'Contact us';
   const thbAmount = parseAmount(priceThb);
-  const bookingUrl = `/booking?item=${encodeURIComponent(bookingName)}&type=${bookingType}&price=${thbAmount}&currency=THB`;
+  const bookingUrl = `/booking?item=${encodeURIComponent(bookingItemName || '')}&type=${bookingType}&price=${thbAmount}&currency=THB`;
 
   const heroImageUrl = heroImage || images[0];
 
