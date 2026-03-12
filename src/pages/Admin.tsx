@@ -691,14 +691,12 @@ const Admin = () => {
           </TabsContent>
 
           <TabsContent value="pricing">
-            <Card>
-              <CardHeader>
-                <CardTitle>Pricing</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Pricing management tab placeholder. Add course pricing, discounts, and currency controls here later.</p>
-              </CardContent>
-            </Card>
+            {/* Editable pricing table for courses */}
+            <React.Suspense fallback={<div>Loading pricing manager...</div>}>
+              {typeof window !== 'undefined' && (
+                (await import('@/components/PricingManager')).default ? <((await import('@/components/PricingManager')).default) /> : null
+              )}
+            </React.Suspense>
           </TabsContent>
 
           <TabsContent value="settings">
