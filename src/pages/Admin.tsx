@@ -34,20 +34,7 @@ interface BookingInquiry {
   internal_notes: string | null;
   message: string | null;
   status: string;
-  return (
-    <div className="container mx-auto py-8">
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="mb-4">
-          <TabsTrigger value="bookings">Bookings</TabsTrigger>
-          <TabsTrigger value="edit-pages">Edit Pages</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="bookings">
-          <Card>
-            <CardHeader>
-              <CardTitle>Bookings</CardTitle>
-            </CardHeader>
-            <CardContent>
+// ...existing code...
 }
   useEffect(() => {
     const initAuth = async () => {
