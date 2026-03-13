@@ -436,7 +436,16 @@ interface BookingInquiry {
     };
   };
 
+
   const counts = getStatusCounts();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    
+    toast.success('Logged out successfully');
+    navigate('/admin/login');
+  };
+
 
   if (isLoading) {
     return (
@@ -445,13 +454,6 @@ interface BookingInquiry {
       </div>
     );
   }
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    
-    toast.success('Logged out successfully');
-    navigate('/admin/login');
-  };
 
   return (
     <div className="min-h-screen bg-muted">
