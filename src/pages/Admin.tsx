@@ -47,6 +47,6 @@ const Admin = () => {
 
   // (The rest of the Admin component remains unchanged)
   // ...existing code...
-
+}
 
 export default Admin;
