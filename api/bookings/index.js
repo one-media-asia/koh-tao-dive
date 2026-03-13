@@ -100,6 +100,11 @@ export default async function handler(req, res) {
   if (handleOptions(req, res)) return;
   applyCors(res);
 
+  // TEST: Respond to GET /api/bookings?test=1 with a simple message
+  if (req.method === 'GET' && req.query && req.query.test === '1') {
+    return res.status(200).json({ message: 'API route is working!' });
+  }
+
   try {
     if (req.method === 'GET') {
       // Admin authentication enabled
