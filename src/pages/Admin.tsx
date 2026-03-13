@@ -92,7 +92,7 @@ const Admin = () => {
           return;
         }
         setAuthToken(token);
-        const response = await fetchAdminApi('/api/bookings', {
+        const response = await fetchAdminApi('https://koh-tao-dive-dreams.vercel.app/api/bookings', {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.status === 401 || response.status === 403) {
@@ -124,7 +124,7 @@ const Admin = () => {
     const token = tokenArg || authToken;
     if (!token) return;
     try {
-      const response = await fetchAdminApi('/api/bookings', {
+      const response = await fetchAdminApi('https://koh-tao-dive-dreams.vercel.app/api/bookings', {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (response.status === 401 || response.status === 403) {
@@ -144,7 +144,7 @@ const Admin = () => {
   const handleStatusChange = async (bookingId: string, newStatus: string) => {
     if (!authToken) return;
     try {
-      const response = await fetchAdminApi(`/api/bookings/${bookingId}/status`, {
+      const response = await fetchAdminApi(`https://koh-tao-dive-dreams.vercel.app/api/bookings/${bookingId}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
         body: JSON.stringify({ status: newStatus }),
