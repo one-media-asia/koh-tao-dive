@@ -92,7 +92,7 @@ const Admin = () => {
           return;
         }
         setAuthToken(token);
-        const response = await fetchAdminApi('https://koh-tao-dive-dreams-4ah68d71b-onemediaa.vercel.app/api/bookings');
+        const response = await fetchAdminApi('https://koh-tao-dive-dreams.vercel.app/api/bookings');
         if (response.status === 401 || response.status === 403) {
           toast.error('Bookings API is not authorized right now. You can still use Edit Pages.');
           setIsLoading(false);
@@ -122,7 +122,7 @@ const Admin = () => {
     const token = tokenArg || authToken;
     if (!token) return;
     try {
-      const response = await fetchAdminApi('https://koh-tao-dive-dreams-4ah68d71b-onemediaa.vercel.app/api/bookings');
+      const response = await fetchAdminApi('https://koh-tao-dive-dreams.vercel.app/api/bookings');
       if (response.status === 401 || response.status === 403) {
         toast.error('Bookings API is not authorized right now. You can still use Edit Pages.');
         return;
@@ -140,7 +140,7 @@ const Admin = () => {
   const handleStatusChange = async (bookingId: string, newStatus: string) => {
     if (!authToken) return;
     try {
-      const response = await fetchAdminApi(`https://koh-tao-dive-dreams-4ah68d71b-onemediaa.vercel.app/api/bookings/${bookingId}/status`, {
+      const response = await fetchAdminApi(`https://koh-tao-dive-dreams.vercel.app/api/bookings/${bookingId}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
         body: JSON.stringify({ status: newStatus }),
