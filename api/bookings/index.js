@@ -107,11 +107,7 @@ export default async function handler(req, res) {
 
   try {
     if (req.method === 'GET') {
-      // Admin authentication enabled
-      const adminUser = await requireAdmin(req, res);
-      if (!adminUser) return;
       if (!supabase) return res.status(500).json({ error: 'Supabase not configured' });
-
       const { rows } = await selectBookings();
       return res.json((rows || []).map(normalizeBooking));
     }
