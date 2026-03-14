@@ -66,7 +66,10 @@ export default async function handler(req, res) {
   try {
     if (!supabase) return res.status(500).json({ error: 'Supabase not configured' });
     const adminUser = await requireAdmin(req, res);
-    if (!adminUser) return;
+    if (!adminUser) {
+      // requireAdmin already sent 404
+      return;
+    }
 
     const { id } = req.query || {};
     if (!id) return res.status(400).json({ error: 'Missing booking id' });

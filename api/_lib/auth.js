@@ -33,15 +33,16 @@ const getBearerToken = (req) => {
   return header.slice('Bearer '.length).trim() || null;
 };
 
+
 export const requireAdmin = async (req, res) => {
   if (!SUPABASE_URL || !SUPABASE_API_KEY) {
-    res.status(500).json({ error: 'Supabase auth is not configured on server.' });
+    res.status(404).json({ error: 'Not found' });
     return null;
   }
 
   const token = getBearerToken(req);
   if (!token) {
-    res.status(401).json({ error: 'Missing bearer token' });
+    res.status(404).json({ error: 'Not found' });
     return null;
   }
 
@@ -56,19 +57,19 @@ export const requireAdmin = async (req, res) => {
 
     const payload = await response.json().catch(() => ({}));
     if (!response.ok || !payload?.id) {
-      res.status(401).json({ error: 'Invalid or expired token' });
+      res.status(404).json({ error: 'Not found' });
       return null;
     }
 
     if (!isAdminUser(payload)) {
-      res.status(403).json({ error: 'Admin access required' });
+      res.status(404).json({ error: 'Not found' });
       return null;
     }
 
     return payload;
   } catch (err) {
     console.error('requireAdmin error', err);
-    res.status(500).json({ error: 'Failed to validate admin auth' });
+    res.status(404).json({ error: 'Not found' });
     return null;
   }
 };
