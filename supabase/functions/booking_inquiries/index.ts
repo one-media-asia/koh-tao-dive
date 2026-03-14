@@ -5,34 +5,42 @@ const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || Deno.env.get('VITE_SUPABASE
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || Deno.env.get('SERVICE_ROLE_KEY');
 
 function getIdFromUrl(url) {
-  // Matches /booking_inquiries/{id}
-  const match = url.match(/booking_inquiries\/?([\w-]+)?/);
-  return match && match[1] ? match[1] : null;
+  // Matches /booking_inquiries or /booking_inquiries/{id}
+  const parts = url.split('/').filter(Boolean);
+  const idx = parts.indexOf('booking_inquiries');
+  if (idx !== -1 && parts.length > idx + 1) {
+    return parts[idx + 1];
+  }
+  return null;
 }
 
 serve(async (req) => {
 
     if (req.method === 'GET') {
-      // Fetch all or a single booking_inquiries row by id
-      let fetchUrl = `${SUPABASE_URL}/rest/v1/booking_inquiries`;
-      if (id) {
-        fetchUrl += `?id=eq.${id}`;
+      try {
+        // Fetch all or a single booking_inquiries row by id
+        let fetchUrl = `${SUPABASE_URL}/rest/v1/booking_inquiries`;
+        if (id) {
+          fetchUrl += `?id=eq.${id}`;
+        }
+        const res = await fetch(fetchUrl, {
+          method: 'GET',
+          headers: {
+            'apikey': SERVICE_ROLE_KEY,
+            'Authorization': `Bearer ${SERVICE_ROLE_KEY}`,
+          },
+        });
+        const text = await res.text();
+        if (!res.ok) {
+          return new Response(JSON.stringify({ error: text || 'Fetch failed' }), { status: res.status, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type, apikey, Authorization' } });
+        }
+        return new Response(text, {
+          status: 200,
+          headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type, apikey, Authorization' },
+        });
+      } catch (err) {
+        return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type, apikey, Authorization' } });
       }
-      const res = await fetch(fetchUrl, {
-        method: 'GET',
-        headers: {
-          'apikey': SERVICE_ROLE_KEY,
-          'Authorization': `Bearer ${SERVICE_ROLE_KEY}`,
-        },
-      });
-      const text = await res.text();
-      if (!res.ok) {
-        return new Response(JSON.stringify({ error: text || 'Fetch failed' }), { status: res.status, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type, apikey, Authorization' } });
-      }
-      return new Response(text, {
-        status: 200,
-        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type, apikey, Authorization' },
-      });
     }
   const url = new URL(req.url);
   const id = getIdFromUrl(url.pathname);
