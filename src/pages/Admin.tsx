@@ -431,7 +431,7 @@ const Admin = () => {
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold">Admin Dashboard</h1>
           <div className="flex gap-2">
-            <Button onClick={fetchBookings} variant="outline" size="sm">
+            <Button onClick={() => fetchBookings()} variant="outline" size="sm">
               <RefreshCw className="h-4 w-4 mr-2" /> Refresh
             </Button>
             <Button onClick={handleLogout} variant="outline" size="sm">
@@ -442,7 +442,7 @@ const Admin = () => {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8">
-        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as AdminTab)} className="w-full">
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value)} className="w-full">
           <div className="mb-3">
             <Badge className="bg-green-600">Admin</Badge>
           </div>
@@ -463,6 +463,8 @@ const Admin = () => {
                     <TableHead>Status</TableHead>
                     <TableHead>Course</TableHead>
                     <TableHead>Date</TableHead>
+                    <TableHead>Notes</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -470,9 +472,42 @@ const Admin = () => {
                     <TableRow key={booking.id}>
                       <TableCell>{booking.name}</TableCell>
                       <TableCell>{booking.email}</TableCell>
-                      <TableCell>{booking.status}</TableCell>
+                      <TableCell>
+                        <Select
+                          value={booking.status}
+                          onValueChange={(value) => handleStatusChange(booking.id, value)}
+                        >
+                          <SelectTrigger className="w-[120px]">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pending">Pending</SelectItem>
+                            <SelectItem value="confirmed">Confirmed</SelectItem>
+                            <SelectItem value="completed">Completed</SelectItem>
+                            <SelectItem value="cancelled">Cancelled</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
                       <TableCell>{booking.course_title}</TableCell>
                       <TableCell>{booking.preferred_date}</TableCell>
+                      <TableCell>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => openNotesDialog(booking)}
+                        >
+                          {booking.internal_notes ? 'Edit' : 'Add'}
+                        </Button>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setActionBooking(booking)}
+                        >
+                          More
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
