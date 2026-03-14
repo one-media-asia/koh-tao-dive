@@ -92,9 +92,7 @@ const Admin = () => {
           return;
         }
         setAuthToken(token);
-        const response = await fetchAdminApi('https://koh-tao-dive-dreams.vercel.app/api/bookings', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await fetchAdminApi('https://koh-tao-dive-dreams.vercel.app/api/bookings');
         if (response.status === 401 || response.status === 403) {
           toast.error('Bookings API is not authorized right now. You can still use Edit Pages.');
           setIsLoading(false);
@@ -124,9 +122,7 @@ const Admin = () => {
     const token = tokenArg || authToken;
     if (!token) return;
     try {
-      const response = await fetchAdminApi('https://koh-tao-dive-dreams.vercel.app/api/bookings', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await fetchAdminApi('https://koh-tao-dive-dreams.vercel.app/api/bookings');
       if (response.status === 401 || response.status === 403) {
         toast.error('Bookings API is not authorized right now. You can still use Edit Pages.');
         return;
