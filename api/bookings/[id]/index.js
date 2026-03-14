@@ -75,7 +75,10 @@ export default async function handler(req, res) {
     if (!id) return res.status(400).json({ error: 'Missing booking id' });
 
     const record = await findBookingById(id);
-    if (!record) return res.status(404).json({ error: 'Booking not found' });
+    if (!record) {
+      console.error('[Booking API] Booking not found:', { id });
+      return res.status(404).json({ error: 'Booking not found' });
+    }
 
     if (req.method === 'GET') {
       return res.json(normalizeBooking(record.row));
@@ -116,8 +119,12 @@ export default async function handler(req, res) {
         if (typeof updateData[key] === 'undefined') delete updateData[key];
       });
 
+      console.log('[Booking API] PATCH/PUT', { id, table: record.table, updateData });
       const { data, error } = await supabase.from(record.table).update(updateData).eq('id', id).select();
-      if (error) return res.status(500).json({ error: error.message });
+      if (error) {
+        console.error('[Booking API] Update error:', error.message);
+        return res.status(500).json({ error: error.message });
+      }
       return res.json(normalizeBooking((data || [])[0] || null));
     }
 
