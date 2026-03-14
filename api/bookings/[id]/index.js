@@ -84,6 +84,7 @@ export default async function handler(req, res) {
       return res.json(normalizeBooking(record.row));
     }
 
+
     if (req.method === 'PATCH' || req.method === 'PUT') {
       const body = parseBody(req);
       const updateData = record.table === BOOKING_TABLE
@@ -120,12 +121,23 @@ export default async function handler(req, res) {
       });
 
       console.log('[Booking API] PATCH/PUT', { id, table: record.table, updateData });
-      const { data, error } = await supabase.from(record.table).update(updateData).eq('id', id).select();
-      if (error) {
-        console.error('[Booking API] Update error:', error.message);
-        return res.status(500).json({ error: error.message });
+      // Extra logging for debugging
+      try {
+        const { data, error } = await supabase.from(record.table).update(updateData).eq('id', id).select();
+        console.log('[Booking API] Update result', { id, table: record.table, data, error });
+        if (error) {
+          console.error('[Booking API] Update error:', error.message);
+          return res.status(500).json({ error: error.message });
+        }
+        if (!data || !data.length) {
+          console.error('[Booking API] No rows updated', { id, table: record.table });
+          return res.status(404).json({ error: 'Booking not found for update' });
+        }
+        return res.json(normalizeBooking(data[0]));
+      } catch (err) {
+        console.error('[Booking API] Exception during update', err);
+        return res.status(500).json({ error: err?.message || 'Internal error' });
       }
-      return res.json(normalizeBooking((data || [])[0] || null));
     }
 
     if (req.method === 'DELETE') {

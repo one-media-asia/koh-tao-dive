@@ -54,13 +54,24 @@ export default async function handler(req, res) {
         return res.status(409).json({ error: 'Status updates are not supported for legacy booking_inquiries rows.' });
       }
 
-      const { data, error } = await supabase
-        .from(targetTable)
-        .update({ status, updated_at: new Date().toISOString() })
-        .eq('id', id)
-        .select();
-      if (error) return res.status(500).json({ error: error.message });
-      return res.json((data || [])[0] || null);
+      // Extra logging for debugging
+      try {
+        const { data, error } = await supabase
+          .from(targetTable)
+          .update({ status, updated_at: new Date().toISOString() })
+          .eq('id', id)
+          .select();
+        console.log('[Booking Status API] Update result', { id, table: targetTable, data, error });
+        if (error) return res.status(500).json({ error: error.message });
+        if (!data || !data.length) {
+          console.error('[Booking Status API] No rows updated', { id, table: targetTable });
+          return res.status(404).json({ error: 'Booking not found for status update' });
+        }
+        return res.json(data[0]);
+      } catch (err) {
+        console.error('[Booking Status API] Exception during update', err);
+        return res.status(500).json({ error: err?.message || 'Internal error' });
+      }
     }
 
     res.setHeader('Allow', 'PUT, PATCH');
