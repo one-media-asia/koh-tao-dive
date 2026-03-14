@@ -36,6 +36,7 @@ interface BookingInquiry {
   internal_notes: string | null;
   message: string | null;
   status: string;
+  source?: 'bookings' | 'booking_inquiries'; // NEW: source table
 }
 
 const Admin = () => {
@@ -61,6 +62,19 @@ const Admin = () => {
   const fetchAdminApi = useCallback((url: string, options?: RequestInit) => {
     return fetch(url, options);
   }, []);
+
+  // Helper to get correct API endpoint for a booking
+  const getBookingApiUrl = (booking: BookingInquiry, action: 'status' | 'notes' | 'delete' = 'notes') => {
+    if (booking.source === 'booking_inquiries') {
+      // Use Supabase Edge Function for legacy/edge bookings
+      return `https://bjiaxftiiqteweteyzna.functions.supabase.co/booking_inquiries/${booking.id}`;
+    }
+    // Default: Vercel API for main bookings
+    if (action === 'status') {
+      return `https://koh-tao-dive-dreams.vercel.app/api/bookings/${booking.id}/status`;
+    }
+    return `https://koh-tao-dive-dreams.vercel.app/api/bookings/${booking.id}`;
+  };
   const redirectToLogin = useCallback(() => navigate('/admin/login'), [navigate]);
   const PAYPAL_ME_LINK = 'https://paypal.me/prodivingasia';
   const statusConfig = {
@@ -139,9 +153,13 @@ const Admin = () => {
   };
   const handleStatusChange = async (bookingId: string, newStatus: string) => {
     if (!authToken) return;
+    const booking = bookings.find(b => b.id === bookingId);
+    if (!booking) return;
     try {
-      const response = await fetchAdminApi(`https://koh-tao-dive-dreams.vercel.app/api/bookings/${bookingId}/status`, {
-        method: 'PUT',
+      const url = getBookingApiUrl(booking, 'status');
+      const method = booking.source === 'booking_inquiries' ? 'PATCH' : 'PUT';
+      const response = await fetchAdminApi(url, {
+        method,
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
         body: JSON.stringify({ status: newStatus }),
       });
@@ -357,8 +375,10 @@ const Admin = () => {
 
     try {
       const noteValue = notesDraft.trim();
-      const response = await fetchAdminApi(`https://koh-tao-dive-dreams.vercel.app/api/bookings/${notesBooking.id}`, {
-        method: 'PATCH',
+      const url = getBookingApiUrl(notesBooking, 'notes');
+      const method = notesBooking.source === 'booking_inquiries' ? 'PATCH' : 'PATCH';
+      const response = await fetchAdminApi(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${authToken}`,
