@@ -46,6 +46,76 @@ const Admin = () => {
   const [notesBooking, setNotesBooking] = useState<BookingInquiry | null>(null);
   const [notesDraft, setNotesDraft] = useState('');
   const [isSavingNotes, setIsSavingNotes] = useState(false);
+  const [editingStatusId, setEditingStatusId] = useState<string | null>(null);
+  const [statusDraft, setStatusDraft] = useState('');
+    // --- PATCH HELPERS ---
+    const handleStatusEdit = (booking: BookingInquiry) => {
+      setEditingStatusId(booking.id);
+      setStatusDraft(booking.status || 'pending');
+    };
+
+    const saveStatus = async (booking: BookingInquiry) => {
+      if (!authToken) return;
+      setEditingStatusId(null);
+      // Detect legacy table by presence of 'notes' or fallback logic if needed
+      const isLegacy = (booking as any).notes !== undefined || (booking as any).table === 'booking_inquiries';
+      const url = isLegacy
+        ? `/api/booking_inquiries/${booking.id}`
+        : `https://koh-tao-dive-dreams.vercel.app/api/bookings/${booking.id}/status`;
+      const method = 'PATCH';
+      const body = { status: statusDraft };
+      try {
+        const res = await fetchAdminApi(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            ...(isLegacy ? { Authorization: `Bearer ${authToken}` } : {}),
+          },
+          body: JSON.stringify(body),
+        });
+        if (!res.ok) throw new Error('Failed to update status');
+        await fetchBookings();
+        toast.success('Status updated');
+      } catch (err) {
+        toast.error('Failed to update status');
+      }
+    };
+
+    const openNotesDialog = (booking: BookingInquiry) => {
+      setNotesBooking(booking);
+      setNotesDraft((booking as any).internal_notes || (booking as any).notes || '');
+    };
+
+    const saveNotes = async () => {
+      if (!notesBooking || !authToken) return;
+      setIsSavingNotes(true);
+      const isLegacy = (notesBooking as any).notes !== undefined || (notesBooking as any).table === 'booking_inquiries';
+      const url = isLegacy
+        ? `/api/booking_inquiries/${notesBooking.id}`
+        : `https://koh-tao-dive-dreams.vercel.app/api/bookings/${notesBooking.id}`;
+      const method = 'PATCH';
+      const body = isLegacy
+        ? { notes: notesDraft }
+        : { internal_notes: notesDraft };
+      try {
+        const res = await fetchAdminApi(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            ...(isLegacy ? { Authorization: `Bearer ${authToken}` } : {}),
+          },
+          body: JSON.stringify(body),
+        });
+        if (!res.ok) throw new Error('Failed to update notes');
+        await fetchBookings();
+        setNotesBooking(null);
+        toast.success('Notes updated');
+      } catch (err) {
+        toast.error('Failed to update notes');
+      } finally {
+        setIsSavingNotes(false);
+      }
+    };
   const [invoiceBooking, setInvoiceBooking] = useState<BookingInquiry | null>(null);
   const [invoiceAmountDraft, setInvoiceAmountDraft] = useState('');
   const [invoicePayPalLink, setInvoicePayPalLink] = useState('');
@@ -56,7 +126,34 @@ const Admin = () => {
   const navigate = useNavigate();
 
   // --- UTILS ---
+  // Use SQLite API for bookings
+  const SQLITE_API = 'http://localhost:4001/api/sqlite-bookings';
   const fetchAdminApi = useCallback((url: string, options?: RequestInit) => {
+    // Route all bookings requests to SQLite API
+    if (url.startsWith('/api/booking_inquiries') || url.startsWith('https://koh-tao-dive-dreams.vercel.app/api/bookings')) {
+      // Map to SQLite API
+      const idMatch = url.match(/bookings\/(\d+)/);
+      if (idMatch) {
+        // PATCH/DELETE specific booking
+        const id = idMatch[1];
+        if (options?.method === 'DELETE') {
+          return fetch(`${SQLITE_API}/${id}`, { method: 'DELETE' });
+        } else if (options?.method === 'PATCH') {
+          return fetch(`${SQLITE_API}/${id}`, { ...options, method: 'PATCH' });
+        }
+        // GET single booking (not used in UI)
+        return fetch(`${SQLITE_API}/${id}`);
+      }
+      // GET all bookings
+      if (options?.method === 'GET' || !options?.method) {
+        return fetch(SQLITE_API);
+      }
+      // POST new booking
+      if (options?.method === 'POST') {
+        return fetch(SQLITE_API, { ...options, method: 'POST' });
+      }
+    }
+    // Fallback for other endpoints
     return fetch(url, options);
   }, []);
 
@@ -70,46 +167,25 @@ const Admin = () => {
   };
 
   // --- AUTH & INITIAL DATA ---
+  // No auth needed for local SQLite API
   useEffect(() => {
-    const initAuth = async () => {
+    const fetchSqliteBookings = async () => {
+      setIsLoading(true);
       try {
-        const [{ data: userData }, { data: sessionData }] = await Promise.all([
-          supabase.auth.getUser(),
-          supabase.auth.getSession(),
-        ]);
-        const user = userData.user || sessionData.session?.user || null;
-        let token = sessionData.session?.access_token || null;
-        if (!user) { redirectToLogin(); return; }
-        if (!hasAdminAccess(user)) { redirectToLogin(); return; }
-        if (!token) {
-          const { data: refreshed } = await supabase.auth.refreshSession();
-          token = refreshed.session?.access_token || null;
-        }
-        if (!token) {
-          toast.error('Unable to establish session token. Please log in again.');
-          redirectToLogin();
-          return;
-        }
-        setAuthToken(token);
-        const response = await fetchAdminApi('https://koh-tao-dive-dreams.vercel.app/api/bookings');
-        if (response.status === 401 || response.status === 403) {
-          toast.error('Bookings API is not authorized right now. You can still use Edit Pages.');
-          setIsLoading(false);
-          return;
-        }
+        const response = await fetchAdminApi(SQLITE_API);
         if (!response.ok) throw new Error('Failed to fetch bookings');
         const data = await response.json();
         setBookings(data);
-        setIsLoading(false);
       } catch (error) {
-        console.error('Admin auth init failed:', error);
-        toast.error('Unable to load bookings right now. You can still use Edit Pages.');
+        console.error('Unable to load bookings from SQLite:', error);
+        toast.error('Unable to load bookings from SQLite.');
         setBookings([]);
+      } finally {
         setIsLoading(false);
       }
     };
-    initAuth();
-  }, [fetchAdminApi, redirectToLogin]);
+    fetchSqliteBookings();
+  }, [fetchAdminApi]);
   useEffect(() => {
     if (window.location.hash === '#pages') {
       setActiveTab('edit-pages');
@@ -117,15 +193,10 @@ const Admin = () => {
   }, []);
 
   // --- HANDLERS & HELPERS ---
-  const fetchBookings = async (tokenArg?: string) => {
-    const token = tokenArg || authToken;
-    if (!token) return;
+  const fetchBookings = async () => {
+    setIsLoading(true);
     try {
-      const response = await fetchAdminApi('https://koh-tao-dive-dreams.vercel.app/api/bookings');
-      if (response.status === 401 || response.status === 403) {
-        toast.error('Bookings API is not authorized right now. You can still use Edit Pages.');
-        return;
-      }
+      const response = await fetchAdminApi(SQLITE_API);
       if (!response.ok) throw new Error('Failed to fetch bookings');
       const data = await response.json();
       setBookings(data);
@@ -137,13 +208,9 @@ const Admin = () => {
     }
   };
   const handleDeleteBooking = async () => {
-    if (!deleteId || !authToken) return;
+    if (!deleteId) return;
     try {
-      const response = await fetchAdminApi(`https://koh-tao-dive-dreams.vercel.app/api/bookings/${deleteId}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
-      if (response.status === 401 || response.status === 403) { redirectToLogin(); return; }
+      const response = await fetchAdminApi(`${SQLITE_API}/${deleteId}`, { method: 'DELETE' });
       if (!response.ok) throw new Error('Failed to delete booking');
       await fetchBookings();
       setDeleteId(null);
@@ -414,6 +481,30 @@ const Admin = () => {
                       <TableRow key={booking.id}>
                         <TableCell>{booking.name}</TableCell>
                         <TableCell>{booking.email}</TableCell>
+                        <TableCell>
+                          {editingStatusId === booking.id ? (
+                            <div className="flex gap-2 items-center">
+                              <select
+                                value={statusDraft}
+                                onChange={e => setStatusDraft(e.target.value)}
+                                className="border rounded px-2 py-1"
+                              >
+                                <option value="pending">Pending</option>
+                                <option value="confirmed">Confirmed</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                                <option value="paid">Paid</option>
+                              </select>
+                              <Button size="sm" onClick={() => saveStatus(booking)}>Save</Button>
+                              <Button size="sm" variant="outline" onClick={() => setEditingStatusId(null)}>Cancel</Button>
+                            </div>
+                          ) : (
+                            <div className="flex gap-2 items-center">
+                              <span>{booking.status || 'pending'}</span>
+                              <Button size="sm" variant="outline" onClick={() => handleStatusEdit(booking)}>Edit</Button>
+                            </div>
+                          )}
+                        </TableCell>
                         <TableCell>{booking.course_title}</TableCell>
                         <TableCell>{booking.preferred_date}</TableCell>
                         <TableCell>
@@ -426,18 +517,45 @@ const Admin = () => {
                           )}
                         </TableCell>
                         <TableCell>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setActionBooking(booking)}
-                          >
-                            More
+                          <Button size="sm" variant="outline" onClick={() => openNotesDialog(booking)}>
+                            {(booking as any).internal_notes || (booking as any).notes ? 'Edit' : 'Add'}
                           </Button>
+                        </TableCell>
+                        <TableCell>
+                          <Button size="sm" onClick={() => setActionBooking(booking)}>More</Button>
                         </TableCell>
                       </TableRow>
                     );
                   })}
                 </TableBody>
+                    {/* Notes Dialog */}
+                    <Dialog open={!!notesBooking} onOpenChange={() => setNotesBooking(null)}>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Edit Notes</DialogTitle>
+                          <DialogDescription>
+                            {notesBooking ? `${notesBooking.name} — ${notesBooking.course_title}` : ''}
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="mb-4">
+                          <Textarea
+                            value={notesDraft}
+                            onChange={e => setNotesDraft(e.target.value)}
+                            rows={6}
+                            className="w-full"
+                            placeholder="Enter internal notes..."
+                          />
+                        </div>
+                        <DialogFooter>
+                          <Button variant="outline" onClick={() => setNotesBooking(null)}>
+                            Cancel
+                          </Button>
+                          <Button onClick={saveNotes} disabled={isSavingNotes}>
+                            {isSavingNotes ? 'Saving...' : 'Save'}
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
               </Table>
             )}
           </TabsContent>
