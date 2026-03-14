@@ -473,7 +473,7 @@ const Admin = () => {
                     const amount = typeof booking.total_payable_now === 'number' && booking.total_payable_now > 0
                       ? booking.total_payable_now
                       : (typeof booking.subtotal_amount === 'number' && booking.subtotal_amount > 0 ? booking.subtotal_amount : null);
-                    const payPalLink = amount ? `https://paypal.me/prodivingasia/${amount}THB` : null;
+                    const payPalLink = amount ? `https://paypal.me/divinginasia/${amount}THB` : null;
                     return (
                       <TableRow key={booking.id}>
                         <TableCell>{booking.name}</TableCell>
