@@ -434,6 +434,7 @@ const Admin = () => {
                     <TableHead>Status</TableHead>
                     <TableHead>Notes</TableHead>
                     <TableHead>PayPal</TableHead>
+                    <TableHead>PayPal Comments</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -460,6 +461,7 @@ const Admin = () => {
                             <span className="text-gray-400">N/A</span>
                           )}
                         </TableCell>
+                        <TableCell>{booking.paypal_comments || ''}</TableCell>
                         <TableCell>
                           <Button size="sm" onClick={() => setActionBooking(booking)}>More</Button>
                           <Button size="sm" variant="outline" className="ml-2" onClick={() => notesBooking === null ? setNotesBooking(booking) : setNotesBooking(null)}>
