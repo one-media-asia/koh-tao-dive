@@ -652,7 +652,13 @@ const Admin = () => {
                   </Button>
                   {isPayPalLinkCopied && <Badge variant="secondary">Copied</Badge>}
                 </div>
-                <Input readOnly value={invoicePayPalLink} placeholder="Generate a PayPal link for this invoice" />
+                <Textarea
+                  value={invoicePayPalLink}
+                  onChange={e => setInvoicePayPalLink(e.target.value)}
+                  placeholder="Enter PayPal link or comments..."
+                  rows={3}
+                  className="w-full"
+                />
               </div>
             </div>
           )}
