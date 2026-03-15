@@ -126,31 +126,30 @@ const Admin = () => {
   const navigate = useNavigate();
 
   // --- UTILS ---
-  // Use SQLite API for bookings
-  const SQLITE_API = 'http://localhost:4001/api/sqlite-bookings';
+  // Use live API for bookings
+  const BOOKINGS_API = '/api/bookings';
   const fetchAdminApi = useCallback((url: string, options?: RequestInit) => {
-    // Route all bookings requests to SQLite API
-    if (url.startsWith('/api/booking_inquiries') || url.startsWith('https://koh-tao-dive-dreams.vercel.app/api/bookings')) {
-      // Map to SQLite API
-      const idMatch = url.match(/bookings\/(\d+)/);
-      if (idMatch) {
-        // PATCH/DELETE specific booking
+    // Route all bookings requests to live API
+    if (url.startsWith('/api/bookings') || url.startsWith('https://koh-tao-dive-dreams.vercel.app/api/bookings')) {
+      // PATCH/DELETE specific booking
+      const idMatch = url.match(/bookings\/(.+?)(\/|$)/);
+      if (idMatch && idMatch[1] && options?.method) {
         const id = idMatch[1];
-        if (options?.method === 'DELETE') {
-          return fetch(`${SQLITE_API}/${id}`, { method: 'DELETE' });
-        } else if (options?.method === 'PATCH') {
-          return fetch(`${SQLITE_API}/${id}`, { ...options, method: 'PATCH' });
+        if (options.method === 'DELETE') {
+          return fetch(`${BOOKINGS_API}/${id}`, { method: 'DELETE' });
+        } else if (options.method === 'PATCH') {
+          return fetch(`${BOOKINGS_API}/${id}`, { ...options, method: 'PATCH' });
         }
         // GET single booking (not used in UI)
-        return fetch(`${SQLITE_API}/${id}`);
+        return fetch(`${BOOKINGS_API}/${id}`);
       }
       // GET all bookings
       if (options?.method === 'GET' || !options?.method) {
-        return fetch(SQLITE_API);
+        return fetch(BOOKINGS_API);
       }
       // POST new booking
       if (options?.method === 'POST') {
-        return fetch(SQLITE_API, { ...options, method: 'POST' });
+        return fetch(BOOKINGS_API, { ...options, method: 'POST' });
       }
     }
     // Fallback for other endpoints
@@ -169,22 +168,22 @@ const Admin = () => {
   // --- AUTH & INITIAL DATA ---
   // No auth needed for local SQLite API
   useEffect(() => {
-    const fetchSqliteBookings = async () => {
+    const fetchLiveBookings = async () => {
       setIsLoading(true);
       try {
-        const response = await fetchAdminApi(SQLITE_API);
+        const response = await fetchAdminApi(BOOKINGS_API);
         if (!response.ok) throw new Error('Failed to fetch bookings');
         const data = await response.json();
         setBookings(data);
       } catch (error) {
-        console.error('Unable to load bookings from SQLite:', error);
-        toast.error('Unable to load bookings from SQLite.');
+        console.error('Unable to load bookings:', error);
+        toast.error('Unable to load bookings.');
         setBookings([]);
       } finally {
         setIsLoading(false);
       }
     };
-    fetchSqliteBookings();
+    fetchLiveBookings();
   }, [fetchAdminApi]);
   useEffect(() => {
     if (window.location.hash === '#pages') {
@@ -196,7 +195,7 @@ const Admin = () => {
   const fetchBookings = async () => {
     setIsLoading(true);
     try {
-      const response = await fetchAdminApi(SQLITE_API);
+      const response = await fetchAdminApi(BOOKINGS_API);
       if (!response.ok) throw new Error('Failed to fetch bookings');
       const data = await response.json();
       setBookings(data);
