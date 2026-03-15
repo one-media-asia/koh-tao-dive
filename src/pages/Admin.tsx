@@ -654,7 +654,16 @@ const Admin = () => {
                 </div>
                 <Textarea
                   value={invoicePayPalLink}
-                  onChange={e => setInvoicePayPalLink(e.target.value)}
+                  onChange={async e => {
+                    setInvoicePayPalLink(e.target.value);
+                    if (invoiceBooking) {
+                      await fetch(`/api/bookings/${invoiceBooking.id}`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ paypal_comments: e.target.value }),
+                      });
+                    }
+                  }}
                   placeholder="Enter PayPal link or comments..."
                   rows={3}
                   className="w-full"
