@@ -12,6 +12,7 @@ interface Booking {
   message?: string;
   payment_choice?: string;
   status: string;
+  notes?: string;
   created_at: string;
 }
 
@@ -39,6 +40,41 @@ const AdminBookings: React.FC = () => {
   if (loading) return <div>Loading bookings...</div>;
   if (error) return <div>Error: {error}</div>;
 
+  const [editingNotesId, setEditingNotesId] = useState<string | null>(null);
+  const [notesDraft, setNotesDraft] = useState('');
+  const [editingStatusId, setEditingStatusId] = useState<string | null>(null);
+  const [statusDraft, setStatusDraft] = useState('');
+
+  const handleEditNotes = (id: string, notes: string = '') => {
+    setEditingNotesId(id);
+    setNotesDraft(notes);
+  };
+  const handleSaveNotes = async (id: string) => {
+    await fetch(`/api/bookings/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ notes: notesDraft }),
+    });
+    setEditingNotesId(null);
+    setNotesDraft('');
+    // Optionally refresh bookings
+    setBookings((prev) => prev.map(b => b.id === id ? { ...b, notes: notesDraft } : b));
+  };
+  const handleEditStatus = (id: string, status: string) => {
+    setEditingStatusId(id);
+    setStatusDraft(status);
+  };
+  const handleSaveStatus = async (id: string) => {
+    await fetch(`/api/bookings/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: statusDraft }),
+    });
+    setEditingStatusId(null);
+    setStatusDraft('');
+    setBookings((prev) => prev.map(b => b.id === id ? { ...b, status: statusDraft } : b));
+  };
+
   return (
     <div className="overflow-x-auto">
       <h2 className="text-xl font-bold mb-4">Bookings</h2>
@@ -50,6 +86,8 @@ const AdminBookings: React.FC = () => {
             <th className="border px-2 py-1">Email</th>
             <th className="border px-2 py-1">Course</th>
             <th className="border px-2 py-1">Date</th>
+            <th className="border px-2 py-1">Status</th>
+            <th className="border px-2 py-1">Notes</th>
             <th className="border px-2 py-1">Created</th>
           </tr>
         </thead>
@@ -61,6 +99,34 @@ const AdminBookings: React.FC = () => {
               <td className="border px-2 py-1">{b.email}</td>
               <td className="border px-2 py-1">{b.course_title}</td>
               <td className="border px-2 py-1">{b.preferred_date || '-'}</td>
+              <td className="border px-2 py-1">
+                {editingStatusId === b.id ? (
+                  <>
+                    <input value={statusDraft} onChange={e => setStatusDraft(e.target.value)} className="border px-1 py-0.5" />
+                    <button onClick={() => handleSaveStatus(b.id)} className="ml-1 text-blue-600">Save</button>
+                    <button onClick={() => setEditingStatusId(null)} className="ml-1 text-gray-600">Cancel</button>
+                  </>
+                ) : (
+                  <>
+                    {b.status}
+                    <button onClick={() => handleEditStatus(b.id, b.status)} className="ml-1 text-blue-600">Edit</button>
+                  </>
+                )}
+              </td>
+              <td className="border px-2 py-1">
+                {editingNotesId === b.id ? (
+                  <>
+                    <input value={notesDraft} onChange={e => setNotesDraft(e.target.value)} className="border px-1 py-0.5 w-32" />
+                    <button onClick={() => handleSaveNotes(b.id)} className="ml-1 text-blue-600">Save</button>
+                    <button onClick={() => setEditingNotesId(null)} className="ml-1 text-gray-600">Cancel</button>
+                  </>
+                ) : (
+                  <>
+                    {b.notes}
+                    <button onClick={() => handleEditNotes(b.id, b.notes || '')} className="ml-1 text-blue-600">Edit</button>
+                  </>
+                )}
+              </td>
               <td className="border px-2 py-1">{new Date(b.created_at).toLocaleString()}</td>
             </tr>
           ))}
