@@ -481,7 +481,7 @@ const Admin = () => {
                         </TableCell>
                         <TableCell>
                           <Button size="sm" onClick={() => setActionBooking(booking)}>More</Button>
-                          <Button size="sm" variant="outline" className="ml-2" onClick={() => openNotesDialog(booking)}>
+                          <Button size="sm" variant="outline" className="ml-2" onClick={() => notesBooking === null ? setNotesBooking(booking) : setNotesBooking(null)}>
                             {(booking.internal_notes || booking.notes || '').trim() ? 'Edit Note' : 'Add Note'}
                           </Button>
                         </TableCell>
