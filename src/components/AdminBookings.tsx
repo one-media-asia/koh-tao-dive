@@ -20,6 +20,10 @@ const AdminBookings: React.FC = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [editingNotesId, setEditingNotesId] = useState<string | null>(null);
+  const [notesDraft, setNotesDraft] = useState('');
+  const [editingStatusId, setEditingStatusId] = useState<string | null>(null);
+  const [statusDraft, setStatusDraft] = useState('');
 
   useEffect(() => {
     fetch('/api/bookings')
@@ -37,14 +41,6 @@ const AdminBookings: React.FC = () => {
       });
   }, []);
 
-  if (loading) return <div>Loading bookings...</div>;
-  if (error) return <div>Error: {error}</div>;
-
-  const [editingNotesId, setEditingNotesId] = useState<string | null>(null);
-  const [notesDraft, setNotesDraft] = useState('');
-  const [editingStatusId, setEditingStatusId] = useState<string | null>(null);
-  const [statusDraft, setStatusDraft] = useState('');
-
   const handleEditNotes = (id: string, notes: string = '') => {
     setEditingNotesId(id);
     setNotesDraft(notes);
@@ -57,7 +53,6 @@ const AdminBookings: React.FC = () => {
     });
     setEditingNotesId(null);
     setNotesDraft('');
-    // Optionally refresh bookings
     setBookings((prev) => prev.map(b => b.id === id ? { ...b, notes: notesDraft } : b));
   };
   const handleEditStatus = (id: string, status: string) => {
@@ -74,6 +69,9 @@ const AdminBookings: React.FC = () => {
     setStatusDraft('');
     setBookings((prev) => prev.map(b => b.id === id ? { ...b, status: statusDraft } : b));
   };
+
+  if (loading) return <div>Loading bookings...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="overflow-x-auto">
