@@ -157,7 +157,7 @@ const Admin = () => {
   }, []);
 
   const redirectToLogin = useCallback(() => navigate('/admin/login'), [navigate]);
-  const PAYPAL_ME_LINK = 'https://paypal.me/prodivingasia';
+  const PAYPAL_ME_LINK = 'https://paypal.me/'; // <-- Update this to your new PayPal username, e.g. 'https://paypal.me/yournewusername'
   const statusConfig = {
     pending: { label: 'Pending', color: 'yellow' },
     confirmed: { label: 'Confirmed', color: 'green' },
