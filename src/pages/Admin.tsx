@@ -1,3 +1,33 @@
+  // Notes dialog state
+  const [notesBooking, setNotesBooking] = useState<BookingInquiry | null>(null);
+  const [notesDraft, setNotesDraft] = useState('');
+  const [isSavingNotes, setIsSavingNotes] = useState(false);
+  // Open notes dialog for a booking
+  const openNotesDialog = (booking: BookingInquiry) => {
+    setNotesBooking(booking);
+    setNotesDraft((booking as any).internal_notes || '');
+  };
+
+  // Save notes to API
+  const saveNotes = async () => {
+    if (!notesBooking) return;
+    setIsSavingNotes(true);
+    try {
+      const res = await fetch(`/api/bookings/${notesBooking.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ internal_notes: notesDraft }),
+      });
+      if (!res.ok) throw new Error('Failed to update notes');
+      await fetchBookings();
+      setNotesBooking(null);
+      toast.success('Notes updated');
+    } catch (err) {
+      toast.error('Failed to update notes');
+    } finally {
+      setIsSavingNotes(false);
+    }
+  };
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -403,7 +433,38 @@ const Admin = () => {
                         </TableCell>
                         <TableCell>
                           <Button size="sm" onClick={() => setActionBooking(booking)}>More</Button>
+                          <Button size="sm" variant="outline" className="ml-2" onClick={() => openNotesDialog(booking)}>
+                            {((booking as any).internal_notes || '').trim() ? 'Edit Note' : 'Add Note'}
+                          </Button>
                         </TableCell>
+                            {/* Notes Dialog */}
+                            <Dialog open={!!notesBooking} onOpenChange={() => setNotesBooking(null)}>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Edit Internal Notes</DialogTitle>
+                                  <DialogDescription>
+                                    {notesBooking ? `${notesBooking.name} — ${notesBooking.course_title}` : ''}
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <div className="mb-4">
+                                  <Textarea
+                                    value={notesDraft}
+                                    onChange={e => setNotesDraft(e.target.value)}
+                                    rows={6}
+                                    className="w-full"
+                                    placeholder="Enter internal notes..."
+                                  />
+                                </div>
+                                <DialogFooter>
+                                  <Button variant="outline" onClick={() => setNotesBooking(null)}>
+                                    Cancel
+                                  </Button>
+                                  <Button onClick={saveNotes} disabled={isSavingNotes}>
+                                    {isSavingNotes ? 'Saving...' : 'Save'}
+                                  </Button>
+                                </DialogFooter>
+                              </DialogContent>
+                            </Dialog>
                       </TableRow>
                     );
                   })}
