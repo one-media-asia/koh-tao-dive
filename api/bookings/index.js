@@ -1,19 +1,15 @@
 
 import { handleOptions, applyCors } from '../_lib/cors.js';
 
-import sqlite3 from 'sqlite3';
-import { open } from 'sqlite';
-import path from 'path';
 import { createClient } from '@supabase/supabase-js';
 
-const DB_PATH = path.resolve(process.cwd(), 'bookings.db');
 const BOOKING_TABLE = 'bookings';
-
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const supabase = SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
-  ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
-  : null;
+if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+  throw new Error('Supabase environment variables are not set');
+}
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
 const toNumberOr = (value, fallback = 0) => {
   if (typeof value === 'number' && !Number.isNaN(value)) return value;
@@ -61,25 +57,13 @@ const sanitizePayload = (body = {}) => {
 };
 
 const selectBookings = async () => {
-  if (supabase) {
-    // Use Supabase in production
-    const { data, error } = await supabase
-      .from(BOOKING_TABLE)
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(1000);
-    if (error) throw new Error(error.message);
-    return { table: BOOKING_TABLE, rows: data || [] };
-  } else {
-    // Use SQLite locally
-    const db = await open({
-      filename: DB_PATH,
-      driver: sqlite3.Database
-    });
-    const rows = await db.all(`SELECT * FROM ${BOOKING_TABLE} ORDER BY created_at DESC LIMIT 1000`);
-    await db.close();
-    return { table: BOOKING_TABLE, rows };
-  }
+  const { data, error } = await supabase
+    .from(BOOKING_TABLE)
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(1000);
+  if (error) throw new Error(error.message);
+  return { table: BOOKING_TABLE, rows: data || [] };
 };
 
 const parseBody = (req) => {
