@@ -65,11 +65,8 @@ export default async function handler(req, res) {
   applyCors(res);
   try {
     if (!supabase) return res.status(500).json({ error: 'Supabase not configured' });
-    const adminUser = await requireAdmin(req, res);
-    if (!adminUser) {
-      // requireAdmin already sent 404
-      return;
-    }
+
+    // Admin authentication removed for PATCH/PUT/DELETE requests
 
     const { id } = req.query || {};
     if (!id) return res.status(400).json({ error: 'Missing booking id' });
