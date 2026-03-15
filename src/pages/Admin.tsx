@@ -406,6 +406,8 @@ const Admin = () => {
                     <TableHead>Email</TableHead>
                     <TableHead>Course</TableHead>
                     <TableHead>Date</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Notes</TableHead>
                     <TableHead>PayPal</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
@@ -422,6 +424,8 @@ const Admin = () => {
                         <TableCell>{booking.email}</TableCell>
                         <TableCell>{booking.course_title}</TableCell>
                         <TableCell>{booking.preferred_date}</TableCell>
+                        <TableCell>{booking.status}</TableCell>
+                        <TableCell>{(booking as any).notes || (booking as any).internal_notes || ''}</TableCell>
                         <TableCell>
                           {payPalLink ? (
                             <a href={payPalLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
@@ -434,37 +438,9 @@ const Admin = () => {
                         <TableCell>
                           <Button size="sm" onClick={() => setActionBooking(booking)}>More</Button>
                           <Button size="sm" variant="outline" className="ml-2" onClick={() => openNotesDialog(booking)}>
-                            {((booking as any).internal_notes || '').trim() ? 'Edit Note' : 'Add Note'}
+                            {((booking as any).internal_notes || (booking as any).notes || '').trim() ? 'Edit Note' : 'Add Note'}
                           </Button>
                         </TableCell>
-                            {/* Notes Dialog */}
-                            <Dialog open={!!notesBooking} onOpenChange={() => setNotesBooking(null)}>
-                              <DialogContent>
-                                <DialogHeader>
-                                  <DialogTitle>Edit Internal Notes</DialogTitle>
-                                  <DialogDescription>
-                                    {notesBooking ? `${notesBooking.name} — ${notesBooking.course_title}` : ''}
-                                  </DialogDescription>
-                                </DialogHeader>
-                                <div className="mb-4">
-                                  <Textarea
-                                    value={notesDraft}
-                                    onChange={e => setNotesDraft(e.target.value)}
-                                    rows={6}
-                                    className="w-full"
-                                    placeholder="Enter internal notes..."
-                                  />
-                                </div>
-                                <DialogFooter>
-                                  <Button variant="outline" onClick={() => setNotesBooking(null)}>
-                                    Cancel
-                                  </Button>
-                                  <Button onClick={saveNotes} disabled={isSavingNotes}>
-                                    {isSavingNotes ? 'Saving...' : 'Save'}
-                                  </Button>
-                                </DialogFooter>
-                              </DialogContent>
-                            </Dialog>
                       </TableRow>
                     );
                   })}
