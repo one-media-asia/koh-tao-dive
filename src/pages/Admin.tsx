@@ -271,7 +271,7 @@ const Admin = () => {
   const handleDeleteBooking = async () => {
     if (!deleteId) return;
     try {
-      const response = await fetchAdminApi(`${SQLITE_API}/${deleteId}`, { method: 'DELETE' });
+      const response = await fetchAdminApi(`${BOOKINGS_API}/${deleteId}`, { method: 'DELETE' });
       if (!response.ok) throw new Error('Failed to delete booking');
       await fetchBookings();
       setDeleteId(null);
