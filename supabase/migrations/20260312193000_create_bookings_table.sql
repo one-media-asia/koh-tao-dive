@@ -1,23 +1,27 @@
--- Create canonical bookings table used by Admin + API
-CREATE TABLE IF NOT EXISTS public.bookings (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  phone TEXT,
-  item_type TEXT,
-  course_title TEXT NOT NULL,
-  preferred_date DATE,
-  experience_level TEXT,
-  addons TEXT,
-  addons_json TEXT,
-  addons_total NUMERIC NOT NULL DEFAULT 0,
-  subtotal_amount NUMERIC,
-  total_payable_now NUMERIC,
-  internal_notes TEXT,
-  message TEXT,
-  status TEXT NOT NULL DEFAULT 'pending',
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
+-- Drop the old bookings table if it exists
+DROP TABLE IF EXISTS bookings;
+
+-- Create a new bookings table with all required fields
+CREATE TABLE bookings (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name text NOT NULL,
+  email text NOT NULL,
+  phone text,
+  item_type text,
+  course_title text,
+  preferred_date text,
+  experience_level text,
+  message text,
+  payment_choice text,
+  addons text,
+  addons_json text,
+  addons_total numeric,
+  subtotal_amount numeric,
+  total_payable_now numeric,
+  internal_notes text,
+  status text DEFAULT 'pending',
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
 );
 
 -- Basic status guard (non-blocking for historical data that already fits this set)
@@ -28,18 +32,18 @@ BEGIN
     FROM pg_constraint
     WHERE conname = 'bookings_status_check'
   ) THEN
-    ALTER TABLE public.bookings
+    ALTER TABLE bookings
       ADD CONSTRAINT bookings_status_check
       CHECK (status IN ('pending', 'confirmed', 'completed', 'cancelled', 'paid'));
   END IF;
 END $$;
 
 -- Helpful indexes for admin screens and updates
-CREATE INDEX IF NOT EXISTS idx_bookings_created_at ON public.bookings(created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_bookings_status ON public.bookings(status);
+CREATE INDEX IF NOT EXISTS idx_bookings_created_at ON bookings(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_bookings_status ON bookings(status);
 
 -- Keep updated_at current on writes
-CREATE OR REPLACE FUNCTION public.set_bookings_updated_at()
+CREATE OR REPLACE FUNCTION set_bookings_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN
   NEW.updated_at = now();
@@ -47,14 +51,14 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-DROP TRIGGER IF EXISTS trg_set_bookings_updated_at ON public.bookings;
+DROP TRIGGER IF EXISTS trg_set_bookings_updated_at ON bookings;
 CREATE TRIGGER trg_set_bookings_updated_at
-  BEFORE UPDATE ON public.bookings
+  BEFORE UPDATE ON bookings
   FOR EACH ROW
-  EXECUTE FUNCTION public.set_bookings_updated_at();
+  EXECUTE FUNCTION set_bookings_updated_at();
 
 -- Enable RLS and provide safe defaults
-ALTER TABLE public.bookings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;
 
 DO $$
 BEGIN
@@ -65,7 +69,7 @@ BEGIN
       AND policyname = 'Anyone can submit bookings'
   ) THEN
     CREATE POLICY "Anyone can submit bookings"
-      ON public.bookings
+      ON bookings
       FOR INSERT
       WITH CHECK (true);
   END IF;
@@ -77,7 +81,7 @@ BEGIN
       AND policyname = 'Admins can view bookings'
   ) THEN
     CREATE POLICY "Admins can view bookings"
-      ON public.bookings
+      ON bookings
       FOR SELECT
       TO authenticated
       USING (public.has_role(auth.uid(), 'admin'));
@@ -90,7 +94,7 @@ BEGIN
       AND policyname = 'Admins can update bookings'
   ) THEN
     CREATE POLICY "Admins can update bookings"
-      ON public.bookings
+      ON bookings
       FOR UPDATE
       TO authenticated
       USING (public.has_role(auth.uid(), 'admin'));
@@ -103,7 +107,7 @@ BEGIN
       AND policyname = 'Admins can delete bookings'
   ) THEN
     CREATE POLICY "Admins can delete bookings"
-      ON public.bookings
+      ON bookings
       FOR DELETE
       TO authenticated
       USING (public.has_role(auth.uid(), 'admin'));
@@ -114,7 +118,7 @@ END $$;
 DO $$
 BEGIN
   IF to_regclass('public.booking_inquiries') IS NOT NULL THEN
-    INSERT INTO public.bookings (
+    INSERT INTO bookings (
       id,
       name,
       email,
