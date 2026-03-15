@@ -1,33 +1,58 @@
-  // Notes dialog state
-  const [notesBooking, setNotesBooking] = useState<BookingInquiry | null>(null);
-  const [notesDraft, setNotesDraft] = useState('');
-  const [isSavingNotes, setIsSavingNotes] = useState(false);
-  // Open notes dialog for a booking
-  const openNotesDialog = (booking: BookingInquiry) => {
-    setNotesBooking(booking);
-    setNotesDraft((booking as any).internal_notes || '');
-  };
+  // ...existing code...
 
-  // Save notes to API
-  const saveNotes = async () => {
-    if (!notesBooking) return;
-    setIsSavingNotes(true);
-    try {
-      const res = await fetch(`/api/bookings/${notesBooking.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ internal_notes: notesDraft }),
-      });
-      if (!res.ok) throw new Error('Failed to update notes');
-      await fetchBookings();
-      setNotesBooking(null);
-      toast.success('Notes updated');
-    } catch (err) {
-      toast.error('Failed to update notes');
-    } finally {
-      setIsSavingNotes(false);
-    }
-  };
+  interface BookingInquiry {
+    id: string;
+    name: string;
+    email: string;
+    phone: string | null;
+    item_type: string | null;
+    course_title: string;
+    preferred_date: string | null;
+    experience_level: string | null;
+    message: string | null;
+    payment_choice?: string;
+    status?: string;
+    notes?: string;
+    internal_notes?: string;
+    addons: string | null;
+    addons_json: string | null;
+    addons_total: number;
+    subtotal_amount: number | null;
+    total_payable_now: number | null;
+    created_at?: string;
+  }
+
+  const Admin = () => {
+    // Notes dialog state
+    const [notesBooking, setNotesBooking] = useState<BookingInquiry | null>(null);
+    const [notesDraft, setNotesDraft] = useState('');
+    const [isSavingNotes, setIsSavingNotes] = useState(false);
+    // Open notes dialog for a booking
+    const openNotesDialog = (booking: BookingInquiry) => {
+      setNotesBooking(booking);
+      setNotesDraft(booking.internal_notes || booking.notes || '');
+    };
+
+    // Save notes to API
+    const saveNotes = async () => {
+      if (!notesBooking) return;
+      setIsSavingNotes(true);
+      try {
+        const res = await fetch(`/api/bookings/${notesBooking.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ internal_notes: notesDraft }),
+        });
+        if (!res.ok) throw new Error('Failed to update notes');
+        await fetchBookings();
+        setNotesBooking(null);
+        toast.success('Notes updated');
+      } catch (err) {
+        toast.error('Failed to update notes');
+      } finally {
+        setIsSavingNotes(false);
+      }
+    };
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -424,8 +449,8 @@ const Admin = () => {
                         <TableCell>{booking.email}</TableCell>
                         <TableCell>{booking.course_title}</TableCell>
                         <TableCell>{booking.preferred_date}</TableCell>
-                        <TableCell>{booking.status}</TableCell>
-                        <TableCell>{(booking as any).notes || (booking as any).internal_notes || ''}</TableCell>
+                        <TableCell>{booking.status || ''}</TableCell>
+                        <TableCell>{booking.notes || booking.internal_notes || ''}</TableCell>
                         <TableCell>
                           {payPalLink ? (
                             <a href={payPalLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
@@ -438,7 +463,7 @@ const Admin = () => {
                         <TableCell>
                           <Button size="sm" onClick={() => setActionBooking(booking)}>More</Button>
                           <Button size="sm" variant="outline" className="ml-2" onClick={() => openNotesDialog(booking)}>
-                            {((booking as any).internal_notes || (booking as any).notes || '').trim() ? 'Edit Note' : 'Add Note'}
+                            {(booking.internal_notes || booking.notes || '').trim() ? 'Edit Note' : 'Add Note'}
                           </Button>
                         </TableCell>
                       </TableRow>
