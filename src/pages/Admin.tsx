@@ -2,14 +2,7 @@
 
   // ...existing code...
 
-  async function addBookingNote(bookingId, note_type, content) {
-    const res = await fetch(`/api/bookings/${bookingId}/notes`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ note_type, content }),
-    });
-    return res.ok;
-  }
+  // ...existing code...
 
   // --- Notes API hooks ---
   function useBookingNotes(bookingId) {
@@ -26,14 +19,7 @@
     return { notes, loading, setNotes };
   }
 
-  async function addBookingNote(bookingId, note_type, content) {
-    const res = await fetch(`/api/bookings/${bookingId}/notes`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ note_type, content }),
-    });
-    return res.ok;
-  }
+  // ...existing code...
   import { useNavigate } from 'react-router-dom';
   import { format } from 'date-fns';
   import { Trash2, RefreshCw, Users, CheckCircle, Clock, XCircle, LogOut, FileText, Copy } from 'lucide-react';
