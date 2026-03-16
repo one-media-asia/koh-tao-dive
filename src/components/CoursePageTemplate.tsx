@@ -59,7 +59,10 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
   useEffect(() => {
     getExchangeRates()
       .then(setRates)
-      .catch(() => setRatesError('Could not fetch live exchange rates.'));
+      .catch((err) => {
+        console.error('Exchange rate fetch error:', err);
+        setRatesError('Could not fetch live exchange rates.');
+      });
   }, []);
 
   const navigate = useNavigate();
