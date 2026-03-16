@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { PageManager } from '@/components/PageManager';
+import AdminEmails from '@/components/AdminEmails';
 import { supabase } from '@/integrations/supabase/client';
 
 const Admin = () => {
@@ -82,8 +83,10 @@ const Admin = () => {
       <div className="mb-6 flex gap-4">
         <button className={`px-4 py-2 rounded ${activeTab === 'pages' ? 'bg-blue-600 text-white' : 'bg-white'}`} onClick={() => setActiveTab('pages')}>Pages</button>
         <button className={`px-4 py-2 rounded ${activeTab === 'bookings' ? 'bg-blue-600 text-white' : 'bg-white'}`} onClick={() => setActiveTab('bookings')}>Bookings</button>
+        <button className={`px-4 py-2 rounded ${activeTab === 'emails' ? 'bg-blue-600 text-white' : 'bg-white'}`} onClick={() => setActiveTab('emails')}>Emails</button>
       </div>
       {activeTab === 'pages' && <PageManager />}
+      {activeTab === 'emails' && <AdminEmails />}
       {activeTab === 'bookings' && (
         <div className="bg-white rounded shadow p-2">
           <h2 className="text-base font-semibold mb-2">Bookings Management</h2>
