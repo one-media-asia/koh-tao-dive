@@ -1,19 +1,6 @@
   import React, { useState, useEffect, useCallback } from 'react';
 
-  // --- Notes API hooks ---
-  function useBookingNotes(bookingId) {
-    const [notes, setNotes] = useState([]);
-    const [loading, setLoading] = useState(true);
-    useEffect(() => {
-      if (!bookingId) return;
-      setLoading(true);
-      fetch(`/api/bookings/${bookingId}/notes`)
-        .then(res => res.json())
-        .then(data => setNotes(data.notes || []))
-        .finally(() => setLoading(false));
-    }, [bookingId]);
-    return { notes, loading, setNotes };
-  }
+  // ...existing code...
 
   async function addBookingNote(bookingId, note_type, content) {
     const res = await fetch(`/api/bookings/${bookingId}/notes`, {
