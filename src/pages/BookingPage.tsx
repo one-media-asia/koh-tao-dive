@@ -34,7 +34,7 @@ const bookingSchema = z.object({
 
 type BookingFormData = z.infer<typeof bookingSchema>;
 
-const PAYPAL_LINK = 'https://paypal.me/divinginasia';
+const PAYPAL_LINK = 'https://paypal.me/prodivingasia';
 const COURSE_DEPOSIT_RATE = 0.2;
 const SKIP_PAYMENT_MESSAGE = 'You have chosen not to pay right now, no problem! We will contact you soon to arrange bookings and payment. Thank You, Pro Diving Asia Team.';
 
@@ -626,7 +626,7 @@ const       BookingPage: React.FC = () => {
                 rel="noopener noreferrer"
               >
                 <Button variant="outline" className="px-8 py-3 text-lg w-full">
-                  Open PayPal.me/divinginasia
+                  Open PayPal.me/prodivingasia
                 </Button>
               </a>
             </div>
