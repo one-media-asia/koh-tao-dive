@@ -30,6 +30,7 @@ const normalizeBooking = (row = {}) => ({
   experience_level: row.experience_level || '',
   message: row.message || '',
   status: row.status || 'pending',
+  internal_notes: row.internal_notes || '',
   created_at: row.created_at || '',
 });
 
