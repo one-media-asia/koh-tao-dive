@@ -28,19 +28,20 @@ const Admin = () => {
     setBookings(bookings.map(b => b.id === id ? { ...b, internal_notes: value } : b));
   };
 
+  const handleSaveStatus = async (id, status) => {
+    try {
+      const res = await fetch('https://koh-tao-dive-dreams.vercel.app/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status })
+      });
+      if (!res.ok) throw new Error('Failed to save status');
+    } catch (err) {
+      alert('Error saving status');
+    }
+  };
+
   const handleSaveNote = async (id, value) => {
-      const handleSaveStatus = async (id, status) => {
-        try {
-          const res = await fetch('https://koh-tao-dive-dreams.vercel.app/api/bookings', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id, status })
-          });
-          if (!res.ok) throw new Error('Failed to save status');
-        } catch (err) {
-          alert('Error saving status');
-        }
-      };
     try {
       const res = await fetch('https://koh-tao-dive-dreams.vercel.app/api/bookings', {
         method: 'POST',
