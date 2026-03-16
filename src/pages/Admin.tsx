@@ -174,8 +174,8 @@ const Admin = () => {
                           onClick={() => {
                             const amount = typeof booking.paypalAmount === 'number' ? booking.paypalAmount : (typeof booking.total_payable_now === 'number' ? booking.total_payable_now : 0);
                             const paypalUrl = amount > 0
-                              ? `https://paypal.me/divinginasia/${amount.toFixed(2)}`
-                              : 'https://paypal.me/divinginasia';
+                              ? `https://paypal.me/prodivingasia/${amount.toFixed(2)}`
+                              : 'https://paypal.me/prodivingasia';
                             window.open(paypalUrl, '_blank');
                           }}
                         >{`Pay ฿${typeof booking.paypalAmount === 'number' ? booking.paypalAmount : (typeof booking.total_payable_now === 'number' ? booking.total_payable_now : 0)} with PayPal`}</button>
