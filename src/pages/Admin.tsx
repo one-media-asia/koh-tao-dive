@@ -27,6 +27,7 @@ const Admin = () => {
   const handleNoteChange = async (id, value) => {
     setBookings(bookings.map(b => b.id === id ? { ...b, internal_notes: value } : b));
   };
+  };
 
   const handleStatusChange = (id, value) => {
     setBookings(bookings.map(b => b.id === id ? { ...b, status: value } : b));
@@ -93,7 +94,6 @@ const Admin = () => {
                   <th className="p-2">Email</th>
                   <th className="p-2">Phone</th>
                   <th className="p-2">Course Title</th>
-                  <th className="p-2">Item Type</th>
                   <th className="p-2">Preferred Date</th>
                   <th className="p-2">Experience Level</th>
                   <th className="p-2">Message</th>
@@ -111,7 +111,6 @@ const Admin = () => {
                     <td className="p-2">{booking.email}</td>
                     <td className="p-2">{booking.phone}</td>
                     <td className="p-2">{booking.course_title}</td>
-                    <td className="p-2">{booking.item_type}</td>
                     <td className="p-2">{booking.preferred_date}</td>
                     <td className="p-2">{booking.experience_level}</td>
                     <td className="p-2">{booking.message}</td>
@@ -146,7 +145,7 @@ const Admin = () => {
                     <td className="p-2">
                       <button
                         className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-                        onClick={() => handleSaveNote(booking.id, booking.internal_notes || '')}
+                        onClick={() => handleSave(booking.id, booking.internal_notes || '', booking.status || 'pending')}
                       >Save</button>
                     </td>
                   </tr>
