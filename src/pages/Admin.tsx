@@ -140,12 +140,6 @@ const Admin = () => {
                         placeholder="Add internal notes/comments..."
                       />
                     </td>
-                    <td className="p-2">
-                      <button
-                        className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-                        onClick={() => handleSave(booking.id, booking.internal_notes || '', booking.status || 'pending')}
-                      >Save</button>
-                    </td>
                   </tr>
                 ))}
               </tbody>
