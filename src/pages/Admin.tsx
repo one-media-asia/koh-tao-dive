@@ -136,6 +136,12 @@ const Admin = () => {
                       <textarea
                         value={booking.internal_notes || ''}
                         onChange={e => handleNoteChange(booking.id, e.target.value)}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            handleSave(booking.id, booking.internal_notes || '', booking.status || 'pending');
+                          }
+                        }}
                         className="border rounded p-2 w-full"
                         rows={2}
                         placeholder="Add internal notes/comments..."
