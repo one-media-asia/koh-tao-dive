@@ -160,7 +160,12 @@ const Admin = () => {
                         className="bg-green-500 text-white px-2 py-0.5 rounded hover:bg-green-600"
                         style={{ fontSize: '0.8rem', minWidth: 30 }}
                         onClick={() => {
-                          const paypalUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${encodeURIComponent(booking.email)}&item_name=${encodeURIComponent(booking.course_title)}&amount=${booking.total_payable_now || 0}&currency_code=USD`;
+                          const amount = typeof booking.total_payable_now === 'number' && booking.total_payable_now > 0
+                            ? booking.total_payable_now.toFixed(2)
+                            : '';
+                          const paypalUrl = amount
+                            ? `https://paypal.me/divinginasia/${amount}`
+                            : 'https://paypal.me/divinginasia';
                           window.open(paypalUrl, '_blank');
                         }}
                       >💲</button>
