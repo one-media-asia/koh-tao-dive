@@ -85,59 +85,63 @@ const Admin = () => {
       </div>
       {activeTab === 'pages' && <PageManager />}
       {activeTab === 'bookings' && (
-        <div className="bg-white rounded shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">Bookings Management</h2>
+        <div className="bg-white rounded shadow p-2">
+          <h2 className="text-base font-semibold mb-2">Bookings Management</h2>
           {loading ? (
-            <div>Loading bookings...</div>
+            <div style={{ fontSize: '0.9rem' }}>Loading bookings...</div>
           ) : (
-            <table className="w-full mb-6 border border-gray-200 rounded-lg">
+            <table className="w-full mb-2 border border-gray-200 rounded-lg" style={{ fontSize: '0.8rem', borderCollapse: 'collapse' }}>
               <thead className="bg-gray-100">
                 <tr>
-                  <th className="p-2">Name</th>
-                  <th className="p-2">Email</th>
-                  <th className="p-2">Phone</th>
-                  <th className="p-2">Course Title</th>
-                  <th className="p-2">Preferred Date</th>
-                  <th className="p-2">Experience Level</th>
-                  <th className="p-2">Message</th>
-                  <th className="p-2">Status</th>
-                                    <th className="p-2">Update</th>
-                  <th className="p-2">Created At</th>
-                  <th className="p-2">Notes</th>
-                                  <th className="p-2">PayPal</th>
-                                  <th className="p-2">Invoice</th>
+                  <th className="p-1" style={{ minWidth: 50 }}>Name</th>
+                  <th className="p-1" style={{ minWidth: 80 }}>Email</th>
+                  <th className="p-1" style={{ minWidth: 60 }}>Phone</th>
+                  <th className="p-1" style={{ minWidth: 80 }}>Course</th>
+                  <th className="p-1" style={{ minWidth: 60 }}>Date</th>
+                  <th className="p-1" style={{ minWidth: 60 }}>Exp</th>
+                  <th className="p-1" style={{ minWidth: 60 }}>Msg</th>
+                  <th className="p-1" style={{ minWidth: 50 }}>Status</th>
+                  <th className="p-1" style={{ minWidth: 40 }}>Upd</th>
+                  <th className="p-1" style={{ minWidth: 70 }}>Created</th>
+                  <th className="p-1" style={{ minWidth: 80 }}>Notes</th>
+                  <th className="p-1" style={{ minWidth: 40 }}>💲</th>
+                  <th className="p-1" style={{ minWidth: 40 }}>🧾</th>
                 </tr>
               </thead>
               <tbody>
                 {bookings.map(booking => (
                   <tr key={booking.id} className="border-t border-gray-200 hover:bg-gray-50">
-                    <td className="p-2">{booking.name}</td>
-                    <td className="p-2">{booking.email}</td>
-                    <td className="p-2">{booking.phone}</td>
-                    <td className="p-2">{booking.course_title}</td>
-                    <td className="p-2">{booking.preferred_date}</td>
-                    <td className="p-2">{booking.experience_level}</td>
-                    <td className="p-2">{booking.message}</td>
-                    <td className="p-2">
+                    <td className="p-1">{booking.name}</td>
+                    <td className="p-1">{booking.email}</td>
+                    <td className="p-1">{booking.phone}</td>
+                    <td className="p-1">{booking.course_title}</td>
+                    <td className="p-1">{booking.preferred_date}</td>
+                    <td className="p-1">{booking.experience_level}</td>
+                    <td className="p-1">{booking.message}</td>
+                    <td className="p-1">
                       <select
                         value={booking.status || 'pending'}
                         onChange={e => handleStatusChange(booking.id, e.target.value)}
-                        className="border rounded p-2 w-full"
+                        className="border rounded p-1"
+                        style={{ fontSize: '0.8rem', minWidth: 40 }}
                       >
                         <option value="pending">Pending</option>
                         <option value="paid">Paid</option>
                         <option value="booked">Booked</option>
                         <option value="talking">Talking</option>
                       </select>
-                    <td className="p-2">
+                    </td>
+                    <td className="p-1">
                       <button
-                        className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                        className="bg-blue-500 text-white px-2 py-0.5 rounded hover:bg-blue-600"
+                        style={{ fontSize: '0.8rem', minWidth: 30 }}
                         onClick={() => handleSave(booking.id, booking.internal_notes || '', booking.status || 'pending')}
                       >Save</button>
                     </td>
-                    <td className="p-2">{booking.created_at ? new Date(booking.created_at).toLocaleString() : ''}</td>
-                    <td className="p-2">
-                      <textarea
+                    <td className="p-1">{booking.created_at ? new Date(booking.created_at).toLocaleString() : ''}</td>
+                    <td className="p-1">
+                      <input
+                        type="text"
                         value={booking.internal_notes || ''}
                         onChange={e => handleNoteChange(booking.id, e.target.value)}
                         onKeyDown={e => {
@@ -146,36 +150,39 @@ const Admin = () => {
                             handleSave(booking.id, booking.internal_notes || '', booking.status || 'pending');
                           }
                         }}
-                        className="border rounded p-2 w-full"
-                        rows={2}
-                        placeholder="Add internal notes/comments..."
+                        className="border rounded p-1"
+                        style={{ fontSize: '0.8rem', minWidth: 60 }}
+                        placeholder="Notes"
                       />
-                                          <button
-                                            className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
-                                            onClick={() => {
-                                              const paypalUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${encodeURIComponent(booking.email)}&item_name=${encodeURIComponent(booking.course_title)}&amount=${booking.total_payable_now || 0}&currency_code=USD`;
-                                              window.open(paypalUrl, '_blank');
-                                            }}
-                                          >PayPal Link</button>
-                                        </td>
-                                        <td className="p-2">
-                                          <button
-                                            className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600"
-                                            onClick={() => {
-                                              // Simple invoice generation (download as text file)
-                                              const invoice = `Invoice\nName: ${booking.name}\nEmail: ${booking.email}\nCourse: ${booking.course_title}\nAmount: $${booking.total_payable_now || 0}\nDate: ${booking.created_at}`;
-                                              const blob = new Blob([invoice], { type: 'text/plain' });
-                                              const url = URL.createObjectURL(blob);
-                                              const a = document.createElement('a');
-                                              a.href = url;
-                                              a.download = `invoice-${booking.id}.txt`;
-                                              document.body.appendChild(a);
-                                              a.click();
-                                              document.body.removeChild(a);
-                                              URL.revokeObjectURL(url);
-                                            }}
-                                          >Invoice</button>
-                                        </td>
+                    </td>
+                    <td className="p-1">
+                      <button
+                        className="bg-green-500 text-white px-2 py-0.5 rounded hover:bg-green-600"
+                        style={{ fontSize: '0.8rem', minWidth: 30 }}
+                        onClick={() => {
+                          const paypalUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${encodeURIComponent(booking.email)}&item_name=${encodeURIComponent(booking.course_title)}&amount=${booking.total_payable_now || 0}&currency_code=USD`;
+                          window.open(paypalUrl, '_blank');
+                        }}
+                      >💲</button>
+                    </td>
+                    <td className="p-1">
+                      <button
+                        className="bg-gray-500 text-white px-2 py-0.5 rounded hover:bg-gray-600"
+                        style={{ fontSize: '0.8rem', minWidth: 30 }}
+                        onClick={() => {
+                          const amount = typeof booking.total_payable_now === 'number' ? booking.total_payable_now.toFixed(2) : '0.00';
+                          const invoice = `Invoice\nName: ${booking.name}\nEmail: ${booking.email}\nCourse: ${booking.course_title}\nAmount: $${amount}\nDate: ${booking.created_at ? new Date(booking.created_at).toLocaleString() : ''}`;
+                          const blob = new Blob([invoice], { type: 'text/plain' });
+                          const url = URL.createObjectURL(blob);
+                          const a = document.createElement('a');
+                          a.href = url;
+                          a.download = `invoice-${booking.id}.txt`;
+                          document.body.appendChild(a);
+                          a.click();
+                          document.body.removeChild(a);
+                          URL.revokeObjectURL(url);
+                        }}
+                      >🧾</button>
                     </td>
                   </tr>
                 ))}
