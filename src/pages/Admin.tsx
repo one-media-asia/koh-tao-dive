@@ -26,10 +26,33 @@ const Admin = () => {
 
   const handleNoteChange = async (id, value) => {
     setBookings(bookings.map(b => b.id === id ? { ...b, internal_notes: value } : b));
-    await supabase
-      .from('bookings')
-      .update({ internal_notes: value, updated_at: new Date().toISOString() })
-      .eq('id', id);
+  };
+
+  const handleSaveNote = async (id, value) => {
+      const handleSaveStatus = async (id, status) => {
+        try {
+          const res = await fetch('https://koh-tao-dive-dreams.vercel.app/api/bookings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, status })
+          });
+          if (!res.ok) throw new Error('Failed to save status');
+        } catch (err) {
+          alert('Error saving status');
+        }
+      };
+    try {
+      const res = await fetch('https://koh-tao-dive-dreams.vercel.app/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, internal_notes: value })
+      });
+      if (!res.ok) throw new Error('Failed to save note');
+      // Optionally show a success message
+    } catch (err) {
+      alert('Error saving note');
+    }
+  };
   };
 
   return (
@@ -46,36 +69,55 @@ const Admin = () => {
           {loading ? (
             <div>Loading bookings...</div>
           ) : (
-            <table className="w-full mb-6">
-              <thead>
+            <table className="w-full mb-6 border border-gray-200 rounded-lg">
+              <thead className="bg-gray-100">
                 <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Course Title</th>
-                  <th>Item Type</th>
-                  <th>Preferred Date</th>
-                  <th>Experience Level</th>
-                  <th>Message</th>
-                  <th>Status</th>
-                  <th>Created At</th>
-                  <th>Notes</th>
+                  <th className="p-2">Name</th>
+                  <th className="p-2">Email</th>
+                  <th className="p-2">Phone</th>
+                  <th className="p-2">Course Title</th>
+                  <th className="p-2">Item Type</th>
+                  <th className="p-2">Preferred Date</th>
+                  <th className="p-2">Experience Level</th>
+                  <th className="p-2">Message</th>
+                  <th className="p-2">Status</th>
+                                    <th className="p-2">Update Status</th>
+                  <th className="p-2">Created At</th>
+                  <th className="p-2">Notes</th>
+                  <th className="p-2">Save</th>
                 </tr>
               </thead>
               <tbody>
                 {bookings.map(booking => (
-                  <tr key={booking.id}>
-                    <td>{booking.name}</td>
-                    <td>{booking.email}</td>
-                    <td>{booking.phone}</td>
-                    <td>{booking.course_title}</td>
-                    <td>{booking.item_type}</td>
-                    <td>{booking.preferred_date}</td>
-                    <td>{booking.experience_level}</td>
-                    <td>{booking.message}</td>
-                    <td>{booking.status}</td>
-                    <td>{booking.created_at ? new Date(booking.created_at).toLocaleString() : ''}</td>
-                    <td>
+                  <tr key={booking.id} className="border-t border-gray-200">
+                    <td className="p-2">{booking.name}</td>
+                    <td className="p-2">{booking.email}</td>
+                    <td className="p-2">{booking.phone}</td>
+                    <td className="p-2">{booking.course_title}</td>
+                    <td className="p-2">{booking.item_type}</td>
+                    <td className="p-2">{booking.preferred_date}</td>
+                    <td className="p-2">{booking.experience_level}</td>
+                    <td className="p-2">{booking.message}</td>
+                    <td className="p-2">
+                      <select
+                        value={booking.status || 'pending'}
+                        onChange={e => handleNoteChange(booking.id, { ...booking, status: e.target.value })}
+                        className="border rounded p-2 w-full"
+                      >
+                        <option value="pending">Pending</option>
+                        <option value="paid">Paid</option>
+                        <option value="booked">Booked</option>
+                        <option value="talking">Talking</option>
+                      </select>
+                    </td>
+                    <td className="p-2">
+                      <button
+                        className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+                        onClick={() => handleSaveStatus(booking.id, booking.status || 'pending')}
+                      >Save Status</button>
+                    </td>
+                    <td className="p-2">{booking.created_at ? new Date(booking.created_at).toLocaleString() : ''}</td>
+                    <td className="p-2">
                       <textarea
                         value={booking.internal_notes || ''}
                         onChange={e => handleNoteChange(booking.id, e.target.value)}
@@ -83,6 +125,12 @@ const Admin = () => {
                         rows={2}
                         placeholder="Add internal notes/comments..."
                       />
+                    </td>
+                    <td className="p-2">
+                      <button
+                        className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                        onClick={() => handleSaveNote(booking.id, booking.internal_notes || '')}
+                      >Save</button>
                     </td>
                   </tr>
                 ))}
