@@ -33,3 +33,15 @@ VALUES
 ALTER TABLE public.booking_inquiries
 ADD COLUMN deposit NUMERIC DEFAULT 0,
 ADD COLUMN total NUMERIC DEFAULT 0;
+
+-- Dedicated vouchers table for tracking generated vouchers
+CREATE TABLE IF NOT EXISTS public.vouchers (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  booking_id uuid REFERENCES booking_inquiries(id),
+  voucher_code text UNIQUE NOT NULL,
+  generated_at timestamptz NOT NULL DEFAULT now(),
+  generated_by text,
+  downloaded boolean DEFAULT false,
+  downloaded_at timestamptz,
+  notes text
+);
