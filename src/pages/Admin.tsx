@@ -40,6 +40,7 @@ const Admin = () => {
         body: JSON.stringify({ id, internal_notes, status })
       });
       if (!res.ok) throw new Error('Failed to save');
+      alert('Booking updated successfully!');
     } catch (err) {
       alert('Error saving');
     }
