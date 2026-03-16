@@ -1,3 +1,123 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { format } from 'date-fns';
+import { Trash2, RefreshCw, LogOut, FileText, Copy } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+import { PageManager } from '@/components/PageManager';
+import PricingManager from '../components/PricingManager';
+
+interface BookingInquiry {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  item_type: string | null;
+  course_title: string;
+  preferred_date: string | null;
+  experience_level: string | null;
+  addons: string | null;
+  addons_json: string | null;
+  addons_total: number;
+  subtotal_amount: number | null;
+  total_payable_now: number | null;
+  message: string | null;
+}
+
+const Admin = () => {
+  const [bookings, setBookings] = useState<BookingInquiry[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [authToken, setAuthToken] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [actionBooking, setActionBooking] = useState<BookingInquiry | null>(null);
+  const [invoiceBooking, setInvoiceBooking] = useState<BookingInquiry | null>(null);
+  const [invoiceAmountDraft, setInvoiceAmountDraft] = useState('');
+  const [invoicePayPalLink, setInvoicePayPalLink] = useState('');
+  const [isPayPalLinkCopied, setIsPayPalLinkCopied] = useState(false);
+  const [isSendingInvoice, setIsSendingInvoice] = useState(false);
+  const [activeTab, setActiveTab] = useState('bookings');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const navigate = useNavigate();
+
+  // --- UTILS ---
+  const BOOKINGS_API = '/api/bookings';
+  const fetchAdminApi = useCallback((url: string, options?: RequestInit) => {
+    if (url.startsWith('/api/bookings') || url.startsWith('https://koh-tao-dive-dreams.vercel.app/api/bookings')) {
+      const idMatch = url.match(/bookings\/(.+?)(\/|$)/);
+      if (idMatch && idMatch[1] && options?.method) {
+        const id = idMatch[1];
+        if (options.method === 'DELETE') {
+          return fetch(`${BOOKINGS_API}/${id}`, { method: 'DELETE' });
+        } else if (options.method === 'PATCH') {
+          return fetch(`${BOOKINGS_API}/${id}`, { ...options, method: 'PATCH' });
+        }
+        return fetch(`${BOOKINGS_API}/${id}`);
+      }
+      if (options?.method === 'GET' || !options?.method) {
+        return fetch(BOOKINGS_API);
+      }
+      if (options?.method === 'POST') {
+        return fetch(BOOKINGS_API, { ...options, method: 'POST' });
+      }
+    }
+    return fetch(url, options);
+  }, []);
+
+  const redirectToLogin = useCallback(() => navigate('/admin/login'), [navigate]);
+  const PAYPAL_ME_LINK = 'https://paypal.me/divinginasia';
+
+  useEffect(() => {
+    const fetchLiveBookings = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetchAdminApi(BOOKINGS_API);
+        if (!response.ok) throw new Error('Failed to fetch bookings');
+        const data = await response.json();
+        setBookings(data);
+      } catch (error) {
+        console.error('Unable to load bookings:', error);
+        toast.error('Unable to load bookings.');
+        setBookings([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchLiveBookings();
+  }, [fetchAdminApi]);
+
+  useEffect(() => {
+    if (window.location.hash === '#pages') {
+      setActiveTab('edit-pages');
+    }
+  }, []);
+
+  // --- HANDLERS & HELPERS ---
+  // ...handlers as in your provided code...
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-muted">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-muted">
+      {/* ...rest of your JSX goes here... */}
+    </div>
+  );
+};
+
+export default Admin;
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -108,16 +228,6 @@ const Admin = () => {
     // ...existing JSX, including Dialogs, goes here...
   );
 };
-  const { notes: bookingNotes, loading: notesLoading, setNotes: setBookingNotes } = useBookingNotes(notesBooking?.id);
-      // Notes Dialog is rendered in the return statement below
-
-  // --- UTILS ---
-  // Use live API for bookings
-  const BOOKINGS_API = '/api/bookings';
-  const fetchAdminApi = useCallback((url: string, options?: RequestInit) => {
-    // Route all bookings requests to live API
-    if (url.startsWith('/api/bookings') || url.startsWith('https://koh-tao-dive-dreams.vercel.app/api/bookings')) {
-      // PATCH/DELETE specific booking
       const idMatch = url.match(/bookings\/(.+?)(\/|$)/);
       if (idMatch && idMatch[1] && options?.method) {
         const id = idMatch[1];
