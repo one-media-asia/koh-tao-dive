@@ -21,3 +21,10 @@ INSERT INTO users (email, name) VALUES
   ('contact@prodiving.asia', 'Contact'),
   ('bas@divinginasia.com', 'Bas')
 ON CONFLICT (email) DO NOTHING;
+
+-- Sample emails for testing
+INSERT INTO emails (subject, sender, body, assigned_to, status)
+VALUES
+  ('Booking Inquiry: Open Water', 'alice@example.com', 'I would like to book the Open Water course.', NULL, 'unread'),
+  ('Question about Advanced Course', 'bob@example.com', 'Can you tell me more about the advanced course?', NULL, 'unread'),
+  ('Group Booking', 'carol@example.com', 'We are a group of 4 interested in diving.', NULL, 'unread');
