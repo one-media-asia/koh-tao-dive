@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import jsPDF from 'jspdf';
 import { PageManager } from '@/components/PageManager';
 import AdminEmails from '@/components/AdminEmails';
 import AdminVouchers from '@/components/AdminVouchers';
@@ -192,17 +193,18 @@ const Admin = () => {
                         className="bg-gray-500 text-white px-2 py-0.5 rounded hover:bg-gray-600"
                         style={{ fontSize: '0.8rem', minWidth: 30 }}
                         onClick={() => {
-                          const amount = typeof booking.total_payable_now === 'number' ? booking.total_payable_now.toFixed(2) : '0.00';
-                          const invoice = `Invoice\nName: ${booking.name}\nEmail: ${booking.email}\nCourse: ${booking.course_title}\nAmount: $${amount}\nDate: ${booking.created_at ? new Date(booking.created_at).toLocaleString() : ''}`;
-                          const blob = new Blob([invoice], { type: 'text/plain' });
-                          const url = URL.createObjectURL(blob);
-                          const a = document.createElement('a');
-                          a.href = url;
-                          a.download = `invoice-${booking.id}.txt`;
-                          document.body.appendChild(a);
-                          a.click();
-                          document.body.removeChild(a);
-                          URL.revokeObjectURL(url);
+                          const doc = new jsPDF();
+                          doc.setFontSize(18);
+                          doc.text('Dive Booking Invoice', 20, 20);
+                          doc.setFontSize(12);
+                          doc.text(`Name: ${booking.name || ''}`, 20, 40);
+                          doc.text(`Email: ${booking.email || ''}`, 20, 50);
+                          doc.text(`Course: ${booking.course_title || ''}`, 20, 60);
+                          doc.text(`Amount: ฿${typeof booking.total_payable_now === 'number' ? booking.total_payable_now.toFixed(2) : '0.00'}`, 20, 70);
+                          doc.text(`Date: ${booking.created_at ? new Date(booking.created_at).toLocaleString() : ''}`, 20, 80);
+                          doc.text(`Booking ID: ${booking.id}`, 20, 90);
+                          doc.text('Thank you for booking with us!', 20, 110);
+                          doc.save(`invoice-${booking.id}.pdf`);
                         }}
                       >🧾</button>
                     </td>
