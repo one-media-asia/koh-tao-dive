@@ -28,3 +28,8 @@ VALUES
   ('Booking Inquiry: Open Water', 'alice@example.com', 'I would like to book the Open Water course.', NULL, 'unread'),
   ('Question about Advanced Course', 'bob@example.com', 'Can you tell me more about the advanced course?', NULL, 'unread'),
   ('Group Booking', 'carol@example.com', 'We are a group of 4 interested in diving.', NULL, 'unread');
+
+-- Add deposit and total columns to booking_inquiries for voucher support
+ALTER TABLE public.booking_inquiries
+ADD COLUMN deposit NUMERIC DEFAULT 0,
+ADD COLUMN total NUMERIC DEFAULT 0;
