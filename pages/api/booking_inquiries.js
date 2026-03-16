@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+// import { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
@@ -7,7 +7,7 @@ const BOOKING_TABLE = 'booking_inquiries';
 
 const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req, res) {
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, PATCH, OPTIONS');
@@ -28,13 +28,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(500).json({ error: error.message || 'Insert failed' });
       }
       return res.status(200).json({ status: 'ok' });
-    } catch (err: any) {
+    } catch (err) {
       return res.status(500).json({ error: err.message });
     }
   }
 
   if (req.method === 'PATCH') {
-    const id = req.query.id as string;
+    const id = req.query.id;
     if (!id) {
       return res.status(400).json({ error: 'Missing booking id in URL' });
     }
@@ -45,7 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(500).json({ error: error.message || 'Update failed' });
       }
       return res.status(200).json(data);
-    } catch (err: any) {
+    } catch (err) {
       return res.status(500).json({ error: err.message });
     }
   }
