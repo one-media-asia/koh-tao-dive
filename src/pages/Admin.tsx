@@ -1,34 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PageManager } from '@/components/PageManager';
-
-// Example booking data structure
-const initialBookings = [
-  {
-    id: '1',
-    name: 'John Doe',
-    email: 'john@example.com',
-    course: 'Open Water',
-    date: '2026-03-15',
-    status: 'Pending',
-    notes: '',
-  },
-  {
-    id: '2',
-    name: 'Jane Smith',
-    email: 'jane@example.com',
-    course: 'Advanced',
-    date: '2026-03-16',
-    status: 'Confirmed',
-    notes: '',
-  },
-];
+import { supabase } from '@/integrations/supabase/client';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('pages');
-  const [bookings, setBookings] = useState(initialBookings);
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleNoteChange = (id, value) => {
+  useEffect(() => {
+    if (activeTab === 'bookings') {
+      setLoading(true);
+      supabase
+        .from('bookings')
+        .select('*')
+        .then(({ data, error }) => {
+          setBookings(data || []);
+          setLoading(false);
+        });
+    }
+  }, [activeTab]);
+
+  const handleNoteChange = async (id, value) => {
     setBookings(bookings.map(b => b.id === id ? { ...b, notes: value } : b));
+    await supabase
+      .from('bookings')
+      .update({ notes: value })
+      .eq('id', id);
   };
 
   return (
@@ -42,38 +39,42 @@ const Admin = () => {
       {activeTab === 'bookings' && (
         <div className="bg-white rounded shadow p-6">
           <h2 className="text-xl font-semibold mb-4">Bookings Management</h2>
-          <table className="w-full mb-6">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Course</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Notes</th>
-              </tr>
-            </thead>
-            <tbody>
-              {bookings.map(booking => (
-                <tr key={booking.id}>
-                  <td>{booking.name}</td>
-                  <td>{booking.email}</td>
-                  <td>{booking.course}</td>
-                  <td>{booking.date}</td>
-                  <td>{booking.status}</td>
-                  <td>
-                    <textarea
-                      value={booking.notes}
-                      onChange={e => handleNoteChange(booking.id, e.target.value)}
-                      className="border rounded p-2 w-full"
-                      rows={2}
-                      placeholder="Add notes/comments..."
-                    />
-                  </td>
+          {loading ? (
+            <div>Loading bookings...</div>
+          ) : (
+            <table className="w-full mb-6">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Course</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Notes</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {bookings.map(booking => (
+                  <tr key={booking.id}>
+                    <td>{booking.name}</td>
+                    <td>{booking.email}</td>
+                    <td>{booking.course_title || booking.course}</td>
+                    <td>{booking.preferred_date || booking.date}</td>
+                    <td>{booking.status}</td>
+                    <td>
+                      <textarea
+                        value={booking.notes || ''}
+                        onChange={e => handleNoteChange(booking.id, e.target.value)}
+                        className="border rounded p-2 w-full"
+                        rows={2}
+                        placeholder="Add notes/comments..."
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       )}
     </div>
