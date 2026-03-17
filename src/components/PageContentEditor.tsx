@@ -65,7 +65,6 @@ const PAGE_DEFINITIONS: Record<string, ContentItem[]> = {
     // Add more prices as needed
   ],
   ],
-
   'contact': [
     { section_key: 'section_title', content_value: 'Get in Touch', content_type: 'text', label: 'Section Title' },
     { section_key: 'section_subtitle', content_value: 'Ready to explore the underwater world? Contact Bas to book your diving adventure on Koh Tao.', content_type: 'textarea', label: 'Section Subtitle' },
@@ -97,7 +96,6 @@ const PAGE_DEFINITIONS: Record<string, ContentItem[]> = {
     { section_key: 'footer_line_1', content_value: '© 2026 Pro Diving Asia. All rights reserved. Powered by One Media Asia @ www.onemedia.asia', content_type: 'textarea', label: 'Footer Line 1' },
     { section_key: 'footer_line_2', content_value: "Discover the magic beneath the waves in Thailand's diving paradise.", content_type: 'textarea', label: 'Footer Line 2' },
   ],
-
   'open-water': [
     { section_key: 'hero_title', content_value: 'PADI Open Water Course', content_type: 'text', label: 'Hero Title' },
     { section_key: 'hero_subtitle', content_value: "The world's most popular scuba course. Learn the fundamentals and get certified to dive independently to 18 metres/60 feet.", content_type: 'text', label: 'Hero Subtitle' },
