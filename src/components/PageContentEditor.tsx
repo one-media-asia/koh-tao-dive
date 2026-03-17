@@ -1,6 +1,3 @@
-// ...existing code...
-export default PageContentEditor;
-
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -430,7 +427,7 @@ const PAGE_DEFINITIONS: Record<string, ContentItem[]> = {
   ],
 };
 
-export const PageContentEditor: React.FC<PageContentEditorProps> = ({ pageSlug, locale }) => {
+const PageContentEditor: React.FC<PageContentEditorProps> = ({ pageSlug, locale }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [contentItems, setContentItems] = useState<ContentItem[]>([]);
   const [isSaving, setIsSaving] = useState(false);
@@ -560,3 +557,5 @@ export const PageContentEditor: React.FC<PageContentEditorProps> = ({ pageSlug, 
     </Card>
   );
 };
+
+export default PageContentEditor;
