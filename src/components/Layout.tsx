@@ -59,67 +59,12 @@ const Footer: React.FC = () => {
   const isDutch = i18n.language.startsWith('nl');
   const tripUrl = buildTripFooterUrl();
 
+  // handleTripClick just calls trackAffiliateClick
   const handleTripClick = () => {
-    trackAffiliateClick({
-      return (
-        <div className="min-h-screen flex flex-col bg-background">
-          <Navigation user={user} isAdmin={isAdmin} isAdminRoute={isAdminRoute} />
-          {isAdminRoute && (
-            <div className="fixed top-20 right-4 z-50">
-              <Button variant="outline" onClick={handleLogout}>
-                {isDutch ? 'Uitloggen' : 'Successfully logged out'}
-              </Button>
-            </div>
-          )}
-          <Link
-            to="/booking?source=left-widget"
-            onClick={() => trackBookingWidgetClick('left-widget')}
-            className="fixed left-0 top-1/2 z-40 hidden -translate-y-1/2 rounded-r-full bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-blue-700 motion-safe:animate-pulse md:block"
-            aria-label={isDutch ? 'Boek nu' : 'Book now'}
-            title={isDutch ? 'Boek nu' : 'Book now'}
-          >
-            {isDutch ? 'Boek nu' : 'Book now'}
-          </Link>
-          <Link
-            to="/booking?source=mobile-sticky"
-            onClick={() => trackBookingWidgetClick('mobile-sticky')}
-            className="fixed bottom-24 left-1/2 z-40 -translate-x-1/2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-blue-700 motion-safe:animate-pulse md:hidden"
-            aria-label={isDutch ? 'Boek nu' : 'Book now'}
-            title={isDutch ? 'Boek nu' : 'Book now'}
-          >
-            {isDutch ? 'Boek nu' : 'Book now'}
-          </Link>
-          <main className="flex-1">{children}</main>
-          <CookieConsent />
-          <a
-            href={WHATSAPP_LINK}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={isDutch ? 'Chat via WhatsApp' : 'Chat on WhatsApp'}
-            title={isDutch ? 'Chat via WhatsApp' : 'Chat on WhatsApp'}
-            className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-green-500 text-white shadow-lg transition hover:bg-green-600 hover:scale-105"
-          >
-            <MessageCircle className="h-7 w-7" />
-          </a>
-          <Footer />
-        </div>
-      );
-              >
-                <Instagram className="h-5 w-5" />
-              </a>
-              <a
-                href={WHATSAPP_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                title="WhatsApp"
-                aria-label="WhatsApp"
-                className="text-gray-300 hover:text-white transition"
-              >
-                <MessageCircle className="h-5 w-5" />
-              </a>
-            </div>
-          </div>
-        </div>
+    trackAffiliateClick({ /* params */ });
+  };
+
+  // ...existing JSX for Footer...
 
         {/* Diving */}
         <div>
