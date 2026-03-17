@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 
 interface Booking {
-    total_payable_now?: number | null;
-    subtotal_amount?: number | null;
+  total_payable_now?: number | null;
+  subtotal_amount?: number | null;
   id: string;
   name: string;
   email: string;
   course_title: string;
   preferred_date?: string;
   status: string;
-  notes?: string;
+  internal_notes?: string;
   created_at: string;
 }
 
@@ -38,19 +38,19 @@ const AdminBookings: React.FC = () => {
       });
   }, []);
 
-  const handleEditNotes = (id: string, notes: string = '') => {
+  const handleEditNotes = (id: string, internal_notes: string = '') => {
     setEditingNotesId(id);
-    setNotesDraft(notes);
+    setNotesDraft(internal_notes);
   };
   const handleSaveNotes = async (id: string) => {
     await fetch(`/api/bookings/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ notes: notesDraft }),
+      body: JSON.stringify({ internal_notes: notesDraft }),
     });
     setEditingNotesId(null);
     setNotesDraft('');
-    setBookings((prev) => prev.map(b => b.id === id ? { ...b, notes: notesDraft } : b));
+    setBookings((prev) => prev.map(b => b.id === id ? { ...b, internal_notes: notesDraft } : b));
   };
   const handleEditStatus = (id: string, status: string) => {
     setEditingStatusId(id);
@@ -84,7 +84,7 @@ const AdminBookings: React.FC = () => {
             <th className="border px-2 py-1">Amount</th>
             <th className="border px-2 py-1">Subtotal</th>
             <th className="border px-2 py-1">Status</th>
-            <th className="border px-2 py-1">Notes</th>
+            <th className="border px-2 py-1">Admin Notes</th>
             <th className="border px-2 py-1">Created</th>
           </tr>
         </thead>
@@ -101,7 +101,7 @@ const AdminBookings: React.FC = () => {
               <td className="border px-2 py-1">
                 {editingStatusId === b.id ? (
                   <>
-                    <input value={statusDraft} onChange={e => setStatusDraft(e.target.value)} className="border px-1 py-0.5" />
+                    <input value={statusDraft} onChange={e => setStatusDraft(e.target.value)} className="border px-1 py-0.5" placeholder="Status" />
                     <button onClick={() => handleSaveStatus(b.id)} className="ml-1 text-blue-600">Save</button>
                     <button onClick={() => setEditingStatusId(null)} className="ml-1 text-gray-600">Cancel</button>
                   </>
@@ -115,14 +115,14 @@ const AdminBookings: React.FC = () => {
               <td className="border px-2 py-1">
                 {editingNotesId === b.id ? (
                   <>
-                    <input value={notesDraft} onChange={e => setNotesDraft(e.target.value)} className="border px-1 py-0.5 w-32" />
+                    <input value={notesDraft} onChange={e => setNotesDraft(e.target.value)} className="border px-1 py-0.5 w-32" placeholder="Admin notes" />
                     <button onClick={() => handleSaveNotes(b.id)} className="ml-1 text-blue-600">Save</button>
                     <button onClick={() => setEditingNotesId(null)} className="ml-1 text-gray-600">Cancel</button>
                   </>
                 ) : (
                   <>
-                    {b.notes}
-                    <button onClick={() => handleEditNotes(b.id, b.notes || '')} className="ml-1 text-blue-600">Edit</button>
+                    {b.internal_notes}
+                    <button onClick={() => handleEditNotes(b.id, b.internal_notes || '')} className="ml-1 text-blue-600">Edit</button>
                   </>
                 )}
               </td>
