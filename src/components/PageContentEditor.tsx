@@ -34,6 +34,33 @@ const getErrorMessage = (err: unknown) => {
 
 const PAGE_DEFINITIONS: Record<string, ContentItem[]> = {
   'home': [
+      'all-prices': [
+        { section_key: 'open_water_price_thb', content_value: '11000', content_type: 'text', label: 'Open Water Price (THB)' },
+        { section_key: 'open_water_price_usd', content_value: '320', content_type: 'text', label: 'Open Water Price (USD)' },
+        { section_key: 'open_water_price_eur', content_value: '290', content_type: 'text', label: 'Open Water Price (EUR)' },
+        { section_key: 'advanced_price_thb', content_value: '9500', content_type: 'text', label: 'Advanced Price (THB)' },
+        { section_key: 'advanced_price_usd', content_value: '275', content_type: 'text', label: 'Advanced Price (USD)' },
+        { section_key: 'advanced_price_eur', content_value: '250', content_type: 'text', label: 'Advanced Price (EUR)' },
+        { section_key: 'rescue_price_thb', content_value: '10000', content_type: 'text', label: 'Rescue Price (THB)' },
+        { section_key: 'rescue_price_usd', content_value: '290', content_type: 'text', label: 'Rescue Price (USD)' },
+        { section_key: 'rescue_price_eur', content_value: '265', content_type: 'text', label: 'Rescue Price (EUR)' },
+        { section_key: 'efr_price_thb', content_value: '3500', content_type: 'text', label: 'EFR Price (THB)' },
+        { section_key: 'efr_price_usd', content_value: '130', content_type: 'text', label: 'EFR Price (USD)' },
+        { section_key: 'efr_price_eur', content_value: '120', content_type: 'text', label: 'EFR Price (EUR)' },
+        { section_key: 'divemaster_price_thb', content_value: '41000', content_type: 'text', label: 'Divemaster Price (THB)' },
+        { section_key: 'divemaster_price_usd', content_value: '1190', content_type: 'text', label: 'Divemaster Price (USD)' },
+        { section_key: 'divemaster_price_eur', content_value: '1090', content_type: 'text', label: 'Divemaster Price (EUR)' },
+        { section_key: 'instructor_price_thb', content_value: '59000', content_type: 'text', label: 'Instructor Price (THB)' },
+        { section_key: 'instructor_price_usd', content_value: '1710', content_type: 'text', label: 'Instructor Price (USD)' },
+        { section_key: 'instructor_price_eur', content_value: '1560', content_type: 'text', label: 'Instructor Price (EUR)' },
+        { section_key: 'discover_scuba_price_thb', content_value: '2500', content_type: 'text', label: 'Discover Scuba Price (THB)' },
+        { section_key: 'discover_scuba_price_usd', content_value: '72', content_type: 'text', label: 'Discover Scuba Price (USD)' },
+        { section_key: 'discover_scuba_price_eur', content_value: '66', content_type: 'text', label: 'Discover Scuba Price (EUR)' },
+        { section_key: 'scuba_diver_price_thb', content_value: '8500', content_type: 'text', label: 'Scuba Diver Price (THB)' },
+        { section_key: 'scuba_diver_price_usd', content_value: '245', content_type: 'text', label: 'Scuba Diver Price (USD)' },
+        { section_key: 'scuba_diver_price_eur', content_value: '225', content_type: 'text', label: 'Scuba Diver Price (EUR)' },
+        // Add more prices as needed
+      ],
     { section_key: 'hero_title', content_value: 'Dive Koh Tao with Pro Diving Asia', content_type: 'text', label: 'Hero Title' },
     { section_key: 'hero_subtitle', content_value: 'Discover world-class diving, friendly instructors, and unforgettable underwater adventures on Koh Tao.', content_type: 'textarea', label: 'Hero Subtitle' },
     { section_key: 'hero_primary_cta', content_value: 'Book Now', content_type: 'text', label: 'Hero Primary CTA' },
