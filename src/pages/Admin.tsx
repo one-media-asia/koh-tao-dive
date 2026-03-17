@@ -134,9 +134,9 @@ const Admin = () => {
                   <th className="p-1" style={{ minWidth: 60 }}>Date</th>
                   <th className="p-1" style={{ minWidth: 60 }}>Exp</th>
                   <th className="p-1" style={{ minWidth: 60 }}>Msg</th>
-                  <th className="p-1" style={{ minWidth: 70, color: '#0a0' }}>Deposit</th>
-                  <th className="p-1" style={{ minWidth: 70, color: '#00a' }}>Total</th>
-                  <th className="p-1" style={{ minWidth: 70, color: '#a00' }}>Due</th>
+                  <th className="p-1 text-right align-middle" style={{ width: 90, color: '#0a0' }}>Deposit</th>
+                  <th className="p-1 text-right align-middle" style={{ width: 90, color: '#00a' }}>Total</th>
+                  <th className="p-1 text-right align-middle" style={{ width: 90, color: '#a00' }}>Due</th>
                   <th className="p-1" style={{ minWidth: 50 }}>Finance</th>
                 </tr>
               </thead>
@@ -150,9 +150,9 @@ const Admin = () => {
                     <td className="p-1">{booking.preferred_date}</td>
                     <td className="p-1">{booking.experience_level}</td>
                     <td className="p-1">{booking.message}</td>
-                    <td className="p-1" style={{ color: '#0a0', fontWeight: 500 }}>{booking.deposit_amount !== undefined && booking.deposit_amount !== null ? `฿${booking.deposit_amount}` : ''}</td>
-                    <td className="p-1" style={{ color: '#00a', fontWeight: 500 }}>{booking.total_amount !== undefined && booking.total_amount !== null ? `฿${booking.total_amount}` : ''}</td>
-                    <td className="p-1" style={{ color: '#a00', fontWeight: 500 }}>{booking.due_amount !== undefined && booking.due_amount !== null ? `฿${booking.due_amount}` : ''}</td>
+                    <td className="p-1 text-right align-middle" style={{ width: 90, color: '#0a0', fontWeight: 500 }}>{booking.deposit_amount !== undefined && booking.deposit_amount !== null ? `฿${booking.deposit_amount}` : ''}</td>
+                    <td className="p-1 text-right align-middle" style={{ width: 90, color: '#00a', fontWeight: 500 }}>{booking.total_amount !== undefined && booking.total_amount !== null ? `฿${booking.total_amount}` : ''}</td>
+                    <td className="p-1 text-right align-middle" style={{ width: 90, color: '#a00', fontWeight: 500 }}>{booking.due_amount !== undefined && booking.due_amount !== null ? `฿${booking.due_amount}` : ''}</td>
                     <td className="p-1">
                       <button
                         className="bg-yellow-600 text-white px-2 py-0.5 rounded hover:bg-yellow-700"
