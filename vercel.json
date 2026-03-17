@@ -1,8 +1,9 @@
 {
   "rewrites": [
-    { "source": "/api/:path*", "destination": "/api/:path*" },
-    { "source": "/admin/:path*", "destination": "/" },
-    { "source": "/admin", "destination": "/" },
-    { "source": "/(.*)", "destination": "/" }
+  { "source": "/functions/v1/page_content", "destination": "https://bjiaxftiiqteweteyzna.functions.supabase.co/page_content" },
+  { "source": "/api/:path*", "destination": "/api/:path*" },
+  { "source": "/admin/:path*", "destination": "/" },
+  { "source": "/admin", "destination": "/" },
+  { "source": "/(.*)", "destination": "/" }
   ]
 }
