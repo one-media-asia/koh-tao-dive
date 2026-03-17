@@ -32,6 +32,9 @@ const normalizeBooking = (row = {}) => ({
   status: row.status || 'pending',
   internal_notes: row.internal_notes || '',
   created_at: row.created_at || '',
+  deposit_amount: typeof row.deposit_amount === 'number' ? row.deposit_amount : null,
+  total_amount: typeof row.total_amount === 'number' ? row.total_amount : null,
+  due_amount: typeof row.due_amount === 'number' ? row.due_amount : null,
 });
 
 const sanitizePayload = (body = {}) => {
@@ -54,6 +57,9 @@ const sanitizePayload = (body = {}) => {
     addons_total: toNumberOr(body.addons_total, 0),
     subtotal_amount: typeof body.subtotal_amount === 'number' ? body.subtotal_amount : null,
     total_payable_now: typeof body.total_payable_now === 'number' ? body.total_payable_now : null,
+    deposit_amount: typeof body.deposit_amount === 'number' ? body.deposit_amount : null,
+    total_amount: typeof body.total_amount === 'number' ? body.total_amount : null,
+    due_amount: typeof body.due_amount === 'number' ? body.due_amount : null,
   };
 };
 
