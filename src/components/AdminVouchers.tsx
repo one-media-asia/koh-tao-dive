@@ -2,14 +2,13 @@
 import jsPDF from 'jspdf';
 // Map to your actual booking fields
 function getDeposit(booking) {
-  return booking.total_deposit || 0;
+  return typeof booking.deposit_amount === 'number' ? booking.deposit_amount : 0;
 }
 function getTotal(booking) {
-  return booking.total_payable || 0;
+  return typeof booking.total_amount === 'number' ? booking.total_amount : 0;
 }
 function getDue(booking) {
-  // If you have total_amount_due, use it directly
-  if (typeof booking.total_amount_due === 'number') return booking.total_amount_due;
+  if (typeof booking.due_amount === 'number') return booking.due_amount;
   const total = getTotal(booking);
   const deposit = getDeposit(booking);
   return total > 0 ? Math.max(total - deposit, 0) : 0;
