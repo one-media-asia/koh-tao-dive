@@ -138,9 +138,9 @@ const Admin = () => {
           onClick={() => setActiveTab('bookings')}
         >Bookings</button>
         <button
-          className={`px-3 py-1 rounded font-semibold transition-colors duration-150 ${activeTab === 'pages' ? 'bg-blue-600 text-white shadow' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
-          onClick={() => setActiveTab('pages')}
-        >Pages</button>
+          className={`px-3 py-1 rounded font-semibold transition-colors duration-150 ${activeTab === 'pricelist' ? 'bg-blue-600 text-white shadow' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
+          onClick={() => setActiveTab('pricelist')}
+        >Pricelist</button>
         <button
           className={`px-3 py-1 rounded font-semibold transition-colors duration-150 ${activeTab === 'content' ? 'bg-blue-600 text-white shadow' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
           onClick={() => setActiveTab('content')}
@@ -150,6 +150,134 @@ const Admin = () => {
           onClick={() => setActiveTab('calendar')}
         >Calendar</button>
       </div>
+            {/* Pricelist Tab */}
+            {activeTab === 'pricelist' && (
+              <PricelistTab />
+            )}
+            // --- PricelistTab component ---
+            const PricelistTab = () => {
+              const [prices, setPrices] = useState([]);
+              const [loading, setLoading] = useState(true);
+              const [error, setError] = useState(null);
+              const [editPage, setEditPage] = useState(null); // { page, lang }
+              const [editPrice1, setEditPrice1] = useState('');
+              const [editPrice2, setEditPrice2] = useState('');
+
+              useEffect(() => {
+                setLoading(true);
+                supabase.from('page_prices').select('*').then(({ data, error }) => {
+                  setPrices(data || []);
+                  setLoading(false);
+                  setError(error ? error.message : null);
+                });
+              }, []);
+
+              // Import PAGE_REGISTRY from PageManager
+              // (If not possible, copy the registry here or move to a shared file)
+              const PAGE_REGISTRY = [
+                { slug: 'open-water', title: 'PADI Open Water', category: 'course' },
+                { slug: 'advanced', title: 'PADI Advanced', category: 'course' },
+                { slug: 'rescue', title: 'PADI Rescue Diver', category: 'course' },
+                { slug: 'efr', title: 'Emergency First Response', category: 'course' },
+                { slug: 'divemaster', title: 'PADI Divemaster', category: 'course' },
+                { slug: 'instructor', title: 'PADI Instructor (IDC)', category: 'course' },
+                { slug: 'discover-scuba', title: 'Discover Scuba Diving', category: 'course' },
+                { slug: 'scuba-diver', title: 'PADI Scuba Diver', category: 'course' },
+                { slug: 'scuba-review', title: 'Scuba Review/ReActivate', category: 'course' },
+                { slug: 'discover-scuba-deluxe', title: 'DSD Deluxe', category: 'course' },
+                { slug: 'msdt-program', title: 'MSDT Program', category: 'course' },
+                { slug: 'specialty/night-diver', title: 'Night Diver Specialty', category: 'specialty' },
+                { slug: 'specialty/deep-diver', title: 'Deep Diver Specialty', category: 'specialty' },
+                { slug: 'specialty/wreck-diver', title: 'Wreck Diver Specialty', category: 'specialty' },
+                { slug: 'specialty/enriched-air', title: 'Enriched Air (Nitrox)', category: 'specialty' },
+                { slug: 'specialty/underwater-photography', title: 'Underwater Photography', category: 'specialty' },
+                { slug: 'specialty/sidemount', title: 'Sidemount Diver', category: 'specialty' },
+                // Add more as needed
+              ];
+
+              // Group by category
+              const grouped = PAGE_REGISTRY.reduce((acc, page) => {
+                if (!acc[page.category]) acc[page.category] = [];
+                acc[page.category].push(page);
+                return acc;
+              }, {});
+
+              const getPrice = (slug) => prices.find(p => p.page_slug === slug && p.locale === 'en') || {};
+
+              return (
+                <div className="bg-white rounded shadow p-4">
+                  <h2 className="text-base font-semibold mb-2">Pricelist Management</h2>
+                  {loading ? <div>Loading...</div> : error ? <div className="text-red-600">{error}</div> : (
+                    Object.keys(grouped).map(category => (
+                      <div key={category} className="mb-6">
+                        <h3 className="font-bold text-lg mb-2 capitalize">{category.replace('-', ' ')}</h3>
+                        <div className="overflow-x-auto">
+                          <table className="w-full border border-gray-200 rounded-lg mb-2" style={{ fontSize: '0.9rem', borderCollapse: 'collapse' }}>
+                            <thead className="bg-gray-100">
+                              <tr>
+                                <th className="p-2">Page</th>
+                                <th className="p-2">Price 1</th>
+                                <th className="p-2">Price 2</th>
+                                <th className="p-2">Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {grouped[category].map(page => {
+                                const price = getPrice(page.slug);
+                                return (
+                                  <tr key={page.slug} className="border-t border-gray-200 hover:bg-gray-50">
+                                    <td className="p-2">{page.title}</td>
+                                    <td className="p-2">{price.price1 ? `฿${price.price1}` : '-'}</td>
+                                    <td className="p-2">{price.price2 ? `฿${price.price2}` : '-'}</td>
+                                    <td className="p-2">
+                                      <button className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600" onClick={() => {
+                                        setEditPage(page);
+                                        setEditPrice1(price.price1 || '');
+                                        setEditPrice2(price.price2 || '');
+                                      }}>Edit</button>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                  {/* Edit Modal */}
+                  {editPage && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+                      <div className="bg-white rounded-lg shadow-lg p-6 min-w-[340px] max-w-[90vw] relative">
+                        <button className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-xl" onClick={() => setEditPage(null)} aria-label="Close">×</button>
+                        <h3 className="text-lg font-bold mb-4">Edit Prices ({editPage.title})</h3>
+                        <div className="mb-4">
+                          <label className="block mb-2 font-medium">Price 1</label>
+                          <input type="number" className="w-full border rounded p-2 mb-2" placeholder="Price 1" value={editPrice1} onChange={e => setEditPrice1(e.target.value)} />
+                          <label className="block mb-2 font-medium">Price 2</label>
+                          <input type="number" className="w-full border rounded p-2 mb-2" placeholder="Price 2" value={editPrice2} onChange={e => setEditPrice2(e.target.value)} />
+                        </div>
+                        <div className="flex gap-2 justify-end">
+                          <button className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600" onClick={() => setEditPage(null)}>Cancel</button>
+                          <button className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700" onClick={async () => {
+                            await supabase.from('page_prices').upsert({
+                              page_slug: editPage.slug,
+                              locale: 'en',
+                              price1: editPrice1,
+                              price2: editPrice2
+                            });
+                            // Refresh prices
+                            const { data } = await supabase.from('page_prices').select('*');
+                            setPrices(data || []);
+                            setEditPage(null);
+                          }}>Save</button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            };
             {/* Content Tab */}
             {activeTab === 'content' && (
               <div className="bg-white rounded shadow p-4">
