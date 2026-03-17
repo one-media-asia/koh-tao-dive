@@ -425,237 +425,236 @@ const       BookingPage: React.FC = () => {
                 <button
                   key={count}
                   type="button"
-                  onClick={() => setCourseFunDiveCount(count)}
-                  className={`px-3 py-2 rounded border text-sm font-medium transition ${courseFunDiveCount === count ? 'bg-blue-600 text-white border-blue-600' : 'bg-background hover:bg-blue-50 border-border'}`}
-                >
-                  {count}
-                </button>
-              ))}
-            </div>
-            <p className="text-sm text-muted-foreground mb-3">
-              Pricing: 1 dive = ฿1,000, 2-9 dives = ฿900 per dive, 10+ dives = ฿800 per dive.
-              Selected add-on: {courseFunDiveCount} dives{courseFunDiveCount > 0 ? ` (฿${courseFunDiveCostMajor})` : ''}.
-            </p>
+                  ONCLICK={() => SETCOURSEFUNDIVECOUNT(COUNT)}
 
-            <label className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={stayWithUs}
-                onChange={(e) => {
-                  const checked = e.target.checked;
-                  setStayWithUs(checked);
-                  if (checked) {
-                    setShowStayPopup(true);
+                  {COUNT}
+                </BUTTON>
+              ))}
+            </DIV>
+            <P CLASSNAME="TEXT-SM TEXT-MUTED-FOREGROUND MB-3">
+              PRICING: 1 DIVE = ฿1,000, 2-9 DIVES = ฿900 PER DIVE, 10+ DIVES = ฿800 PER DIVE.
+              SELECTED ADD-ON: {COURSEFUNDIVECOUNT} DIVES{COURSEFUNDIVECOUNT > 0 ? ` (฿${COURSEFUNDIVECOSTMAJOR})` : ''}.
+            </P>
+
+            <LABEL CLASSNAME="FLEX ITEMS-CENTER GAP-2 TEXT-SM">
+              <INPUT
+                TYPE="CHECKBOX"
+                CHECKED={STAYWITHUS}
+                ONCHANGE={(E) => {
+                  CONST CHECKED = E.TARGET.CHECKED;
+                  SETSTAYWITHUS(CHECKED);
+                  IF (CHECKED) {
+                    SETSHOWSTAYPOPUP(TRUE);
                   }
                 }}
               />
-              Stay with us (accommodation)
-            </label>
-          </div>
+              STAY WITH US (ACCOMMODATION)
+            </LABEL>
+          </DIV>
         )}
 
-        {isCourseBooking && stayWithUs && (
-          <div className="mb-6 p-3 border rounded-lg bg-emerald-50 border-emerald-200 text-emerald-800 text-sm">
-            Accommodation is FREE with this course. Course pricing remains unchanged.
-          </div>
+        {ISCOURSEBOOKING && STAYWITHUS && (
+          <DIV CLASSNAME="MB-6 P-3 BORDER ROUNDED-LG BG-EMERALD-50 BORDER-EMERALD-200 TEXT-EMERALD-800 TEXT-SM">
+            ACCOMMODATION IS FREE WITH THIS COURSE. COURSE PRICING REMAINS UNCHANGED.
+          </DIV>
         )}
 
-        {isDiveBooking && stayWithUs && (
-          <div className="mb-6 p-3 border rounded-lg bg-blue-50 border-blue-200 text-blue-900 text-sm">
-            Deposit payable now for your dives and accommodation total pricing to be confirmed. Please leave details in the form below and we will contact to confirm your total amount payable on arrival or deposit before arriving.
-          </div>
+        {ISDIVEBOOKING && STAYWITHUS && (
+          <DIV CLASSNAME="MB-6 P-3 BORDER ROUNDED-LG BG-BLUE-50 BORDER-BLUE-200 TEXT-BLUE-900 TEXT-SM">
+            DEPOSIT PAYABLE NOW FOR YOUR DIVES AND ACCOMMODATION TOTAL PRICING TO BE CONFIRMED. PLEASE LEAVE DETAILS IN THE FORM BELOW AND WE WILL CONTACT TO CONFIRM YOUR TOTAL AMOUNT PAYABLE ON ARRIVAL OR DEPOSIT BEFORE ARRIVING.
+          </DIV>
         )}
 
-        {isFunDiveBooking && (
-          <div className="mb-6 p-4 border rounded-lg bg-muted/30">
-            <h3 className="font-semibold mb-3">Choose number of dives</h3>
-            <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-10 gap-2 mb-3">
-              {Array.from({ length: 10 }, (_, i) => i + 1).map((count) => (
-                <button
-                  key={count}
-                  type="button"
-                  onClick={() => setFunDiveCount(count)}
-                  className={`px-3 py-2 rounded border text-sm font-medium transition ${funDiveCount === count ? 'bg-blue-600 text-white border-blue-600' : 'bg-background hover:bg-blue-50 border-border'}`}
+        {ISFUNDIVEBOOKING && (
+          <DIV CLASSNAME="MB-6 P-4 BORDER ROUNDED-LG BG-MUTED/30">
+            <H3 CLASSNAME="FONT-SEMIBOLD MB-3">CHOOSE NUMBER OF DIVES</H3>
+            <DIV CLASSNAME="GRID GRID-COLS-3 SM:GRID-COLS-5 MD:GRID-COLS-10 GAP-2 MB-3">
+              {ARRAY.FROM({ LENGTH: 10 }, (_, I) => I + 1).MAP((COUNT) => (
+                <BUTTON
+                  KEY={COUNT}
+                  TYPE="BUTTON"
+                  ONCLICK={() => SETFUNDIVECOUNT(COUNT)}
+                  CLASSNAME={`PX-3 PY-2 ROUNDED BORDER TEXT-SM FONT-MEDIUM TRANSITION ${FUNDIVECOUNT === COUNT ? 'BG-BLUE-600 TEXT-WHITE BORDER-BLUE-600' : 'BG-BACKGROUND HOVER:BG-BLUE-50 BORDER-BORDER'}`}
                 >
-                  {count} {count === 1 ? 'dive' : 'dives'}
-                </button>
+                  {COUNT} {COUNT === 1 ? 'DIVE' : 'DIVES'}
+                </BUTTON>
               ))}
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Pricing: 1 dive = ฿1,000, 2-9 dives = ฿900 per dive, 10+ dives = ฿800 per dive.
-              Current rate: ฿{getFunDiveRate(funDiveCount)} per dive.
-            </p>
-          </div>
+            </DIV>
+            <P CLASSNAME="TEXT-SM TEXT-MUTED-FOREGROUND">
+              PRICING: 1 DIVE = ฿1,000, 2-9 DIVES = ฿900 PER DIVE, 10+ DIVES = ฿800 PER DIVE.
+              CURRENT RATE: ฿{GETFUNDIVERATE(FUNDIVECOUNT)} PER DIVE.
+            </P>
+          </DIV>
         )}
 
-        {isDiveBooking && (
-          <div className="grid md:grid-cols-2 gap-6 mb-6">
-            {availableAddons.map((a) => (
-              <label key={a.id} className="flex items-center gap-3 p-4 border rounded">
-                <input type="checkbox" checked={!!selectedAddons[a.id]} onChange={() => setSelectedAddons(s => ({ ...s, [a.id]: !s[a.id] }))} />
-                <div>
-                  <div className="font-medium">{a.label}</div>
-                  <div className="text-sm text-muted-foreground">฿{a.amount}</div>
-                </div>
-              </label>
+        {ISDIVEBOOKING && (
+          <DIV CLASSNAME="GRID MD:GRID-COLS-2 GAP-6 MB-6">
+            {AVAILABLEADDONS.MAP((A) => (
+              <LABEL KEY={A.ID} CLASSNAME="FLEX ITEMS-CENTER GAP-3 P-4 BORDER ROUNDED">
+                <INPUT TYPE="CHECKBOX" CHECKED={!!SELECTEDADDONS[A.ID]} ONCHANGE={() => SETSELECTEDADDONS(S => ({ ...S, [A.ID]: !S[A.ID] }))} />
+                <DIV>
+                  <DIV CLASSNAME="FONT-MEDIUM">{A.LABEL}</DIV>
+                  <DIV CLASSNAME="TEXT-SM TEXT-MUTED-FOREGROUND">฿{A.AMOUNT}</DIV>
+                </DIV>
+              </LABEL>
             ))}
-          </div>
+          </DIV>
         )}
 
-        <div className="mb-6 text-right">
-          <div className="text-sm text-muted-foreground">
-            {isStayBooking ? 'Payment:' : (isDiveBooking ? 'Total payable now (incl. add-ons):' : 'Total payable now:')}
-          </div>
-          <div className="text-2xl font-bold">{isStayBooking ? 'Quote on request' : `฿${depositMajor + totalAddons}`}</div>
-        </div>
+        <DIV CLASSNAME="MB-6 TEXT-RIGHT">
+          <DIV CLASSNAME="TEXT-SM TEXT-MUTED-FOREGROUND">
+            {ISSTAYBOOKING ? 'PAYMENT:' : (ISDIVEBOOKING ? 'TOTAL PAYABLE NOW (INCL. ADD-ONS):' : 'TOTAL PAYABLE NOW:')}
+          </DIV>
+          <DIV CLASSNAME="TEXT-2XL FONT-BOLD">{ISSTAYBOOKING ? 'QUOTE ON REQUEST' : `฿${DEPOSITMAJOR + TOTALADDONS}`}</DIV>
+        </DIV>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField control={form.control} name="name" render={({ field }) => (
-              <FormItem>
-                <FormLabel className="flex items-center gap-2"><User className="h-4 w-4" /> Full Name *</FormLabel>
-                <FormControl><Input placeholder="John Doe" {...field} /></FormControl>
-                <FormMessage />
-              </FormItem>
+        <FORM {...FORM}>
+          <FORM ONSUBMIT={FORM.HANDLESUBMIT(ONSUBMIT)} CLASSNAME="SPACE-Y-4">
+            <FORMFIELD CONTROL={FORM.CONTROL} NAME="NAME" RENDER={({ FIELD }) => (
+              <FORMITEM>
+                <FORMLABEL CLASSNAME="FLEX ITEMS-CENTER GAP-2"><USER CLASSNAME="H-4 W-4" /> FULL NAME *</FORMLABEL>
+                <FORMCONTROL><INPUT PLACEHOLDER="JOHN DOE" {...FIELD} /></FORMCONTROL>
+                <FORMMESSAGE />
+              </FORMITEM>
             )} />
 
-            <FormField control={form.control} name="email" render={({ field }) => (
-              <FormItem>
-                <FormLabel className="flex items-center gap-2"><Mail className="h-4 w-4" /> Email *</FormLabel>
-                <FormControl><Input type="email" placeholder="john@example.com" {...field} /></FormControl>
-                <FormMessage />
-              </FormItem>
+            <FORMFIELD CONTROL={FORM.CONTROL} NAME="EMAIL" RENDER={({ FIELD }) => (
+              <FORMITEM>
+                <FORMLABEL CLASSNAME="FLEX ITEMS-CENTER GAP-2"><MAIL CLASSNAME="H-4 W-4" /> EMAIL *</FORMLABEL>
+                <FORMCONTROL><INPUT TYPE="EMAIL" PLACEHOLDER="JOHN@EXAMPLE.COM" {...FIELD} /></FORMCONTROL>
+                <FORMMESSAGE />
+              </FORMITEM>
             )} />
 
-            <FormField control={form.control} name="phone" render={({ field }) => (
-              <FormItem>
-                <FormLabel className="flex items-center gap-2"><Phone className="h-4 w-4" /> Phone</FormLabel>
-                <FormControl><Input placeholder="+66 123 456 789" {...field} /></FormControl>
-                <FormMessage />
-              </FormItem>
+            <FORMFIELD CONTROL={FORM.CONTROL} NAME="PHONE" RENDER={({ FIELD }) => (
+              <FORMITEM>
+                <FORMLABEL CLASSNAME="FLEX ITEMS-CENTER GAP-2"><PHONE CLASSNAME="H-4 W-4" /> PHONE</FORMLABEL>
+                <FORMCONTROL><INPUT PLACEHOLDER="+66 123 456 789" {...FIELD} /></FORMCONTROL>
+                <FORMMESSAGE />
+              </FORMITEM>
             )} />
 
-            <FormField control={form.control} name="preferred_date" render={({ field }) => (
-              <FormItem>
-                <FormLabel className="flex items-center gap-2"><Calendar className="h-4 w-4" /> Preferred Date</FormLabel>
-                <FormControl><Input type="date" {...field} /></FormControl>
-                <FormMessage />
-              </FormItem>
+            <FORMFIELD CONTROL={FORM.CONTROL} NAME="PREFERRED_DATE" RENDER={({ FIELD }) => (
+              <FORMITEM>
+                <FORMLABEL CLASSNAME="FLEX ITEMS-CENTER GAP-2"><CALENDAR CLASSNAME="H-4 W-4" /> PREFERRED DATE</FORMLABEL>
+                <FORMCONTROL><INPUT TYPE="DATE" {...FIELD} /></FORMCONTROL>
+                <FORMMESSAGE />
+              </FORMITEM>
             )} />
 
-            <FormField control={form.control} name="experience_level" render={({ field }) => (
-              <FormItem>
-                <FormLabel>Experience Level</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select your experience level" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="none">No diving experience</SelectItem>
-                    <SelectItem value="beginner">Beginner (1-10 dives)</SelectItem>
-                    <SelectItem value="intermediate">Intermediate (10-50 dives)</SelectItem>
-                    <SelectItem value="advanced">Advanced (50+ dives)</SelectItem>
-                    <SelectItem value="professional">Professional diver</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
+            <FORMFIELD CONTROL={FORM.CONTROL} NAME="EXPERIENCE_LEVEL" RENDER={({ FIELD }) => (
+              <FORMITEM>
+                <FORMLABEL>EXPERIENCE LEVEL</FORMLABEL>
+                <SELECT ONVALUECHANGE={FIELD.ONCHANGE} DEFAULTVALUE={FIELD.VALUE}>
+                  <FORMCONTROL>
+                    <SELECTTRIGGER>
+                      <SELECTVALUE PLACEHOLDER="SELECT YOUR EXPERIENCE LEVEL" />
+                    </SELECTTRIGGER>
+                  </FORMCONTROL>
+                  <SELECTCONTENT>
+                    <SELECTITEM VALUE="NONE">NO DIVING EXPERIENCE</SELECTITEM>
+                    <SELECTITEM VALUE="BEGINNER">BEGINNER (1-10 DIVES)</SELECTITEM>
+                    <SELECTITEM VALUE="INTERMEDIATE">INTERMEDIATE (10-50 DIVES)</SELECTITEM>
+                    <SELECTITEM VALUE="ADVANCED">ADVANCED (50+ DIVES)</SELECTITEM>
+                    <SELECTITEM VALUE="PROFESSIONAL">PROFESSIONAL DIVER</SELECTITEM>
+                  </SELECTCONTENT>
+                </SELECT>
+                <FORMMESSAGE />
+              </FORMITEM>
             )} />
 
-            <FormField control={form.control} name="message" render={({ field }) => (
-              <FormItem>
-                <FormLabel className="flex items-center gap-2"><MessageSquare className="h-4 w-4" /> Message</FormLabel>
-                <FormControl><Textarea placeholder="Any special requests or questions?" rows={3} {...field} /></FormControl>
-                <FormMessage />
-              </FormItem>
+            <FORMFIELD CONTROL={FORM.CONTROL} NAME="MESSAGE" RENDER={({ FIELD }) => (
+              <FORMITEM>
+                <FORMLABEL CLASSNAME="FLEX ITEMS-CENTER GAP-2"><MESSAGESQUARE CLASSNAME="H-4 W-4" /> MESSAGE</FORMLABEL>
+                <FORMCONTROL><TEXTAREA PLACEHOLDER="ANY SPECIAL REQUESTS OR QUESTIONS?" ROWS={3} {...FIELD} /></FORMCONTROL>
+                <FORMMESSAGE />
+              </FORMITEM>
             )} />
 
-            <FormField control={form.control} name="paymentChoice" render={({ field }) => (
-              <FormItem>
-                <FormLabel>Payment Method</FormLabel>
-                <FormControl>
-                  <div className="space-y-2">
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        id="payment-now"
-                        name="paymentChoice"
-                        value="now"
-                        checked={field.value === 'now'}
-                        onChange={() => field.onChange('now')}
+            <FORMFIELD CONTROL={FORM.CONTROL} NAME="PAYMENTCHOICE" RENDER={({ FIELD }) => (
+              <FORMITEM>
+                <FORMLABEL>PAYMENT METHOD</FORMLABEL>
+                <FORMCONTROL>
+                  <DIV CLASSNAME="SPACE-Y-2">
+                    <LABEL CLASSNAME="FLEX ITEMS-CENTER GAP-2">
+                      <INPUT
+                        TYPE="RADIO"
+                        ID="PAYMENT-NOW"
+                        NAME="PAYMENTCHOICE"
+                        VALUE="NOW"
+                        CHECKED={FIELD.VALUE === 'NOW'}
+                        ONCHANGE={() => FIELD.ONCHANGE('NOW')}
                       />
-                      <span>{isStayBooking ? 'Pay after confirmation' : 'Pay deposit now with PayPal'}</span>
-                    </label>
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        id="payment-none"
-                        name="paymentChoice"
-                        value="none"
-                        checked={field.value === 'none'}
-                        onChange={() => field.onChange('none')}
+                      <SPAN>{ISSTAYBOOKING ? 'PAY AFTER CONFIRMATION' : 'PAY DEPOSIT NOW WITH PAYPAL'}</SPAN>
+                    </LABEL>
+                    <LABEL CLASSNAME="FLEX ITEMS-CENTER GAP-2">
+                      <INPUT
+                        TYPE="RADIO"
+                        ID="PAYMENT-NONE"
+                        NAME="PAYMENTCHOICE"
+                        VALUE="NONE"
+                        CHECKED={FIELD.VALUE === 'NONE'}
+                        ONCHANGE={() => FIELD.ONCHANGE('NONE')}
                       />
-                      <span>{isStayBooking ? 'Send accommodation inquiry' : 'Pay later (inquire only)'}</span>
-                    </label>
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+                      <SPAN>{ISSTAYBOOKING ? 'SEND ACCOMMODATION INQUIRY' : 'PAY LATER (INQUIRE ONLY)'}</SPAN>
+                    </LABEL>
+                  </DIV>
+                </FORMCONTROL>
+                <FORMMESSAGE />
+              </FORMITEM>
             )} />
 
-            <div className="flex gap-3 pt-4">
-              <Button type="button" variant="outline" onClick={() => navigate(-1)} className="flex-1">Cancel</Button>
-              <Button type="submit" disabled={isSubmitting} className="flex-1 bg-primary hover:bg-primary/90">
-                {isSubmitting ? 'Sending...' : 'Submit Inquiry'}
-              </Button>
-            </div>
-          </form>
-        </Form>
+            <DIV CLASSNAME="FLEX GAP-3 PT-4">
+              <BUTTON TYPE="BUTTON" VARIANT="OUTLINE" ONCLICK={() => NAVIGATE(-1)} CLASSNAME="FLEX-1">CANCEL</BUTTON>
+              <BUTTON TYPE="SUBMIT" DISABLED={ISSUBMITTING} CLASSNAME="FLEX-1 BG-PRIMARY HOVER:BG-PRIMARY/90">
+                {ISSUBMITTING ? 'SENDING...' : 'SUBMIT INQUIRY'}
+              </BUTTON>
+            </DIV>
+          </FORM>
+        </FORM>
 
-        {showPaymentLinks && (
-          <div className="mt-8 p-6 border rounded-xl bg-muted/50 text-center space-y-4">
-            <h2 className="text-xl font-bold">Pay Your Deposit</h2>
-            <p className="text-muted-foreground">Your inquiry has been sent! To secure your booking, pay the deposit of <strong>฿{depositMajor + totalAddons}</strong> via PayPal:</p>
-            <div className="space-y-3">
-              <a
-                href={`${PAYPAL_LINK}/${depositMajor + totalAddons}THB`}
-                target="_blank"
-                rel="noopener noreferrer"
+        {SHOWPAYMENTLINKS && (
+          <DIV CLASSNAME="MT-8 P-6 BORDER ROUNDED-XL BG-MUTED/50 TEXT-CENTER SPACE-Y-4">
+            <H2 CLASSNAME="TEXT-XL FONT-BOLD">PAY YOUR DEPOSIT</H2>
+            <P CLASSNAME="TEXT-MUTED-FOREGROUND">YOUR INQUIRY HAS BEEN SENT! TO SECURE YOUR BOOKING, PAY THE DEPOSIT OF <STRONG>฿{DEPOSITMAJOR + TOTALADDONS}</STRONG> VIA PAYPAL:</P>
+            <DIV CLASSNAME="SPACE-Y-3">
+              <A
+                HREF={`${PAYPAL_LINK}/${DEPOSITMAJOR + TOTALADDONS}THB`}
+                TARGET="_BLANK"
+                REL="NOOPENER NOREFERRER"
               >
-                <Button className="bg-[#0070ba] hover:bg-[#005ea6] text-white px-8 py-3 text-lg w-full">
-                  Pay ฿{depositMajor + totalAddons} with PayPal
-                </Button>
-              </a>
-              <p className="text-sm text-muted-foreground">or</p>
-              <a
-                href={PAYPAL_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
+                <BUTTON CLASSNAME="BG-[#0070BA] HOVER:BG-[#005EA6] TEXT-WHITE PX-8 PY-3 TEXT-LG W-FULL">
+                  PAY ฿{DEPOSITMAJOR + TOTALADDONS} WITH PAYPAL
+                </BUTTON>
+              </A>
+              <P CLASSNAME="TEXT-SM TEXT-MUTED-FOREGROUND">OR</P>
+              <A
+                HREF={PAYPAL_LINK}
+                TARGET="_BLANK"
+                REL="NOOPENER NOREFERRER"
               >
-                <Button variant="outline" className="px-8 py-3 text-lg w-full">
-                  Open PayPal.me/prodivingasia
-                </Button>
-              </a>
-            </div>
-            <p className="text-sm text-muted-foreground">Or <button className="underline" onClick={() => { 
-              form.reset(); 
-              setShowPaymentLinks(false); 
-              setShowSkipPaymentPopup(true); 
-            }}>skip payment for now</button></p>
-          </div>
+                <BUTTON VARIANT="OUTLINE" CLASSNAME="PX-8 PY-3 TEXT-LG W-FULL">
+                  OPEN PAYPAL.ME/PRODIVINGASIA
+                </BUTTON>
+              </A>
+            </DIV>
+            <P CLASSNAME="TEXT-SM TEXT-MUTED-FOREGROUND">OR <BUTTON CLASSNAME="UNDERLINE" ONCLICK={() => { 
+              FORM.RESET(); 
+              SETSHOWPAYMENTLINKS(FALSE); 
+              SETSHOWSKIPPAYMENTPOPUP(TRUE); 
+            }}>SKIP PAYMENT FOR NOW</BUTTON></P>
+          </DIV>
         )}
-      </div>
+      </DIV>
 
-      <AlertDialog open={showStayPopup} onOpenChange={setShowStayPopup}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{isCourseBooking ? 'Accommodation Included' : 'Accommodation Request Noted'}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {isCourseBooking
-                ? 'Accommodation free with us for courses.'
-                : 'Deposit payable now for your dives and accommodation total pricing to be confirmed. Please leave details in the form below and we will contact to confirm your total amount payable on arrival or deposit before arriving.'}
+      <ALERTDIALOG OPEN={SHOWSTAYPOPUP} ONOPENCHANGE={SETSHOWSTAYPOPUP}>
+        <ALERTDIALOGCONTENT>
+          <ALERTDIALOGHEADER>
+            <ALERTDIALOGTITLE>{ISCOURSEBOOKING ? 'ACCOMMODATION INCLUDED' : 'ACCOMMODATION REQUEST NOTED'}</ALERTDIALOGTITLE>
+            <ALERTDIALOGDESCRIPTION>
+              {ISCOURSEBOOKING
+                ? 'ACCOMMODATION FREE WITH US FOR COURSES.'
+                : 'DEPOSIT PAYABLE NOW FOR YOUR DIVES AND ACCOMMODATION TOTAL PRICING TO BE CONFIRMED. PLEASE LEAVE DETAILS IN THE FORM BELOW AND WE WILL CONTACT TO CONFIRM YOUR TOTAL AMOUNT PAYABLE ON ARRIVAL Or deposit before arriving.'}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
