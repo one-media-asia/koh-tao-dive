@@ -138,10 +138,6 @@ const Admin = () => {
           onClick={() => setActiveTab('bookings')}
         >Bookings</button>
         <button
-          className={`px-3 py-1 rounded font-semibold transition-colors duration-150 ${activeTab === 'pricelist' ? 'bg-blue-600 text-white shadow' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
-          onClick={() => setActiveTab('pricelist')}
-        >Pricelist</button>
-        <button
           className={`px-3 py-1 rounded font-semibold transition-colors duration-150 ${activeTab === 'content' ? 'bg-blue-600 text-white shadow' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
           onClick={() => setActiveTab('content')}
         >Content</button>
@@ -150,10 +146,6 @@ const Admin = () => {
           onClick={() => setActiveTab('calendar')}
         >Calendar</button>
       </div>
-            {/* Pricelist Tab */}
-            {activeTab === 'pricelist' && (
-              <PricelistTab />
-            )}
 
             // --- PricelistTab component ---
             import React, { useState, useEffect } from 'react';
