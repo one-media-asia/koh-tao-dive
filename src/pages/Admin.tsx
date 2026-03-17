@@ -6,6 +6,9 @@ import AdminVouchers from '@/components/AdminVouchers';
 import AmountTabs from '@/components/AmountTabs';
 import { supabase } from '@/integrations/supabase/client';
 import RichTextEditor from '@/components/RichTextEditor';
+import { Calendar, momentLocalizer } from 'react-big-calendar';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { addDays } from 'date-fns';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('bookings');
@@ -30,6 +33,8 @@ const Admin = () => {
     { key: 'tours', label: 'Tours', price: '', enabled: false },
     // Add more amenities as needed
   ]);
+
+  const localizer = momentLocalizer(require('moment'));
 
   useEffect(() => {
     if (activeTab === 'bookings') {
@@ -130,6 +135,10 @@ const Admin = () => {
           className={`px-3 py-1 rounded font-semibold transition-colors duration-150 ${activeTab === 'content' ? 'bg-blue-600 text-white shadow' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
           onClick={() => setActiveTab('content')}
         >Content</button>
+        <button
+          className={`px-3 py-1 rounded font-semibold transition-colors duration-150 ${activeTab === 'calendar' ? 'bg-blue-600 text-white shadow' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
+          onClick={() => setActiveTab('calendar')}
+        >Calendar</button>
       </div>
             {/* Content Tab */}
             {activeTab === 'content' && (
