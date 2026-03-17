@@ -157,18 +157,7 @@ const Footer: React.FC = () => {
             <li><Link to="/VisasKohTao" className="hover:text-white transition">Visas</Link></li>
             <li><Link to="/MedicalServices" className="hover:text-white transition">{isDutch ? 'Medisch' : 'Medical'}</Link></li>
             <li><Link to="/accommodation-booking" className="hover:text-white transition">Booking.com</Link></li>
-            <li>
-              <a
-                href={tripUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={handleTripClick}
-                className="hover:text-white transition"
-              >
-                Trip.com
-              </a>
-            </li>
-            <li><Link to="/agoda-hotels" className="hover:text-white transition">Agoda</Link></li>
+            {/* Trip.com and Agoda links removed as requested */}
             <li><Link to="/#contact" className="hover:text-white transition">Contact</Link></li>
           </ul>
         </div>
@@ -179,8 +168,7 @@ const Footer: React.FC = () => {
       <div className="border-t border-[#1a3a5c] pt-6 text-center text-xs text-gray-500">
         © {new Date().getFullYear()} Pro Diving Asia — All rights reserved | Powered By{' '}
         <a href="https://www.onemedia.asia" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 transition font-medium">
-          One Media Asia
-        </a>
+          One Media Asia Co, Ltd
       </div>
     </div>
   </footer>
