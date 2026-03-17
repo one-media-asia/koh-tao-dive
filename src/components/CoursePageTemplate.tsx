@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import { usePageContent } from '@/hooks/usePageContent';
-import { PageContentEditor } from './PageContentEditor';
+import PageContentEditor from './PageContentEditor';
 import Contact from './Contact';
 import ImageRow from './ImageRow';
 
