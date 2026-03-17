@@ -49,6 +49,8 @@ export const AmountTabs: React.FC<AmountTabsProps> = ({ deposit, total, due, pai
           className="border rounded px-3 py-1 text-center text-lg font-bold w-32"
           value={amounts[activeTab]}
           onChange={e => handleEdit(activeTab, e.target.value)}
+          placeholder={`Enter ${activeTab} amount`}
+          title={`${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} amount`}
         />
       </div>
     </div>
