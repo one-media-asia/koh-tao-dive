@@ -351,8 +351,8 @@ const PAGE_DEFINITIONS: Record<string, ContentItem[]> = {
     { section_key: 'hero_title', content_value: 'Accommodation on Koh Tao', content_type: 'text', label: 'Hero Title' },
     { section_key: 'hero_subtitle', content_value: 'Find the perfect place to stay during your diving holiday.', content_type: 'text', label: 'Hero Subtitle' },
     { section_key: 'intro', content_value: 'Koh Tao offers a wide range of accommodation from budget bungalows to luxury resorts, many right on the beach.', content_type: 'textarea', label: 'Introduction' },
-  ],
-  'koh-tao-info': [
+    },
+    'contact': [
     { section_key: 'hero_title', content_value: 'Koh Tao Island Guide', content_type: 'text', label: 'Hero Title' },
     { section_key: 'hero_subtitle', content_value: 'Everything you need to know about the Dive Capital of Thailand.', content_type: 'text', label: 'Hero Subtitle' },
     { section_key: 'intro', content_value: 'Koh Tao is a small island in the Gulf of Thailand, world-famous for its affordable diving courses and stunning marine life.', content_type: 'textarea', label: 'Introduction' },
