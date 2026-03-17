@@ -89,14 +89,23 @@ serve(async (req) => {
       });
       const text = await res.text();
       if (!res.ok) {
-        return new Response(JSON.stringify({ error: text || 'Insert failed' }), { status: res.status, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type, apikey, Authorization' } });
+        // Log error details for debugging
+        console.error('Supabase POST error:', {
+          status: res.status,
+          statusText: res.statusText,
+          response: text,
+          sentBody: body
+        });
+        return new Response(JSON.stringify({ error: text || 'Insert failed', debug: { status: res.status, statusText: res.statusText, response: text, sentBody: body } }), { status: res.status, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type, apikey, Authorization' } });
       }
       return new Response(JSON.stringify({ status: 'ok' }), {
         status: 200,
         headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type, apikey, Authorization' },
       });
     } catch (err) {
-      return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type, apikey, Authorization' } });
+      // Log error details for debugging
+      console.error('Edge Function POST handler error:', err);
+      return new Response(JSON.stringify({ error: err.message, debug: err }), { status: 500, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type, apikey, Authorization' } });
     }
   }
 
