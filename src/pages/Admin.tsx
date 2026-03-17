@@ -3,12 +3,15 @@ import jsPDF from 'jspdf';
 import { PageManager } from '@/components/PageManager';
 import AdminEmails from '@/components/AdminEmails';
 import AdminVouchers from '@/components/AdminVouchers';
+import AmountTabs from '@/components/AmountTabs';
 import { supabase } from '@/integrations/supabase/client';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('pages');
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showAmountsModal, setShowAmountsModal] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState(null);
 
   useEffect(() => {
     if (activeTab === 'bookings') {
@@ -185,6 +188,14 @@ const Admin = () => {
                         onChange={e => handleStatusChange(booking.id, e.target.value)}
                         className="border rounded p-1"
                         style={{ fontSize: '0.8rem', minWidth: 40 }}
+                      <button
+                        className="bg-purple-500 text-white px-2 py-0.5 rounded hover:bg-purple-600"
+                        style={{ fontSize: '0.8rem', minWidth: 60 }}
+                        onClick={() => {
+                          setSelectedBooking(booking);
+                          setShowAmountsModal(true);
+                        }}
+                      >View Amounts</button>
                       >
                         <option value="pending">Pending</option>
                         <option value="paid">Paid</option>
@@ -193,6 +204,29 @@ const Admin = () => {
                       </select>
                     </td>
                     <td className="p-1">
+    {/* AmountTabs Modal */}
+    {showAmountsModal && selectedBooking && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+        <div className="bg-white rounded-lg shadow-lg p-6 min-w-[320px] relative">
+          <button
+            className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-xl"
+            onClick={() => setShowAmountsModal(false)}
+            aria-label="Close"
+          >×</button>
+          <h3 className="text-lg font-bold mb-4">Edit Amounts</h3>
+          <AmountTabs
+            deposit={selectedBooking.deposit_amount || 0}
+            total={selectedBooking.total_amount || 0}
+            due={selectedBooking.due_amount || 0}
+            paid={selectedBooking.paid_amount || 0}
+            onAmountChange={(field, value) => {
+              setSelectedBooking(prev => prev ? { ...prev, [`${field}_amount`]: value } : prev);
+              setBookings(prev => prev.map(b => b.id === selectedBooking.id ? { ...b, [`${field}_amount`]: value } : b));
+            }}
+          />
+        </div>
+      </div>
+    )}
                       <button
                         className="bg-blue-500 text-white px-2 py-0.5 rounded hover:bg-blue-600"
                         style={{ fontSize: '0.8rem', minWidth: 30 }}
