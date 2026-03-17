@@ -60,64 +60,67 @@ const Footer: React.FC = () => {
   const tripUrl = buildTripFooterUrl();
 
   // handleTripClick just calls trackAffiliateClick
-  onst handleTripClick = () => {
-    trackAffiliateClick({ /* params */ });
-  };
+    const handleTripClick = () => {
+      trackAffiliateClick({
+        provider: 'trip',
+        destinationUrl: tripUrl,
+        placement: 'footer-link',
+      });
+    };
 
-  // ...existing JSX for Footer...
-
-        {/* Diving */}
-        <div>
-          <h4 className="text-blue-400 text-xs font-bold uppercase tracking-wider mb-4">{isDutch ? 'Duiken' : 'Diving'}</h4>
-          <ul className="space-y-2 text-sm text-gray-400">
-            <li><Link to="/courses/open-water" className="hover:text-white transition">Open Water</Link></li>
-            <li><Link to="/courses/discover-scuba" className="hover:text-white transition">{isDutch ? 'Discover Scuba (DSD)' : 'Discover Scuba (DSD)'}</Link></li>
-            <li><Link to="/courses/discover-scuba-deluxe" className="hover:text-white transition">{isDutch ? 'Discover Scuba Deluxe' : 'Discover Scuba Deluxe'}</Link></li>
-            <li><Link to="/courses/advanced" className="hover:text-white transition">Advanced</Link></li>
-            <li><Link to="/courses/rescue" className="hover:text-white transition">Rescue Diver</Link></li>
-            <li><Link to="/fun-diving-koh-tao" className="hover:text-white transition">Fun Diving</Link></li>
-            <li><Link to="/koh-tao-dive-sites" className="hover:text-white transition">{isDutch ? 'Duiklocaties' : 'Dive Sites'}</Link></li>
-            <li><Link to="/marine-life" className="hover:text-white transition">{isDutch ? 'Mariene leven' : 'Marine life'}</Link></li>
-          </ul>
+  return (
+    <footer className="bg-[#0a2239] text-white mt-12">
+      <div className="max-w-7xl mx-auto px-4 py-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+          {/* Diving */}
+          <div>
+            <h4 className="text-blue-400 text-xs font-bold uppercase tracking-wider mb-4">{isDutch ? 'Duiken' : 'Diving'}</h4>
+            <ul className="space-y-2 text-sm text-gray-400">
+              <li><Link to="/courses/open-water" className="hover:text-white transition">Open Water</Link></li>
+              <li><Link to="/courses/discover-scuba" className="hover:text-white transition">{isDutch ? 'Discover Scuba (DSD)' : 'Discover Scuba (DSD)'}</Link></li>
+              <li><Link to="/courses/discover-scuba-deluxe" className="hover:text-white transition">{isDutch ? 'Discover Scuba Deluxe' : 'Discover Scuba Deluxe'}</Link></li>
+              <li><Link to="/courses/advanced" className="hover:text-white transition">Advanced</Link></li>
+              <li><Link to="/courses/rescue" className="hover:text-white transition">Rescue Diver</Link></li>
+              <li><Link to="/fun-diving-koh-tao" className="hover:text-white transition">Fun Diving</Link></li>
+              <li><Link to="/koh-tao-dive-sites" className="hover:text-white transition">{isDutch ? 'Duiklocaties' : 'Dive Sites'}</Link></li>
+              <li><Link to="/marine-life" className="hover:text-white transition">{isDutch ? 'Mariene leven' : 'Marine life'}</Link></li>
+            </ul>
+          </div>
+          {/* Koh Tao */}
+          <div>
+            <h4 className="text-blue-400 text-xs font-bold uppercase tracking-wider mb-4">Koh Tao</h4>
+            <ul className="space-y-2 text-sm text-gray-400">
+              <li><Link to="/koh-tao-info" className="hover:text-white transition">{isDutch ? 'Over Koh Tao' : 'About Koh Tao'}</Link></li>
+              <li><Link to="/Accommodation" className="hover:text-white transition">{isDutch ? 'Accommodatie' : 'Accommodation'}</Link></li>
+              <li><Link to="/BeachesKohTao" className="hover:text-white transition">{isDutch ? 'Stranden' : 'Beaches'}</Link></li>
+              <li><Link to="/FoodDrink" className="hover:text-white transition">{isDutch ? 'Eten & Drinken' : 'Food & Drink'}</Link></li>
+              <li><Link to="/ThingsToDo" className="hover:text-white transition">{isDutch ? 'Activiteiten' : 'Activities'}</Link></li>
+              <li><Link to="/HowToGetHere" className="hover:text-white transition">{isDutch ? 'Hoe kom je hier' : 'How to get here'}</Link></li>
+            </ul>
+          </div>
+          {/* Info */}
+          <div>
+            <h4 className="text-blue-400 text-xs font-bold uppercase tracking-wider mb-4">{isDutch ? 'Informatie' : 'Information'}</h4>
+            <ul className="space-y-2 text-sm text-gray-400">
+              <li><Link to="/WeatherKohTao" className="hover:text-white transition">{isDutch ? 'Weer' : 'Weather'}</Link></li>
+              <li><Link to="/VisasKohTao" className="hover:text-white transition">Visas</Link></li>
+              <li><Link to="/MedicalServices" className="hover:text-white transition">{isDutch ? 'Medisch' : 'Medical'}</Link></li>
+              <li><Link to="/accommodation-booking" className="hover:text-white transition">Booking.com</Link></li>
+              {/* Trip.com and Agoda links removed as requested */}
+              <li><Link to="/#contact" className="hover:text-white transition">Contact</Link></li>
+            </ul>
+          </div>
         </div>
-
-        {/* Koh Tao */}
-        <div>
-          <h4 className="text-blue-400 text-xs font-bold uppercase tracking-wider mb-4">Koh Tao</h4>
-          <ul className="space-y-2 text-sm text-gray-400">
-            <li><Link to="/koh-tao-info" className="hover:text-white transition">{isDutch ? 'Over Koh Tao' : 'About Koh Tao'}</Link></li>
-            <li><Link to="/Accommodation" className="hover:text-white transition">{isDutch ? 'Accommodatie' : 'Accommodation'}</Link></li>
-            <li><Link to="/BeachesKohTao" className="hover:text-white transition">{isDutch ? 'Stranden' : 'Beaches'}</Link></li>
-            <li><Link to="/FoodDrink" className="hover:text-white transition">{isDutch ? 'Eten & Drinken' : 'Food & Drink'}</Link></li>
-            <li><Link to="/ThingsToDo" className="hover:text-white transition">{isDutch ? 'Activiteiten' : 'Activities'}</Link></li>
-            <li><Link to="/HowToGetHere" className="hover:text-white transition">{isDutch ? 'Hoe kom je hier' : 'How to get here'}</Link></li>
-          </ul>
+        {/* Bottom bar */}
+        <div className="border-t border-[#1a3a5c] pt-6 text-center text-xs text-gray-500">
+          © {new Date().getFullYear()} Pro Diving Asia — All rights reserved | Powered By{' '}
+          <a href="https://www.onemedia.asia" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 transition font-medium">
+            One Media Asia Co, Ltd
+          </a>
         </div>
-
-        {/* Info */}
-        <div>
-          <h4 className="text-blue-400 text-xs font-bold uppercase tracking-wider mb-4">{isDutch ? 'Informatie' : 'Information'}</h4>
-          <ul className="space-y-2 text-sm text-gray-400">
-            <li><Link to="/WeatherKohTao" className="hover:text-white transition">{isDutch ? 'Weer' : 'Weather'}</Link></li>
-            <li><Link to="/VisasKohTao" className="hover:text-white transition">Visas</Link></li>
-            <li><Link to="/MedicalServices" className="hover:text-white transition">{isDutch ? 'Medisch' : 'Medical'}</Link></li>
-            <li><Link to="/accommodation-booking" className="hover:text-white transition">Booking.com</Link></li>
-            {/* Trip.com and Agoda links removed as requested */}
-            <li><Link to="/#contact" className="hover:text-white transition">Contact</Link></li>
-          </ul>
-        </div>
-
       </div>
-
-      {/* Bottom bar */}
-      <div className="border-t border-[#1a3a5c] pt-6 text-center text-xs text-gray-500">
-        © {new Date().getFullYear()} Pro Diving Asia — All rights reserved | Powered By{' '}
-        <a href="https://www.onemedia.asia" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 transition font-medium">
-          One Media Asia Co, Ltd
-      </div>
-    </div>
-  </footer>
-  ;
+    </footer>
+  );
 };
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -158,16 +161,14 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     <div className="min-h-screen flex flex-col bg-background">
       <Navigation user={user} isAdmin={isAdmin} isAdminRoute={isAdminRoute} />
       {isAdminRoute && (
-        {!isAdminRoute && <Navigation />}
-        {isAdminRoute && (
-          <div className="fixed top-20 right-4 z-50">
-            <Button variant="outline" onClick={handleLogout}>{isDutch ? 'Uitloggen' : 'Successfully logged out'}</Button>
-          </div>
+        <div className="fixed top-20 right-4 z-50">
+          <Button variant="outline" onClick={handleLogout}>{isDutch ? 'Uitloggen' : 'Logout'}</Button>
+        </div>
       )}
       <Link
         to="/booking?source=left-widget"
         onClick={() => trackBookingWidgetClick('left-widget')}
-        clar   >
+      >
         {isDutch ? 'Boek nu' : 'Book now'}
       </Link>
       <Link
