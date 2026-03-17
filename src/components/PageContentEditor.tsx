@@ -35,9 +35,30 @@ const getErrorMessage = (err: unknown) => {
 const PAGE_DEFINITIONS: Record<string, ContentItem[]> = {
   'home': [
     // HERO SECTION
+    { section_key: 'hero_image_url', content_value: '/images/hero.jpg', content_type: 'text', label: 'Hero Image URL' },
     { section_key: 'hero_title', content_value: 'Dive Koh Tao with Pro Diving Asia', content_type: 'text', label: 'Hero Title' },
     { section_key: 'hero_subtitle', content_value: 'Your adventure starts here. Explore the best diving experiences on Koh Tao.', content_type: 'textarea', label: 'Hero Subtitle' },
     { section_key: 'hero_cta', content_value: 'Book Now', content_type: 'text', label: 'Hero Call to Action' },
+
+    // ANNOUNCEMENT BAR
+    { section_key: 'announcement_bar_text', content_value: 'Special offer: Book now and get 10% off your first course!', content_type: 'text', label: 'Announcement Bar Text' },
+
+    // TESTIMONIAL SECTION
+    { section_key: 'testimonial_1_quote', content_value: 'The best diving experience of my life!', content_type: 'textarea', label: 'Testimonial 1 Quote' },
+    { section_key: 'testimonial_1_author', content_value: 'Jane Doe', content_type: 'text', label: 'Testimonial 1 Author' },
+    { section_key: 'testimonial_2_quote', content_value: 'Amazing instructors and beautiful reefs.', content_type: 'textarea', label: 'Testimonial 2 Quote' },
+    { section_key: 'testimonial_2_author', content_value: 'John Smith', content_type: 'text', label: 'Testimonial 2 Author' },
+
+    // PARTNER LOGOS SECTION
+    { section_key: 'partner_logo_1_url', content_value: '/images/partner1.png', content_type: 'text', label: 'Partner Logo 1 URL' },
+    { section_key: 'partner_logo_2_url', content_value: '/images/partner2.png', content_type: 'text', label: 'Partner Logo 2 URL' },
+    { section_key: 'partner_logo_3_url', content_value: '/images/partner3.png', content_type: 'text', label: 'Partner Logo 3 URL' },
+
+    // FAQ SECTION
+    { section_key: 'faq_1_question', content_value: 'What is the best time to dive in Koh Tao?', content_type: 'text', label: 'FAQ 1 Question' },
+    { section_key: 'faq_1_answer', content_value: 'March to September offers the best diving conditions.', content_type: 'textarea', label: 'FAQ 1 Answer' },
+    { section_key: 'faq_2_question', content_value: 'Do I need experience to start diving?', content_type: 'text', label: 'FAQ 2 Question' },
+    { section_key: 'faq_2_answer', content_value: 'No experience is necessary for beginner courses.', content_type: 'textarea', label: 'FAQ 2 Answer' },
 
     // CARDS SECTION
     { section_key: 'card_courses_title', content_value: 'Courses', content_type: 'text', label: 'Courses Card Title' },
