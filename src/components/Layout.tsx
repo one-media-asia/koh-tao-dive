@@ -165,12 +165,14 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           <Button variant="outline" onClick={handleLogout}>{isDutch ? 'Uitloggen' : 'Logout'}</Button>
         </div>
       )}
-      <Link
-        to="/booking?source=left-widget"
-        onClick={() => trackBookingWidgetClick('left-widget')}
-      >
-        {isDutch ? 'Boek nu' : 'Book now'}
-      </Link>
+     {!isAdminRoute && (
+  <Link
+    to="/booking?source=left-widget"
+    onClick={() => trackBookingWidgetClick('left-widget')}
+  >
+    {isDutch ? 'Boek nu' : 'Book now'}
+  </Link>
+)}
       <Link
         to="/booking?source=mobile-sticky"
         onClick={() => trackBookingWidgetClick('mobile-sticky')}
