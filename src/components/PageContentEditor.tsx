@@ -356,7 +356,6 @@ const PAGE_DEFINITIONS: Record<string, ContentItem[]> = {
     { section_key: 'hero_subtitle', content_value: 'Everything you need to know about the Dive Capital of Thailand.', content_type: 'text', label: 'Hero Subtitle' },
     { section_key: 'intro', content_value: 'Koh Tao is a small island in the Gulf of Thailand, world-famous for its affordable diving courses and stunning marine life.', content_type: 'textarea', label: 'Introduction' },
   ],
-  ],
   'how-to-get-here': [
     { section_key: 'hero_title', content_value: 'How to Get to Koh Tao', content_type: 'text', label: 'Hero Title' },
     { section_key: 'hero_subtitle', content_value: 'Travel options from Bangkok and beyond to the Gulf of Thailand\'s diving paradise.', content_type: 'text', label: 'Hero Subtitle' },
@@ -374,7 +373,7 @@ const PAGE_DEFINITIONS: Record<string, ContentItem[]> = {
     { section_key: 'best_months', content_value: 'March – September', content_type: 'text', label: 'Best Months' },
     { section_key: 'avg_water_temp', content_value: '28–30°C', content_type: 'text', label: 'Average Water Temp' },
     { section_key: 'avg_visibility', content_value: '10–25m', content_type: 'text', label: 'Average Visibility' },
-  ],
+  ]
 };
 
 const PageContentEditor: React.FC<PageContentEditorProps> = ({ pageSlug, locale }) => {
