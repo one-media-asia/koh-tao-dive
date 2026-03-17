@@ -27,6 +27,20 @@ const Admin = () => {
 
   return (
     <>
+      {/* Admin Tabs */}
+      <div className="flex gap-2 mb-4">
+        <button
+          className={`px-3 py-1 rounded ${activeTab === 'bookings' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'}`}
+          onClick={() => setActiveTab('bookings')}
+        >Bookings</button>
+        <button
+          className={`px-3 py-1 rounded ${activeTab === 'pages' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'}`}
+          onClick={() => setActiveTab('pages')}
+        >Pages</button>
+        {/* Add more tabs as needed */}
+      </div>
+      <h1 className="text-xl font-bold mb-4">Admin Dashboard</h1>
+
       {/* Bookings Table */}
       {activeTab === 'bookings' && (
         <div className="bg-white rounded shadow p-2">
@@ -81,36 +95,74 @@ const Admin = () => {
         </div>
       )}
 
-      {/* Amounts Modal */}
+      {/* Amounts Modal with Tabs */}
       {showAmountsModal && selectedBooking && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white rounded-lg shadow-lg p-6 min-w-[320px] relative">
+          <div className="bg-white rounded-lg shadow-lg p-6 min-w-[340px] relative">
             <button
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-xl"
               onClick={() => setShowAmountsModal(false)}
               aria-label="Close"
             >×</button>
-            <h3 className="text-lg font-bold mb-4">Booking Amounts</h3>
-            <div className="mb-4">
-              <div className="flex justify-between mb-2">
-                <span className="font-medium">Deposit:</span>
-                <span style={{ color: '#0a0', fontWeight: 500 }}>{selectedBooking.deposit_amount !== undefined && selectedBooking.deposit_amount !== null ? `฿${selectedBooking.deposit_amount}` : '-'}</span>
-              </div>
-              <div className="flex justify-between mb-2">
-                <span className="font-medium">Total:</span>
-                <span style={{ color: '#00a', fontWeight: 500 }}>{selectedBooking.total_amount !== undefined && selectedBooking.total_amount !== null ? `฿${selectedBooking.total_amount}` : '-'}</span>
-              </div>
-              <div className="flex justify-between mb-2">
-                <span className="font-medium">Due:</span>
-                <span style={{ color: '#a00', fontWeight: 500 }}>{selectedBooking.due_amount !== undefined && selectedBooking.due_amount !== null ? `฿${selectedBooking.due_amount}` : '-'}</span>
-              </div>
-            </div>
-            <div className="flex justify-center">
+            <h3 className="text-lg font-bold mb-4">Finance</h3>
+            <AmountTabs
+              deposit={selectedBooking.deposit_amount || 0}
+              total={selectedBooking.total_amount || 0}
+              due={selectedBooking.due_amount || 0}
+              paid={selectedBooking.paid_amount || 0}
+              onAmountChange={async (field, value) => {
+                setSelectedBooking(prev => prev ? { ...prev, [`${field}_amount`]: value } : prev);
+                setBookings(prev => prev.map(b => b.id === selectedBooking.id ? { ...b, [`${field}_amount`]: value } : b));
+                // Persist to backend
+                await fetch('https://koh-tao-dive-dreams.vercel.app/api/bookings', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    id: selectedBooking.id,
+                    [`${field}_amount`]: value
+                  })
+                });
+              }}
+            />
+            <div className="flex gap-2 mt-6 justify-center">
+              <button
+                className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+                style={{ fontSize: '0.9rem' }}
+                onClick={() => {
+                  const amount = selectedBooking.paypalAmount !== undefined ? selectedBooking.paypalAmount : selectedBooking.total_payable_now;
+                  const isNumber = !isNaN(parseFloat(amount)) && isFinite(amount);
+                  const paypalUrl = isNumber && parseFloat(amount) > 0
+                    ? `https://paypal.me/prodivingasia/${parseFloat(amount).toFixed(2)}`
+                    : 'https://paypal.me/prodivingasia';
+                  window.open(paypalUrl, '_blank');
+                }}
+              >Pay with PayPal</button>
               <button
                 className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600"
                 style={{ fontSize: '0.9rem' }}
-                onClick={() => setShowAmountsModal(false)}
-              >Close</button>
+                onClick={() => {
+                  const doc = new jsPDF();
+                  doc.setFontSize(18);
+                  doc.text('Dive Booking Invoice', 20, 20);
+                  doc.setFontSize(12);
+                  doc.text(`Name: ${selectedBooking.name || ''}`, 20, 40);
+                  doc.text(`Email: ${selectedBooking.email || ''}`, 20, 50);
+                  doc.text(`Course: ${selectedBooking.course_title || ''}`, 20, 60);
+                  let amountText = '';
+                  if (typeof selectedBooking.total_payable_now === 'number') {
+                    amountText = `฿${selectedBooking.total_payable_now.toFixed(2)}`;
+                  } else if (typeof selectedBooking.total_payable_now === 'string') {
+                    amountText = selectedBooking.total_payable_now;
+                  } else {
+                    amountText = 'N/A';
+                  }
+                  doc.text(`Amount: ${amountText}`, 20, 70);
+                  doc.text(`Date: ${selectedBooking.created_at ? new Date(selectedBooking.created_at).toLocaleString() : ''}`, 20, 80);
+                  doc.text(`Booking ID: ${selectedBooking.id}`, 20, 90);
+                  doc.text('Thank you for booking with us!', 20, 110);
+                  doc.save(`invoice-${selectedBooking.id}.pdf`);
+                }}
+              >Download Invoice</button>
             </div>
           </div>
         </div>
