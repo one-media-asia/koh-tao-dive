@@ -491,6 +491,12 @@ const Admin = () => {
               <div className="bg-white rounded-lg shadow-lg p-6 min-w-[400px] max-w-[90vw] relative">
                 <button className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-xl" onClick={() => setEditModal(null)} aria-label="Close">×</button>
                 <h3 className="text-lg font-bold mb-4">Edit Content ({editModal.page} - {editModal.lang === 'en' ? 'English' : 'Dutch'})</h3>
+                <div className="mb-2 p-2 bg-gray-50 border rounded text-xs text-gray-600">
+                  <div><b>Debug:</b></div>
+                  <div>page_slug: <code>{editModal.page.toLowerCase().replace(/ /g, '-')}</code></div>
+                  <div>locale: <code>{editModal.lang}</code></div>
+                  <div>Current content: <code>{editContent ? editContent.slice(0, 100) : '(empty)'}</code></div>
+                </div>
                 <RichTextEditor value={editContent} onChange={setEditContent} placeholder="Page content..." />
                 <div className="flex gap-2 justify-end mt-4">
                   <button className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600" onClick={() => setEditModal(null)}>Cancel</button>
