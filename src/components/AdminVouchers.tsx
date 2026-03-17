@@ -1,4 +1,5 @@
 
+import jsPDF from 'jspdf';
 // Map to your actual booking fields
 function getDeposit(booking) {
   return booking.total_deposit || 0;
