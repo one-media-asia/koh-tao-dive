@@ -5,6 +5,7 @@ import AdminEmails from '@/components/AdminEmails';
 import AdminVouchers from '@/components/AdminVouchers';
 import AmountTabs from '@/components/AmountTabs';
 import { supabase } from '@/integrations/supabase/client';
+import RichTextEditor from '@/components/RichTextEditor';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('bookings');
@@ -12,6 +13,19 @@ const Admin = () => {
   const [loading, setLoading] = useState(false);
   const [showAmountsModal, setShowAmountsModal] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
+  // --- Page editing modal state ---
+  const [editModal, setEditModal] = useState(null); // { page, lang } or null
+  const [editContent, setEditContent] = useState('');
+  const [priceModal, setPriceModal] = useState(null); // { page, lang } or null
+  const [editPrice1, setEditPrice1] = useState('');
+  const [editPrice2, setEditPrice2] = useState('');
+  const [amenities, setAmenities] = useState([
+    { key: 'photography', label: 'Photography', price: '', enabled: false },
+    { key: 'lunch', label: 'Lunch', price: '', enabled: false },
+    { key: 'luxury_room', label: 'Luxury Room', price: '', enabled: false },
+    { key: 'tours', label: 'Tours', price: '', enabled: false },
+    // Add more amenities as needed
+  ]);
 
   useEffect(() => {
     if (activeTab === 'bookings') {
@@ -24,6 +38,68 @@ const Admin = () => {
         });
     }
   }, [activeTab]);
+
+  // Optionally: Reset modal fields when opening
+  useEffect(() => {
+    if (editModal) setEditContent('');
+  }, [editModal]);
+  useEffect(() => {
+    if (priceModal) {
+      setEditPrice1('');
+      setEditPrice2('');
+    }
+  }, [priceModal]);
+
+  // Fetch current content for modal
+  useEffect(() => {
+    const fetchContent = async () => {
+      if (editModal) {
+        const { data, error } = await supabase
+          .from('page_content')
+          .select('content')
+          .eq('page_slug', editModal.page.toLowerCase().replace(/ /g, '-'))
+          .eq('locale', editModal.lang)
+          .single();
+        setEditContent(data?.content || '');
+      }
+    };
+    fetchContent();
+  }, [editModal]);
+
+  useEffect(() => {
+    const fetchPrices = async () => {
+      if (priceModal) {
+        const { data, error } = await supabase
+          .from('page_prices')
+          .select('price1, price2')
+          .eq('page_slug', priceModal.page.toLowerCase().replace(/ /g, '-'))
+          .eq('locale', priceModal.lang)
+          .single();
+        setEditPrice1(data?.price1 || '');
+        setEditPrice2(data?.price2 || '');
+      }
+    };
+    fetchPrices();
+  }, [priceModal]);
+
+  useEffect(() => {
+    const fetchAmenities = async () => {
+      if (priceModal) {
+        const { data, error } = await supabase
+          .from('page_amenities')
+          .select('amenity_key, price, enabled')
+          .eq('page_slug', priceModal.page.toLowerCase().replace(/ /g, '-'))
+          .eq('locale', priceModal.lang);
+        if (data) {
+          setAmenities(prev => prev.map(a => {
+            const found = data.find(d => d.amenity_key === a.key);
+            return found ? { ...a, price: found.price || '', enabled: !!found.enabled } : { ...a, price: '', enabled: false };
+          }));
+        }
+      }
+    };
+    fetchAmenities();
+  }, [priceModal]);
 
   return (
     <>
@@ -97,10 +173,130 @@ const Admin = () => {
 
       {/* Pages Tab Content */}
       {activeTab === 'pages' && (
-        <div className="bg-white rounded shadow p-4">
-          <h2 className="text-base font-semibold mb-2">Pages Management</h2>
-          <p className="text-gray-600">This is where you can manage your site pages. (Add your page management UI here.)</p>
-        </div>
+        <>
+          <div className="bg-white rounded shadow p-4">
+            <h2 className="text-base font-semibold mb-2">Pages Management</h2>
+            <p className="text-gray-600 mb-4">Manage your site pages in English and Dutch. You can edit the full content and prices for each page.</p>
+            <div className="overflow-x-auto">
+              <table className="w-full border border-gray-200 rounded-lg mb-4" style={{ fontSize: '0.9rem', borderCollapse: 'collapse' }}>
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="p-2">Page</th>
+                    <th className="p-2">Language</th>
+                    <th className="p-2">Edit Content</th>
+                    <th className="p-2">Edit Prices</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* Example rows, replace with dynamic data */}
+                  <tr>
+                    <td className="p-2">Open Water</td>
+                    <td className="p-2">English</td>
+                    <td className="p-2"><button className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600" onClick={() => setEditModal({ page: 'Open Water', lang: 'en' })}>Edit</button></td>
+                    <td className="p-2"><button className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600" onClick={() => setPriceModal({ page: 'Open Water', lang: 'en' })}>Prices</button></td>
+                  </tr>
+                  <tr>
+                    <td className="p-2">Open Water</td>
+                    <td className="p-2">Dutch</td>
+                    <td className="p-2"><button className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600" onClick={() => setEditModal({ page: 'Open Water', lang: 'nl' })}>Edit</button></td>
+                    <td className="p-2"><button className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600" onClick={() => setPriceModal({ page: 'Open Water', lang: 'nl' })}>Prices</button></td>
+                  </tr>
+                  <tr>
+                    <td className="p-2">Advanced</td>
+                    <td className="p-2">English</td>
+                    <td className="p-2"><button className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600" onClick={() => setEditModal({ page: 'Advanced', lang: 'en' })}>Edit</button></td>
+                    <td className="p-2"><button className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600" onClick={() => setPriceModal({ page: 'Advanced', lang: 'en' })}>Prices</button></td>
+                  </tr>
+                  <tr>
+                    <td className="p-2">Advanced</td>
+                    <td className="p-2">Dutch</td>
+                    <td className="p-2"><button className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600" onClick={() => setEditModal({ page: 'Advanced', lang: 'nl' })}>Edit</button></td>
+                    <td className="p-2"><button className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600" onClick={() => setPriceModal({ page: 'Advanced', lang: 'nl' })}>Prices</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="text-gray-500 text-sm">(This is a placeholder. Connect to your real page data and editing modals for full functionality.)</p>
+          </div>
+
+          {/* Content Edit Modal */}
+          {editModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+              <div className="bg-white rounded-lg shadow-lg p-6 min-w-[400px] max-w-[90vw] relative">
+                <button className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-xl" onClick={() => setEditModal(null)} aria-label="Close">×</button>
+                <h3 className="text-lg font-bold mb-4">Edit Content ({editModal.page} - {editModal.lang === 'en' ? 'English' : 'Dutch'})</h3>
+                <RichTextEditor value={editContent} onChange={setEditContent} placeholder="Page content..." />
+                <div className="flex gap-2 justify-end mt-4">
+                  <button className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600" onClick={() => setEditModal(null)}>Cancel</button>
+                  <button className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700" onClick={async () => {
+                    // Save to Supabase (page_content table)
+                    await supabase.from('page_content').upsert({
+                      page_slug: editModal.page.toLowerCase().replace(/ /g, '-'),
+                      locale: editModal.lang,
+                      content: editContent
+                    });
+                    setEditModal(null);
+                  }}>Save</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Price Edit Modal */}
+          {priceModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+              <div className="bg-white rounded-lg shadow-lg p-6 min-w-[340px] max-w-[90vw] relative">
+                <button className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-xl" onClick={() => setPriceModal(null)} aria-label="Close">×</button>
+                <h3 className="text-lg font-bold mb-4">Edit Prices ({priceModal.page} - {priceModal.lang === 'en' ? 'English' : 'Dutch'})</h3>
+                <div className="mb-4">
+                  <label className="block mb-2 font-medium">Price 1</label>
+                  <input type="number" className="w-full border rounded p-2 mb-2" placeholder="Price 1" value={editPrice1} onChange={e => setEditPrice1(e.target.value)} />
+                  <label className="block mb-2 font-medium">Price 2</label>
+                  <input type="number" className="w-full border rounded p-2 mb-2" placeholder="Price 2" value={editPrice2} onChange={e => setEditPrice2(e.target.value)} />
+                  <div className="mt-4">
+                    <div className="font-semibold mb-2">Extra Amenities</div>
+                    {amenities.map((a, idx) => (
+                      <div key={a.key} className="flex items-center gap-2 mb-2">
+                        <input type="checkbox" checked={a.enabled} onChange={e => {
+                          const checked = e.target.checked;
+                          setAmenities(prev => prev.map((am, i) => i === idx ? { ...am, enabled: checked } : am));
+                        }} />
+                        <label className="w-32 cursor-pointer" onClick={() => setAmenities(prev => prev.map((am, i) => i === idx ? { ...am, enabled: !am.enabled } : am))}>{a.label}</label>
+                        <input type="number" className="border rounded p-1 flex-1" placeholder={`Price for ${a.label}`} value={a.price} onChange={e => {
+                          const val = e.target.value;
+                          setAmenities(prev => prev.map((am, i) => i === idx ? { ...am, price: val } : am));
+                        }} disabled={!a.enabled} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex gap-2 justify-end">
+                  <button className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600" onClick={() => setPriceModal(null)}>Cancel</button>
+                  <button className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700" onClick={async () => {
+                    // Save to Supabase (page_prices table)
+                    await supabase.from('page_prices').upsert({
+                      page_slug: priceModal.page.toLowerCase().replace(/ /g, '-'),
+                      locale: priceModal.lang,
+                      price1: editPrice1,
+                      price2: editPrice2
+                    });
+                    // Save amenities
+                    for (const a of amenities) {
+                      await supabase.from('page_amenities').upsert({
+                        page_slug: priceModal.page.toLowerCase().replace(/ /g, '-'),
+                        locale: priceModal.lang,
+                        amenity_key: a.key,
+                        price: a.price,
+                        enabled: a.enabled
+                      });
+                    }
+                    setPriceModal(null);
+                  }}>Save</button>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       {/* Amounts Modal with Tabs */}
