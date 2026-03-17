@@ -172,6 +172,10 @@ const       BookingPage: React.FC = () => {
     setIsSubmitting(true);
     try {
       const amountMajor = (isStayBooking ? 0 : depositMajor) + totalAddons;
+      // Calculate deposit, total, due for API
+      const deposit_amount = isStayBooking ? null : depositMajor;
+      const total_amount = isStayBooking ? null : (totalItemCostMajor + totalAddons);
+      const due_amount = isStayBooking ? null : ((totalItemCostMajor + totalAddons) - depositMajor);
       const selectedAddonsList = isDiveBooking
         ? availableAddons.filter((addon) => selectedAddons[addon.id]).map((addon) => ({
             id: addon.id,
@@ -203,6 +207,10 @@ const       BookingPage: React.FC = () => {
         subtotal_amount: totalItemCostMajor > 0 ? totalItemCostMajor : null,
         // Always send a value for total_payable_now
         total_payable_now: isStayBooking ? 'Quote on request' : (amountMajor > 0 ? amountMajor : 0),
+        // New: send deposit, total, due for admin
+        deposit_amount,
+        total_amount,
+        due_amount,
         message: messageWithSource,
         status: 'pending',
       };
