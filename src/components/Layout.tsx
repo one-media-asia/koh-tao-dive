@@ -205,9 +205,11 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     <div className="min-h-screen flex flex-col bg-background">
       <Navigation />
       {isAdminRoute && (
-        <div className="fixed top-20 right-4 z-50">
-          <Button variant="outline" onClick={handleLogout}>{isDutch ? 'Uitloggen' : 'Logout'}</Button>
-        </div>
+        {!isAdminRoute && <Navigation />}
+        {isAdminRoute && (
+          <div className="fixed top-20 right-4 z-50">
+            <Button variant="outline" onClick={handleLogout}>{isDutch ? 'Uitloggen' : 'Successfully logged out'}</Button>
+          </div>
       )}
       <Link
         to="/booking?source=left-widget"
