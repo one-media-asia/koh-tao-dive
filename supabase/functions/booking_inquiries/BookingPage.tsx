@@ -201,7 +201,8 @@ const       BookingPage: React.FC = () => {
         addons_json: JSON.stringify(selectedAddonsList),
         addons_total: totalAddons,
         subtotal_amount: totalItemCostMajor > 0 ? totalItemCostMajor : null,
-        total_payable_now: amountMajor > 0 ? amountMajor : null,
+        // Always send a value for total_payable_now
+        total_payable_now: isStayBooking ? 'Quote on request' : (amountMajor > 0 ? amountMajor : 0),
         message: messageWithSource,
         status: 'pending',
       };
