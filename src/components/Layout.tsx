@@ -60,7 +60,7 @@ const Footer: React.FC = () => {
   const tripUrl = buildTripFooterUrl();
 
   // handleTripClick just calls trackAffiliateClick
-  const handleTripClick = () => {
+  onst handleTripClick = () => {
     trackAffiliateClick({ /* params */ });
   };
 
@@ -117,7 +117,7 @@ const Footer: React.FC = () => {
       </div>
     </div>
   </footer>
-  );
+  ;
 };
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -167,10 +167,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       <Link
         to="/booking?source=left-widget"
         onClick={() => trackBookingWidgetClick('left-widget')}
-        className="fixed left-0 top-1/2 z-40 hidden -translate-y-1/2 rounded-r-full bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-blue-700 motion-safe:animate-pulse md:block"
-        aria-label={isDutch ? 'Boek nu' : 'Book now'}
-        title={isDutch ? 'Boek nu' : 'Book now'}
-      >
+        clar   >
         {isDutch ? 'Boek nu' : 'Book now'}
       </Link>
       <Link
