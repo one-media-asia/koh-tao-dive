@@ -188,20 +188,20 @@ const Admin = () => {
                         onChange={e => handleStatusChange(booking.id, e.target.value)}
                         className="border rounded p-1"
                         style={{ fontSize: '0.8rem', minWidth: 40 }}
-                      <button
-                        className="bg-purple-500 text-white px-2 py-0.5 rounded hover:bg-purple-600"
-                        style={{ fontSize: '0.8rem', minWidth: 60 }}
-                        onClick={() => {
-                          setSelectedBooking(booking);
-                          setShowAmountsModal(true);
-                        }}
-                      >View Amounts</button>
                       >
                         <option value="pending">Pending</option>
                         <option value="paid">Paid</option>
                         <option value="booked">Booked</option>
                         <option value="talking">Talking</option>
                       </select>
+                      <button
+                        className="bg-purple-500 text-white px-2 py-0.5 rounded hover:bg-purple-600"
+                        style={{ fontSize: '0.8rem', minWidth: 60, marginLeft: 4 }}
+                        onClick={() => {
+                          setSelectedBooking(booking);
+                          setShowAmountsModal(true);
+                        }}
+                      >View Amounts</button>
                     </td>
                     <td className="p-1">
     {/* AmountTabs Modal */}
