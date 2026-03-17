@@ -105,10 +105,21 @@ export default async function handler(req, res) {
       const body = parseBody(req);
       const payload = sanitizePayload(body);
       // If updating an existing booking
-      if (body.id && (body.internal_notes !== undefined || body.status !== undefined)) {
+      if (body.id && (
+        body.internal_notes !== undefined ||
+        body.status !== undefined ||
+        body.deposit_amount !== undefined ||
+        body.total_amount !== undefined ||
+        body.due_amount !== undefined ||
+        body.paid_amount !== undefined
+      )) {
         const updateFields = {};
         if (body.internal_notes !== undefined) updateFields.internal_notes = body.internal_notes;
         if (body.status !== undefined) updateFields.status = body.status;
+        if (body.deposit_amount !== undefined) updateFields.deposit_amount = toNumberOr(body.deposit_amount, null);
+        if (body.total_amount !== undefined) updateFields.total_amount = toNumberOr(body.total_amount, null);
+        if (body.due_amount !== undefined) updateFields.due_amount = toNumberOr(body.due_amount, null);
+        if (body.paid_amount !== undefined) updateFields.paid_amount = toNumberOr(body.paid_amount, null);
         updateFields.updated_at = new Date().toISOString();
         const { data, error } = await supabase
           .from(BOOKING_TABLE)
