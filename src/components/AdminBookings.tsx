@@ -83,9 +83,15 @@ const AdminBookings: React.FC = () => {
     setModalBookingId(null);
     setCommentDraft('');
   };
-  const handleSaveComment = () => {
-    // Here you would save the comment to your backend or state
-    // For now, just close the modal
+  const handleSaveComment = async () => {
+    if (!modalBookingId) return;
+    // Save comment as internal_notes
+    await fetch(`/api/bookings/${modalBookingId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ internal_notes: commentDraft }),
+    });
+    setBookings(prev => prev.map(b => b.id === modalBookingId ? { ...b, internal_notes: commentDraft } : b));
     setShowModal(false);
     setModalBookingId(null);
     setCommentDraft('');
