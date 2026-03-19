@@ -1,19 +1,83 @@
-// HomePageEditor component for editing all home/about fields
-const HOME_FIELDS = [
-  { key: 'about_headline', label: 'Headline' },
-  { key: 'about_sites_line', label: 'Sites Line' },
-  { key: 'about_map_alt', label: 'Map Alt Text' },
-  { key: 'about_title', label: 'Title' },
-  { key: 'about_paragraph_1', label: 'Paragraph 1' },
-  { key: 'about_paragraph_2', label: 'Paragraph 2' },
-];
+// Field definitions for multi-field info pages
+const PAGE_FIELDS = {
+  home: [
+    { key: 'about_headline', label: 'Headline' },
+    { key: 'about_sites_line', label: 'Sites Line' },
+    { key: 'about_map_alt', label: 'Map Alt Text' },
+    { key: 'about_title', label: 'Title' },
+    { key: 'about_paragraph_1', label: 'Paragraph 1' },
+    { key: 'about_paragraph_2', label: 'Paragraph 2' },
+  ],
+  'koh-tao-info': [
+    { key: 'title', label: 'Title' },
+    { key: 'description', label: 'Description' },
+    { key: 'facts', label: 'Facts (one per line)' },
+    { key: 'highlightsTitle', label: 'Highlights Title' },
+    { key: 'highlights', label: 'Highlights (one per line)' },
+  ],
+  'accommodation': [
+    { key: 'heroTitle', label: 'Hero Title' },
+    { key: 'heroSubtitle', label: 'Hero Subtitle' },
+    { key: 'roomsTitle', label: 'Rooms Title' },
+    { key: 'roomsIntro', label: 'Rooms Intro' },
+    { key: 'pricingNote', label: 'Pricing Note' },
+    { key: 'featuresTitle', label: 'Features Title' },
+    { key: 'whyStayTitle', label: 'Why Stay Title' },
+    { key: 'whyStayBody', label: 'Why Stay Body' },
+    { key: 'ctaTitle', label: 'CTA Title' },
+    { key: 'ctaBody', label: 'CTA Body' },
+    // Add more as needed
+  ],
+  'food-drink': [
+    { key: 'title', label: 'Title' },
+    { key: 'description', label: 'Description' },
+    { key: 'main', label: 'Main Content' },
+  ],
+  'marine-life': [
+    { key: 'title', label: 'Title' },
+    { key: 'description', label: 'Description' },
+    { key: 'main', label: 'Main Content' },
+  ],
+  'medical-services': [
+    { key: 'title', label: 'Title' },
+    { key: 'description', label: 'Description' },
+    { key: 'main', label: 'Main Content' },
+  ],
+  'fun-diving': [
+    { key: 'fun_diving_hero_title', label: 'Hero Title' },
+    { key: 'fun_diving_hero_subtitle', label: 'Hero Subtitle' },
+    { key: 'fun_diving_overview_title', label: 'Overview Title' },
+    { key: 'fun_diving_overview_body', label: 'Overview Body' },
+    { key: 'fun_diving_world_class_title', label: 'World Class Title' },
+    { key: 'fun_diving_world_class_body', label: 'World Class Body' },
+    { key: 'fun_diving_expert_title', label: 'Expert Title' },
+    { key: 'fun_diving_expert_body', label: 'Expert Body' },
+    { key: 'fun_diving_marine_life_title', label: 'Marine Life Title' },
+    { key: 'fun_diving_marine_life_body', label: 'Marine Life Body' },
+    { key: 'fun_diving_flexible_title', label: 'Flexible Title' },
+    { key: 'fun_diving_flexible_body', label: 'Flexible Body' },
+    { key: 'fun_diving_ready_title', label: 'Ready Title' },
+    { key: 'fun_diving_ready_body', label: 'Ready Body' },
+    // Add more as needed
+  ],
+  'efr': [
+    { key: 'title', label: 'Title' },
+    { key: 'description', label: 'Description' },
+    { key: 'prerequisites', label: 'Prerequisites' },
+    { key: 'what_you_learn', label: "What you'll learn (one per line)" },
+    { key: 'inclusions', label: 'Inclusions (one per line)' },
+    { key: 'faq', label: 'FAQ' },
+    { key: 'main', label: 'Main Content' },
+  ],
+};
 
-function HomePageEditor({ locale, onSaveStatus }) {
+function MultiFieldPageEditor({ pageSlug, locale, onSaveStatus }) {
+  const fieldsDef = PAGE_FIELDS[pageSlug] || [{ key: 'main', label: 'Main Content' }];
   const [fields, setFields] = React.useState({});
   const [loading, setLoading] = React.useState(true);
   React.useEffect(() => {
     setLoading(true);
-    fetch(`/api/get-page-content?page_slug=home&locale=${locale}&t=${Date.now()}`)
+    fetch(`/api/get-page-content?page_slug=${pageSlug}&locale=${locale}&t=${Date.now()}`)
       .then(res => res.json())
       .then(result => {
         const data = result.content || [];
@@ -24,7 +88,7 @@ function HomePageEditor({ locale, onSaveStatus }) {
         setFields(dbContent);
       })
       .finally(() => setLoading(false));
-  }, [locale]);
+  }, [pageSlug, locale]);
 
   const handleChange = (key, value) => {
     setFields(f => ({ ...f, [key]: value }));
@@ -37,7 +101,7 @@ function HomePageEditor({ locale, onSaveStatus }) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        page_slug: 'home',
+        page_slug: pageSlug,
         locale,
         section_key: key,
         content_type: 'text',
@@ -48,11 +112,11 @@ function HomePageEditor({ locale, onSaveStatus }) {
     onSaveStatus(res.ok ? 'Saved!' : (result.error || 'Error saving content.'));
   };
 
-  if (loading) return <div className="text-gray-500 text-sm mb-2">Loading home content...</div>;
+  if (loading) return <div className="text-gray-500 text-sm mb-2">Loading content...</div>;
 
   return (
     <div className="flex flex-col gap-4">
-      {HOME_FIELDS.map(f => (
+      {fieldsDef.map(f => (
         <div key={f.key} className="flex flex-col gap-1">
           <label className="text-xs font-medium">{f.label}</label>
           <textarea
@@ -261,9 +325,10 @@ const Admin = () => {
                 </div>
                 {selectedPage === page.slug && (
                   <>
-                    {/* Home/About page: show all editable fields */}
-                    {page.slug === 'home' ? (
-                      <HomePageEditor
+                    {/* Home/About and info pages: show all editable fields */}
+                    {['home','koh-tao-info','accommodation','food-drink','marine-life','medical-services','fun-diving','efr'].includes(page.slug) ? (
+                      <MultiFieldPageEditor
+                        pageSlug={page.slug}
                         locale={selectedLang}
                         onSaveStatus={setPageSaveStatus}
                       />
