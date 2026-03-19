@@ -86,7 +86,7 @@ const AdminBookings: React.FC = () => {
   const handleSaveComment = async () => {
     if (!modalBookingId) return;
     try {
-      const res = await fetch(`/api/bookings/${modalBookingId}`, {
+      const res = await fetch(`/api/bookings/${modalBookingId}/`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ internal_notes: commentDraft }),
