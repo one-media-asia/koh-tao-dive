@@ -28,6 +28,8 @@ const AdminBookings: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalBookingId, setModalBookingId] = useState<string | null>(null);
   const [commentDraft, setCommentDraft] = useState('');
+  const [showFinanceModal, setShowFinanceModal] = useState(false);
+  const [financeBooking, setFinanceBooking] = useState<Booking | null>(null);
 
   useEffect(() => {
     fetch('/api/bookings')
@@ -108,6 +110,14 @@ const AdminBookings: React.FC = () => {
       alert('Error saving comment: ' + (err?.message || err));
     }
   };
+  const handleOpenFinance = (booking: Booking) => {
+    setFinanceBooking(booking);
+    setShowFinanceModal(true);
+  };
+  const handleCloseFinance = () => {
+    setShowFinanceModal(false);
+    setFinanceBooking(null);
+  };
 
   if (loading) return <div>Loading bookings...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -128,6 +138,7 @@ const AdminBookings: React.FC = () => {
             <th className="border px-2 py-1">To Be Paid</th>
             <th className="border px-2 py-1">PayPal</th>
             <th className="border px-2 py-1">Comments</th>
+            <th className="border px-2 py-1">Finance</th>
           </tr>
         </thead>
         <tbody>
@@ -157,6 +168,9 @@ const AdminBookings: React.FC = () => {
               <td className="border px-2 py-1">
                 <button onClick={() => handleOpenModal(b.id)} className="text-blue-600 underline">Add Comment</button>
               </td>
+              <td className="border px-2 py-1">
+                <button onClick={() => handleOpenFinance(b)} className="text-blue-600 underline">Finance</button>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -175,6 +189,19 @@ const AdminBookings: React.FC = () => {
             <div className="flex justify-end gap-2">
               <button onClick={handleCloseModal} className="px-3 py-1 bg-gray-200 rounded">Cancel</button>
               <button onClick={handleSaveComment} className="px-3 py-1 bg-blue-600 text-white rounded">Save</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showFinanceModal && financeBooking && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+          <div className="bg-white p-6 rounded shadow-lg w-80">
+            <h3 className="text-lg font-bold mb-2">Finance Details</h3>
+            <div className="mb-2"><strong>Total:</strong> {typeof financeBooking.total_amount === 'number' ? financeBooking.total_amount : '-'}</div>
+            <div className="mb-2"><strong>Deposit:</strong> {typeof financeBooking.deposit_amount === 'number' ? financeBooking.deposit_amount : '-'}</div>
+            <div className="mb-4"><strong>To Be Paid:</strong> {typeof financeBooking.due_amount === 'number' ? financeBooking.due_amount : (typeof financeBooking.total_amount === 'number' && typeof financeBooking.deposit_amount === 'number' ? financeBooking.total_amount - financeBooking.deposit_amount : '-')}</div>
+            <div className="flex justify-end">
+              <button onClick={handleCloseFinance} className="px-3 py-1 bg-gray-200 rounded">Close</button>
             </div>
           </div>
         </div>
