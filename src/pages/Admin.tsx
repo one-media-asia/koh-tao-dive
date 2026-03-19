@@ -7,6 +7,15 @@ const pageList = [
   { slug: 'advanced', label: 'Advanced' },
   { slug: 'rescue', label: 'Rescue' },
   { slug: 'divemaster', label: 'Divemaster' },
+  { slug: 'scuba-diver', label: 'Scuba Diver' },
+  { slug: 'discover-scuba-deluxe', label: 'Discover Scuba Deluxe' },
+  { slug: 'fun-diving', label: 'Fun Diving' },
+  { slug: 'accommodation', label: 'Accommodation' },
+  { slug: 'koh-tao-info', label: 'Koh Tao Info' },
+  { slug: 'food-drink', label: 'Food & Drink' },
+  { slug: 'medical-services', label: 'Medical Services' },
+  { slug: 'marine-life', label: 'Marine Life' },
+  { slug: 'home', label: 'Home/About' },
 ];
 const languageList = [
   { code: 'en', label: 'English' },
@@ -149,103 +158,110 @@ const Admin = () => {
       {activeTab === 'pages' && (
         <div className="bg-white rounded shadow p-4">
           <h2 className="text-base font-semibold mb-2">Page Content Editor</h2>
-          <div className="flex gap-4 mb-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">Page</label>
-              <select
-                className="border rounded px-2 py-1"
-                value={selectedPage}
-                onChange={e => setSelectedPage(e.target.value)}
-              >
-                {pageList.map(p => (
-                  <option key={p.slug} value={p.slug}>{p.label}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Language</label>
-              <select
-                className="border rounded px-2 py-1"
-                value={selectedLang}
-                onChange={e => setSelectedLang(e.target.value)}
-              >
-                {languageList.map(l => (
-                  <option key={l.code} value={l.code}>{l.label}</option>
-                ))}
-              </select>
-            </div>
-            <div className="flex items-end gap-2">
-              <div>
-                <label className="block text-sm font-medium mb-1">Section</label>
-                <select
-                  className="border rounded px-2 py-1"
-                  value={selectedSection}
-                  onChange={e => setSelectedSection(e.target.value)}
-                  disabled={sectionKeyList.length === 0}
-                >
-                  {sectionKeyList.map(key => (
-                    <option key={key} value={key}>{key}</option>
-                  ))}
-                </select>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            {pageList.map(page => (
+              <div key={page.slug} className="border rounded p-3 flex flex-col gap-2 bg-gray-50">
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold">{page.label}</span>
+                  <select
+                    className="border rounded px-2 py-1 text-xs"
+                    value={selectedPage === page.slug ? selectedLang : languageList[0].code}
+                    onChange={e => {
+                      setSelectedPage(page.slug);
+                      setSelectedLang(e.target.value);
+                    }}
+                  >
+                    {languageList.map(l => (
+                      <option key={l.code} value={l.code}>{l.label}</option>
+                    ))}
+                  </select>
+                  <button
+                    className="ml-auto bg-blue-600 text-white px-2 py-1 rounded text-xs hover:bg-blue-700"
+                    onClick={() => {
+                      setSelectedPage(page.slug);
+                      setSelectedLang(selectedLang);
+                    }}
+                  >Edit</button>
+                </div>
+                {selectedPage === page.slug && (
+                  <>
+                    {['open-water','advanced','rescue','divemaster','scuba-diver','discover-scuba-deluxe'].includes(page.slug) && (
+                      <div className="flex items-end gap-2 mb-2">
+                        <div>
+                          <label className="block text-xs font-medium mb-1">Section</label>
+                          <select
+                            className="border rounded px-2 py-1 text-xs"
+                            value={selectedSection}
+                            onChange={e => setSelectedSection(e.target.value)}
+                            disabled={sectionKeyList.length === 0}
+                          >
+                            {sectionKeyList.map(key => (
+                              <option key={key} value={key}>{key}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <button
+                          type="button"
+                          className="ml-2 px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs"
+                          onClick={() => {
+                            const newKey = window.prompt('Enter new section name:');
+                            if (newKey && !sectionKeyList.includes(newKey)) {
+                              setSectionKeyList(prev => [...prev, newKey]);
+                              setSelectedSection(newKey);
+                              setPageContent('');
+                            }
+                          }}
+                        >Add Section</button>
+                      </div>
+                    )}
+                    {pageLoading ? (
+                      <div className="text-gray-500 text-sm mb-2">Loading content...</div>
+                    ) : (
+                      <>
+                        <textarea
+                          className="w-full min-h-[120px] border rounded p-2 text-base"
+                          value={pageContent}
+                          onChange={e => setPageContent(e.target.value)}
+                          placeholder="Edit main content..."
+                        />
+                        <div className="flex gap-2 mt-2 justify-end">
+                          <button
+                            className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
+                            disabled={['open-water','advanced','rescue','divemaster','scuba-diver','discover-scuba-deluxe'].includes(page.slug) ? !selectedSection.trim() : false}
+                            onClick={async () => {
+                              if (['open-water','advanced','rescue','divemaster','scuba-diver','discover-scuba-deluxe'].includes(page.slug) && !selectedSection.trim()) {
+                                setPageSaveStatus('Section key required.');
+                                return;
+                              }
+                              setPageSaveStatus('Saving...');
+                              const plainText = pageContent.replace(/<[^>]+>/g, '');
+                              const res = await fetch('/api/admin-upsert-page-content', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                  page_slug: page.slug,
+                                  locale: selectedLang,
+                                  section_key: ['open-water','advanced','rescue','divemaster','scuba-diver','discover-scuba-deluxe'].includes(page.slug) ? selectedSection : 'main',
+                                  content_type: 'text',
+                                  content_value: plainText
+                                })
+                              });
+                              const result = await res.json();
+                              setPageSaveStatus(res.ok ? 'Saved!' : (result.error || 'Error saving content.'));
+                              if (res.ok && ['open-water','advanced','rescue','divemaster','scuba-diver','discover-scuba-deluxe'].includes(page.slug) && !sectionKeyList.includes(selectedSection)) {
+                                setSectionKeyList(prev => [...prev, selectedSection]);
+                              }
+                            }}
+                          >Save</button>
+                          {pageSaveStatus && <span className="text-xs text-gray-600 ml-2">{pageSaveStatus}</span>}
+                        </div>
+                      </>
+                    )}
+                  </>
+                )}
               </div>
-              <button
-                type="button"
-                className="ml-2 px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs"
-                onClick={() => {
-                  const newKey = window.prompt('Enter new section name:');
-                  if (newKey && !sectionKeyList.includes(newKey)) {
-                    setSectionKeyList(prev => [...prev, newKey]);
-                    setSelectedSection(newKey);
-                    setPageContent('');
-                  }
-                }}
-              >Add Section</button>
-            </div>
+            ))}
           </div>
-          {pageLoading ? (
-            <div className="text-gray-500 text-sm mb-2">Loading content...</div>
-          ) : (
-            <>
-              <textarea
-                className="w-full min-h-[120px] border rounded p-2 text-base"
-                value={pageContent}
-                onChange={e => setPageContent(e.target.value)}
-                placeholder="Edit page content..."
-              />
-              <div className="flex gap-2 mt-4 justify-end">
-                <button
-                  className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
-                  disabled={!selectedSection.trim()}
-                  onClick={async () => {
-                    if (!selectedSection.trim()) {
-                      setPageSaveStatus('Section key required.');
-                      return;
-                    }
-                    setPageSaveStatus('Saving...');
-                    const plainText = pageContent.replace(/<[^>]+>/g, '');
-                    const res = await fetch('/api/admin-upsert-page-content', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({
-                        page_slug: selectedPage,
-                        locale: selectedLang,
-                        section_key: selectedSection,
-                        content_type: 'text',
-                        content_value: plainText
-                      })
-                    });
-                    const result = await res.json();
-                    setPageSaveStatus(res.ok ? 'Saved!' : (result.error || 'Error saving content.'));
-                    // If new section, update sectionKeyList and select it
-                    if (res.ok && !sectionKeyList.includes(selectedSection)) {
-                      setSectionKeyList(prev => [...prev, selectedSection]);
-                    }
-                  }}
-                >Save</button>
-                {pageSaveStatus && <span className="text-xs text-gray-600 ml-2">{pageSaveStatus}</span>}
-              </div>
-            </>
-          )}
         </div>
       )}
     </>
