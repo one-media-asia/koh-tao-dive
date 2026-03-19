@@ -135,7 +135,6 @@ const AdminBookings: React.FC = () => {
             <th className="border px-2 py-1">Date</th>
             <th className="border px-2 py-1">Finance</th>
             <th className="border px-2 py-1">PayPal</th>
-            <th className="border px-2 py-1">Comments</th>
           </tr>
         </thead>
         <tbody>
@@ -159,12 +158,6 @@ const AdminBookings: React.FC = () => {
                   >
                     PayPal
                   </a>
-                )}
-              </td>
-              <td className="border px-2 py-1">
-                <button onClick={() => handleOpenModal(b.id)} className="text-blue-600 underline">{b.internal_notes ? 'Edit Comment' : 'Add Comment'}</button>
-                {b.internal_notes && (
-                  <div className="text-xs text-gray-600 mt-1">{b.internal_notes}</div>
                 )}
               </td>
             </tr>
