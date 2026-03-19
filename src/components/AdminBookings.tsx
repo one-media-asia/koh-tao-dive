@@ -162,7 +162,10 @@ const AdminBookings: React.FC = () => {
                 )}
               </td>
               <td className="border px-2 py-1">
-                <button onClick={() => handleOpenModal(b.id)} className="text-blue-600 underline">Add Comment</button>
+                <button onClick={() => handleOpenModal(b.id)} className="text-blue-600 underline">{b.internal_notes ? 'Edit Comment' : 'Add Comment'}</button>
+                {b.internal_notes && (
+                  <div className="text-xs text-gray-600 mt-1">{b.internal_notes}</div>
+                )}
               </td>
             </tr>
           ))}
