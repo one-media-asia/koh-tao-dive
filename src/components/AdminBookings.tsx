@@ -101,9 +101,9 @@ const AdminBookings: React.FC = () => {
                 {typeof b.total_payable_now === 'number' ? b.total_payable_now : '-'}
                 {b.total_payable_now && b.email && (
                   <a
-                    href={`https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=YOUR_PAYPAL_EMAIL&item_name=Booking+${encodeURIComponent(
+                    href={`https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${encodeURIComponent(b.email)}&item_name=Booking+${encodeURIComponent(
                       b.course_title || 'Course'
-                    )}&amount=${b.total_payable_now}&currency_code=USD&notify_url=YOUR_NOTIFY_URL&return=YOUR_RETURN_URL&custom=${b.id}`}
+                    )}&amount=${b.total_payable_now}&currency_code=USD&custom=${b.id}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="ml-2 text-blue-600 underline"
