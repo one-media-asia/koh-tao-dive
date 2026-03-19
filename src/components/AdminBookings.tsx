@@ -11,6 +11,9 @@ interface Booking {
   status: string;
   internal_notes?: string;
   created_at: string;
+  phone?: string;
+  deposit_amount?: number | null;
+  total_amount?: number | null;
 }
 
 const AdminBookings: React.FC = () => {
@@ -76,43 +79,28 @@ const AdminBookings: React.FC = () => {
       <table className="min-w-full border">
         <thead>
           <tr>
-            <th className="border px-2 py-1">ID</th>
             <th className="border px-2 py-1">Name</th>
             <th className="border px-2 py-1">Email</th>
+            <th className="border px-2 py-1">Phone</th>
             <th className="border px-2 py-1">Course</th>
             <th className="border px-2 py-1">Date</th>
             <th className="border px-2 py-1">Amount</th>
-            <th className="border px-2 py-1">Subtotal</th>
             <th className="border px-2 py-1">Status</th>
-            <th className="border px-2 py-1">Internal</th>
-              <th className="border px-2 py-1">Created</th>
-              <th className="border px-2 py-1">Debug</th>
+            <th className="border px-2 py-1">PayPal</th>
+            <th className="border px-2 py-1">Actions</th>
           </tr>
         </thead>
         <tbody>
           {bookings.map((b) => (
             <tr key={b.id}>
-              <td className="border px-2 py-1">{b.id}</td>
               <td className="border px-2 py-1">{b.name}</td>
               <td className="border px-2 py-1">{b.email}</td>
+              <td className="border px-2 py-1">{b.phone || '-'}</td>
               <td className="border px-2 py-1">{b.course_title}</td>
               <td className="border px-2 py-1">{b.preferred_date || '-'}</td>
               <td className="border px-2 py-1">
-                {typeof b.total_payable_now === 'number' ? b.total_payable_now : '-'}
-                {b.total_payable_now && b.email && (
-                  <a
-                    href={`https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${encodeURIComponent(b.email)}&item_name=Booking+${encodeURIComponent(
-                      b.course_title || 'Course'
-                    )}&amount=${b.total_payable_now}&currency_code=USD&custom=${b.id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="ml-2 text-blue-600 underline"
-                  >
-                    PayPal Link
-                  </a>
-                )}
+                {typeof b.total_payable_now === 'number' ? b.total_payable_now : (typeof b.deposit_amount === 'number' ? b.deposit_amount : (typeof b.total_amount === 'number' ? b.total_amount : '-'))}
               </td>
-              <td className="border px-2 py-1">{typeof b.subtotal_amount === 'number' ? b.subtotal_amount : '-'}</td>
               <td className="border px-2 py-1">
                 {editingStatusId === b.id ? (
                   <>
@@ -128,21 +116,23 @@ const AdminBookings: React.FC = () => {
                 )}
               </td>
               <td className="border px-2 py-1">
-                {editingNotesId === b.id ? (
-                  <>
-                    <input value={notesDraft} onChange={e => setNotesDraft(e.target.value)} className="border px-1 py-0.5 w-32" placeholder="Admin notes" />
-                    <button onClick={() => handleSaveNotes(b.id)} className="ml-1 text-blue-600">Save</button>
-                    <button onClick={() => setEditingNotesId(null)} className="ml-1 text-gray-600">Cancel</button>
-                  </>
-                ) : (
-                  <>
-                    <span style={{whiteSpace: 'pre-line'}}>{b.internal_notes || ''}</span>
-                    <button onClick={() => handleEditNotes(b.id, b.internal_notes || '')} className="ml-1 text-blue-600">Edit</button>
-                  </>
+                {(b.total_payable_now || b.deposit_amount || b.total_amount) && b.email && (
+                  <a
+                    href={`https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=YOUR_PAYPAL_EMAIL&item_name=Booking+${encodeURIComponent(
+                      b.course_title || 'Course'
+                    )}&amount=${b.total_payable_now || b.deposit_amount || b.total_amount}&currency_code=USD&custom=${b.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline"
+                  >
+                    PayPal
+                  </a>
                 )}
               </td>
-                <td className="border px-2 py-1">{new Date(b.created_at).toLocaleString()}</td>
-                <td className="border px-2 py-1" style={{maxWidth: 200, fontSize: '0.7em', wordBreak: 'break-all'}}><pre>{JSON.stringify(b, null, 2)}</pre></td>
+              <td className="border px-2 py-1">
+                <button onClick={() => handleEditNotes(b.id, b.internal_notes || '')} className="text-blue-600">Notes</button>
+                <button onClick={() => setShowDetails(show => ({...show, [b.id]: !show[b.id]}))} className="ml-2 text-gray-600">Details</button>
+              </td>
             </tr>
           ))}
         </tbody>
