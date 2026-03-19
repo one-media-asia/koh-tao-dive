@@ -78,6 +78,27 @@ const PAGE_FIELDS = {
     { key: 'faq', label: 'FAQ' },
     { key: 'main', label: 'Main Content' },
   ],
+  'discover-scuba-deluxe': [
+    { key: 'hero_title', label: 'Hero Title' },
+    { key: 'hero_subtitle', label: 'Hero Subtitle' },
+    { key: 'course_overview', label: 'Course Overview' },
+    { key: 'price_thb', label: 'Price (THB)' },
+    { key: 'price_usd', label: 'Price (USD)' },
+    { key: 'price_eur', label: 'Price (EUR)' },
+    { key: 'duration', label: 'Duration' },
+    { key: 'section_1_title', label: 'Section 1 Title' },
+    { key: 'section_1_content', label: 'Section 1 Content (one per line)' },
+    { key: 'section_2_title', label: 'Section 2 Title' },
+    { key: 'section_2_content', label: 'Section 2 Content (one per line)' },
+    { key: 'faq_1_question', label: 'FAQ 1 Question' },
+    { key: 'faq_1_answer', label: 'FAQ 1 Answer' },
+    { key: 'faq_2_question', label: 'FAQ 2 Question' },
+    { key: 'faq_2_answer', label: 'FAQ 2 Answer' },
+    { key: 'faq_3_question', label: 'FAQ 3 Question' },
+    { key: 'faq_3_answer', label: 'FAQ 3 Answer' },
+    { key: 'faq_4_question', label: 'FAQ 4 Question' },
+    { key: 'faq_4_answer', label: 'FAQ 4 Answer' },
+  ],
 };
 
 function MultiFieldPageEditor({ pageSlug, locale, onSaveStatus }) {
