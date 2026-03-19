@@ -271,6 +271,7 @@ const Admin = () => {
                     )}
                   </>
                 )}
+
               // HomePageEditor component for editing all home/about fields
               const HOME_FIELDS = [
                 { key: 'about_headline', label: 'Headline' },
@@ -282,9 +283,9 @@ const Admin = () => {
               ];
 
               function HomePageEditor({ locale, onSaveStatus }) {
-                const [fields, setFields] = useState({});
-                const [loading, setLoading] = useState(true);
-                useEffect(() => {
+                const [fields, setFields] = React.useState({});
+                const [loading, setLoading] = React.useState(true);
+                React.useEffect(() => {
                   setLoading(true);
                   fetch(`/api/get-page-content?page_slug=home&locale=${locale}&t=${Date.now()}`)
                     .then(res => res.json())
