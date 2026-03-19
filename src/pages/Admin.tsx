@@ -26,10 +26,19 @@ const Admin = () => {
   useEffect(() => {
     if (activeTab === 'bookings') {
       setLoading(true);
-      setTimeout(() => {
-        setBookings([]); // TODO: fetch bookings from backend
-        setLoading(false);
-      }, 500);
+      fetch('/api/bookings')
+        .then((res) => {
+          if (!res.ok) throw new Error('Failed to fetch bookings');
+          return res.json();
+        })
+        .then((data) => {
+          setBookings(data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          setBookings([]);
+          setLoading(false);
+        });
     }
   }, [activeTab]);
 
@@ -74,8 +83,35 @@ const Admin = () => {
           <h2 className="text-base font-semibold mb-2">Bookings Management</h2>
           {loading ? (
             <div style={{ fontSize: '0.9rem' }}>Loading bookings...</div>
-          ) : (
+          ) : bookings.length === 0 ? (
             <div className="text-gray-500 text-sm">No bookings loaded.</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs border border-gray-200 rounded">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="p-1">Name</th>
+                    <th className="p-1">Email</th>
+                    <th className="p-1">Phone</th>
+                    <th className="p-1">Course</th>
+                    <th className="p-1">Date</th>
+                    <th className="p-1">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bookings.map((b) => (
+                    <tr key={b.id} className="border-t border-gray-100 hover:bg-gray-50">
+                      <td className="p-1">{b.name}</td>
+                      <td className="p-1">{b.email}</td>
+                      <td className="p-1">{b.phone}</td>
+                      <td className="p-1">{b.course_title}</td>
+                      <td className="p-1">{b.preferred_date}</td>
+                      <td className="p-1">{b.status}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       )}
