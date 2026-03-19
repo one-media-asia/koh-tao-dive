@@ -186,80 +186,163 @@ const Admin = () => {
                 </div>
                 {selectedPage === page.slug && (
                   <>
-                    {['open-water','advanced','rescue','divemaster','scuba-diver','discover-scuba-deluxe'].includes(page.slug) && (
-                      <div className="flex items-end gap-2 mb-2">
-                        <div>
-                          <label className="block text-xs font-medium mb-1">Section</label>
-                          <select
-                            className="border rounded px-2 py-1 text-xs"
-                            value={selectedSection}
-                            onChange={e => setSelectedSection(e.target.value)}
-                            disabled={sectionKeyList.length === 0}
-                          >
-                            {sectionKeyList.map(key => (
-                              <option key={key} value={key}>{key}</option>
-                            ))}
-                          </select>
-                        </div>
-                        <button
-                          type="button"
-                          className="ml-2 px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs"
-                          onClick={() => {
-                            const newKey = window.prompt('Enter new section name:');
-                            if (newKey && !sectionKeyList.includes(newKey)) {
-                              setSectionKeyList(prev => [...prev, newKey]);
-                              setSelectedSection(newKey);
-                              setPageContent('');
-                            }
-                          }}
-                        >Add Section</button>
-                      </div>
-                    )}
-                    {pageLoading ? (
-                      <div className="text-gray-500 text-sm mb-2">Loading content...</div>
+                    {/* Home/About page: show all editable fields */}
+                    {page.slug === 'home' ? (
+                      <HomePageEditor
+                        locale={selectedLang}
+                        onSaveStatus={setPageSaveStatus}
+                      />
                     ) : (
                       <>
-                        <textarea
-                          className="w-full min-h-[120px] border rounded p-2 text-base"
-                          value={pageContent}
-                          onChange={e => setPageContent(e.target.value)}
-                          placeholder="Edit main content..."
-                        />
-                        <div className="flex gap-2 mt-2 justify-end">
-                          <button
-                            className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
-                            disabled={['open-water','advanced','rescue','divemaster','scuba-diver','discover-scuba-deluxe'].includes(page.slug) ? !selectedSection.trim() : false}
-                            onClick={async () => {
-                              if (['open-water','advanced','rescue','divemaster','scuba-diver','discover-scuba-deluxe'].includes(page.slug) && !selectedSection.trim()) {
-                                setPageSaveStatus('Section key required.');
-                                return;
-                              }
-                              setPageSaveStatus('Saving...');
-                              const plainText = pageContent.replace(/<[^>]+>/g, '');
-                              const res = await fetch('/api/admin-upsert-page-content', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                  page_slug: page.slug,
-                                  locale: selectedLang,
-                                  section_key: ['open-water','advanced','rescue','divemaster','scuba-diver','discover-scuba-deluxe'].includes(page.slug) ? selectedSection : 'main',
-                                  content_type: 'text',
-                                  content_value: plainText
-                                })
-                              });
-                              const result = await res.json();
-                              setPageSaveStatus(res.ok ? 'Saved!' : (result.error || 'Error saving content.'));
-                              if (res.ok && ['open-water','advanced','rescue','divemaster','scuba-diver','discover-scuba-deluxe'].includes(page.slug) && !sectionKeyList.includes(selectedSection)) {
-                                setSectionKeyList(prev => [...prev, selectedSection]);
-                              }
-                            }}
-                          >Save</button>
-                          {pageSaveStatus && <span className="text-xs text-gray-600 ml-2">{pageSaveStatus}</span>}
-                        </div>
+                        {/* Course pages: show section and main content fields */}
+                        {['open-water','advanced','rescue','divemaster','scuba-diver','discover-scuba-deluxe'].includes(page.slug) && (
+                          <div className="flex items-end gap-2 mb-2">
+                            <div>
+                              <label className="block text-xs font-medium mb-1">Section</label>
+                              <select
+                                className="border rounded px-2 py-1 text-xs"
+                                value={selectedSection}
+                                onChange={e => setSelectedSection(e.target.value)}
+                                disabled={sectionKeyList.length === 0}
+                              >
+                                {sectionKeyList.map(key => (
+                                  <option key={key} value={key}>{key}</option>
+                                ))}
+                              </select>
+                            </div>
+                            <button
+                              type="button"
+                              className="ml-2 px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs"
+                              onClick={() => {
+                                const newKey = window.prompt('Enter new section name:');
+                                if (newKey && !sectionKeyList.includes(newKey)) {
+                                  setSectionKeyList(prev => [...prev, newKey]);
+                                  setSelectedSection(newKey);
+                                  setPageContent('');
+                                }
+                              }}
+                            >Add Section</button>
+                          </div>
+                        )}
+                        {pageLoading ? (
+                          <div className="text-gray-500 text-sm mb-2">Loading content...</div>
+                        ) : (
+                          <>
+                            <textarea
+                              className="w-full min-h-[120px] border rounded p-2 text-base"
+                              value={pageContent}
+                              onChange={e => setPageContent(e.target.value)}
+                              placeholder="Edit main content..."
+                            />
+                            <div className="flex gap-2 mt-2 justify-end">
+                              <button
+                                className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
+                                disabled={['open-water','advanced','rescue','divemaster','scuba-diver','discover-scuba-deluxe'].includes(page.slug) ? !selectedSection.trim() : false}
+                                onClick={async () => {
+                                  if (['open-water','advanced','rescue','divemaster','scuba-diver','discover-scuba-deluxe'].includes(page.slug) && !selectedSection.trim()) {
+                                    setPageSaveStatus('Section key required.');
+                                    return;
+                                  }
+                                  setPageSaveStatus('Saving...');
+                                  const plainText = pageContent.replace(/<[^>]+>/g, '');
+                                  const res = await fetch('/api/admin-upsert-page-content', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                      page_slug: page.slug,
+                                      locale: selectedLang,
+                                      section_key: ['open-water','advanced','rescue','divemaster','scuba-diver','discover-scuba-deluxe'].includes(page.slug) ? selectedSection : 'main',
+                                      content_type: 'text',
+                                      content_value: plainText
+                                    })
+                                  });
+                                  const result = await res.json();
+                                  setPageSaveStatus(res.ok ? 'Saved!' : (result.error || 'Error saving content.'));
+                                  if (res.ok && ['open-water','advanced','rescue','divemaster','scuba-diver','discover-scuba-deluxe'].includes(page.slug) && !sectionKeyList.includes(selectedSection)) {
+                                    setSectionKeyList(prev => [...prev, selectedSection]);
+                                  }
+                                }}
+                              >Save</button>
+                              {pageSaveStatus && <span className="text-xs text-gray-600 ml-2">{pageSaveStatus}</span>}
+                            </div>
+                          </>
+                        )}
                       </>
                     )}
                   </>
                 )}
+              // HomePageEditor component for editing all home/about fields
+              const HOME_FIELDS = [
+                { key: 'about_headline', label: 'Headline' },
+                { key: 'about_sites_line', label: 'Sites Line' },
+                { key: 'about_map_alt', label: 'Map Alt Text' },
+                { key: 'about_title', label: 'Title' },
+                { key: 'about_paragraph_1', label: 'Paragraph 1' },
+                { key: 'about_paragraph_2', label: 'Paragraph 2' },
+              ];
+
+              function HomePageEditor({ locale, onSaveStatus }) {
+                const [fields, setFields] = useState({});
+                const [loading, setLoading] = useState(true);
+                useEffect(() => {
+                  setLoading(true);
+                  fetch(`/api/get-page-content?page_slug=home&locale=${locale}&t=${Date.now()}`)
+                    .then(res => res.json())
+                    .then(result => {
+                      const data = result.content || [];
+                      const dbContent = {};
+                      data.forEach(row => {
+                        dbContent[row.section_key] = row.content_value;
+                      });
+                      setFields(dbContent);
+                    })
+                    .finally(() => setLoading(false));
+                }, [locale]);
+
+                const handleChange = (key, value) => {
+                  setFields(f => ({ ...f, [key]: value }));
+                };
+
+                const handleSave = async (key) => {
+                  onSaveStatus('Saving...');
+                  const plainText = (fields[key] || '').replace(/<[^>]+>/g, '');
+                  const res = await fetch('/api/admin-upsert-page-content', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      page_slug: 'home',
+                      locale,
+                      section_key: key,
+                      content_type: 'text',
+                      content_value: plainText
+                    })
+                  });
+                  const result = await res.json();
+                  onSaveStatus(res.ok ? 'Saved!' : (result.error || 'Error saving content.'));
+                };
+
+                if (loading) return <div className="text-gray-500 text-sm mb-2">Loading home content...</div>;
+
+                return (
+                  <div className="flex flex-col gap-4">
+                    {HOME_FIELDS.map(f => (
+                      <div key={f.key} className="flex flex-col gap-1">
+                        <label className="text-xs font-medium">{f.label}</label>
+                        <textarea
+                          className="w-full min-h-[60px] border rounded p-2 text-base"
+                          value={fields[f.key] || ''}
+                          onChange={e => handleChange(f.key, e.target.value)}
+                          placeholder={`Edit ${f.label}...`}
+                        />
+                        <button
+                          className="self-end bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 mt-1"
+                          onClick={() => handleSave(f.key)}
+                        >Save {f.label}</button>
+                      </div>
+                    ))}
+                  </div>
+                );
+              }
               </div>
             ))}
           </div>
