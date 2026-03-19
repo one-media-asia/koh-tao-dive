@@ -186,6 +186,7 @@ const Admin = () => {
                   onClick={async () => {
                     setPageSaveStatus('Saving...');
                     setPageSaveStatus('Saving...');
+                    const plainText = pageContent.replace(/<[^>]+>/g, '');
                     const res = await fetch('/api/admin-upsert-page-content', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
@@ -194,7 +195,7 @@ const Admin = () => {
                         locale: selectedLang,
                         section_key: selectedSection,
                         content_type: 'text',
-                        content_value: pageContent
+                        content_value: plainText
                       })
                     });
                     const result = await res.json();
