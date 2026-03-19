@@ -155,6 +155,16 @@ const pageList = [
   { slug: 'marine-life', label: 'Marine Life' },
   { slug: 'home', label: 'Home/About' },
 ];
+
+const COURSE_SLUGS = [
+  'open-water',
+  'advanced',
+  'rescue',
+  'divemaster',
+  'idc',
+  'scuba-diver',
+  'discover-scuba-deluxe',
+];
 const languageList = [
   { code: 'en', label: 'English' },
   { code: 'nl', label: 'Dutch' },
@@ -335,7 +345,7 @@ const Admin = () => {
                     ) : (
                       <>
                         {/* Course pages: show section and main content fields */}
-                        {['open-water','advanced','rescue','divemaster','scuba-diver','discover-scuba-deluxe'].includes(page.slug) && (
+                        {COURSE_SLUGS.includes(page.slug) && (
                           <div className="flex items-end gap-2 mb-2">
                             <div>
                               <label className="block text-xs font-medium mb-1">Section</label>
@@ -377,9 +387,9 @@ const Admin = () => {
                             <div className="flex gap-2 mt-2 justify-end">
                               <button
                                 className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
-                                disabled={['open-water','advanced','rescue','divemaster','scuba-diver','discover-scuba-deluxe'].includes(page.slug) ? !selectedSection.trim() : false}
+                                disabled={COURSE_SLUGS.includes(page.slug) ? !selectedSection.trim() : false}
                                 onClick={async () => {
-                                  if (['open-water','advanced','rescue','divemaster','scuba-diver','discover-scuba-deluxe'].includes(page.slug) && !selectedSection.trim()) {
+                                  if (COURSE_SLUGS.includes(page.slug) && !selectedSection.trim()) {
                                     setPageSaveStatus('Section key required.');
                                     return;
                                   }
@@ -391,14 +401,14 @@ const Admin = () => {
                                     body: JSON.stringify({
                                       page_slug: page.slug,
                                       locale: selectedLang,
-                                      section_key: ['open-water','advanced','rescue','divemaster','scuba-diver','discover-scuba-deluxe'].includes(page.slug) ? selectedSection : 'main',
+                                      section_key: COURSE_SLUGS.includes(page.slug) ? selectedSection : 'main',
                                       content_type: 'text',
                                       content_value: plainText
                                     })
                                   });
                                   const result = await res.json();
                                   setPageSaveStatus(res.ok ? 'Saved!' : (result.error || 'Error saving content.'));
-                                  if (res.ok && ['open-water','advanced','rescue','divemaster','scuba-diver','discover-scuba-deluxe'].includes(page.slug) && !sectionKeyList.includes(selectedSection)) {
+                                  if (res.ok && COURSE_SLUGS.includes(page.slug) && !sectionKeyList.includes(selectedSection)) {
                                     setSectionKeyList(prev => [...prev, selectedSection]);
                                   }
                                 }}
