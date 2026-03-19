@@ -1,3 +1,75 @@
+// HomePageEditor component for editing all home/about fields
+const HOME_FIELDS = [
+  { key: 'about_headline', label: 'Headline' },
+  { key: 'about_sites_line', label: 'Sites Line' },
+  { key: 'about_map_alt', label: 'Map Alt Text' },
+  { key: 'about_title', label: 'Title' },
+  { key: 'about_paragraph_1', label: 'Paragraph 1' },
+  { key: 'about_paragraph_2', label: 'Paragraph 2' },
+];
+
+function HomePageEditor({ locale, onSaveStatus }) {
+  const [fields, setFields] = React.useState({});
+  const [loading, setLoading] = React.useState(true);
+  React.useEffect(() => {
+    setLoading(true);
+    fetch(`/api/get-page-content?page_slug=home&locale=${locale}&t=${Date.now()}`)
+      .then(res => res.json())
+      .then(result => {
+        const data = result.content || [];
+        const dbContent = {};
+        data.forEach(row => {
+          dbContent[row.section_key] = row.content_value;
+        });
+        setFields(dbContent);
+      })
+      .finally(() => setLoading(false));
+  }, [locale]);
+
+  const handleChange = (key, value) => {
+    setFields(f => ({ ...f, [key]: value }));
+  };
+
+  const handleSave = async (key) => {
+    onSaveStatus('Saving...');
+    const plainText = (fields[key] || '').replace(/<[^>]+>/g, '');
+    const res = await fetch('/api/admin-upsert-page-content', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        page_slug: 'home',
+        locale,
+        section_key: key,
+        content_type: 'text',
+        content_value: plainText
+      })
+    });
+    const result = await res.json();
+    onSaveStatus(res.ok ? 'Saved!' : (result.error || 'Error saving content.'));
+  };
+
+  if (loading) return <div className="text-gray-500 text-sm mb-2">Loading home content...</div>;
+
+  return (
+    <div className="flex flex-col gap-4">
+      {HOME_FIELDS.map(f => (
+        <div key={f.key} className="flex flex-col gap-1">
+          <label className="text-xs font-medium">{f.label}</label>
+          <textarea
+            className="w-full min-h-[60px] border rounded p-2 text-base"
+            value={fields[f.key] || ''}
+            onChange={e => handleChange(f.key, e.target.value)}
+            placeholder={`Edit ${f.label}...`}
+          />
+          <button
+            className="self-end bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 mt-1"
+            onClick={() => handleSave(f.key)}
+          >Save {f.label}</button>
+        </div>
+      ))}
+    </div>
+  );
+}
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 // import RichTextEditor from '@/components/RichTextEditor';
