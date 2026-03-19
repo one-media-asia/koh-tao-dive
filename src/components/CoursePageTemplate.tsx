@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import { usePageContent } from '@/hooks/usePageContent';
-// ...removed PageContentEditor import...
+// PageContentEditor import removed
 import Contact from './Contact';
 import ImageRow from './ImageRow';
 
@@ -205,7 +205,7 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
           </aside>
         </div>
 
-        <PageContentEditor pageSlug={pageSlug} locale={locale} />
+        {/* PageContentEditor removed */}
         
         <section className="mt-12">
           <Contact />

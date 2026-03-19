@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import { Edit, Globe, Shield, Search, Plus, Eye, Lock, Unlock } from 'lucide-react';
 import { SEOMetaEditor } from './SEOMetaEditor';
 import { SecurityScanner } from './SecurityScanner';
-import { PageContentEditor } from './PageContentEditor';
+// import { PageContentEditor } from './PageContentEditor';
 
 interface PageInfo {
   slug: string;
@@ -196,11 +196,7 @@ export const PageManager: React.FC = () => {
             Back to Page List
           </Button>
         </div>
-        <PageContentEditor 
-          pageSlug={editingPage.slug} 
-          locale={editingPage.locale}
-          key={`${editingPage.slug}-${editingPage.locale}`}
-        />
+        {/* PageContentEditor removed */}
       </div>
     );
   }
