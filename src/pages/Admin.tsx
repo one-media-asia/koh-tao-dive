@@ -69,6 +69,15 @@ const PAGE_FIELDS = {
     { key: 'faq', label: 'FAQ' },
     { key: 'main', label: 'Main Content' },
   ],
+  'idc': [
+    { key: 'title', label: 'Title' },
+    { key: 'program_overview', label: 'Program Overview' },
+    { key: 'prerequisites', label: 'Prerequisites' },
+    { key: 'what_you_learn', label: "What you'll learn (one per line)" },
+    { key: 'inclusions', label: 'Inclusions (one per line)' },
+    { key: 'faq', label: 'FAQ' },
+    { key: 'main', label: 'Main Content' },
+  ],
 };
 
 function MultiFieldPageEditor({ pageSlug, locale, onSaveStatus }) {
