@@ -92,8 +92,12 @@ const AdminBookings: React.FC = () => {
         body: JSON.stringify({ internal_notes: commentDraft }),
       });
       if (!res.ok) {
-        const result = await res.json();
-        alert('Failed to save comment: ' + (result.error || res.status));
+        let errorMsg = res.status;
+        try {
+          const result = await res.json();
+          errorMsg = result.error || errorMsg;
+        } catch {}
+        alert('Failed to save comment: ' + errorMsg);
         return;
       }
       setBookings(prev => prev.map(b => b.id === modalBookingId ? { ...b, internal_notes: commentDraft } : b));
