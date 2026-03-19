@@ -184,14 +184,20 @@ const Admin = () => {
                   className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
                   onClick={async () => {
                     setPageSaveStatus('Saving...');
-                    const { error } = await supabase.from('page_content').upsert({
-                      page_slug: selectedPage,
-                      locale: selectedLang,
-                      section_key: selectedSection,
-                      content_type: 'html',
-                      content_value: pageContent
+                    setPageSaveStatus('Saving...');
+                    const res = await fetch('/api/admin-upsert-page-content', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        page_slug: selectedPage,
+                        locale: selectedLang,
+                        section_key: selectedSection,
+                        content_type: 'html',
+                        content_value: pageContent
+                      })
                     });
-                    setPageSaveStatus(error ? 'Error saving content.' : 'Saved!');
+                    const result = await res.json();
+                    setPageSaveStatus(res.ok ? 'Saved!' : (result.error || 'Error saving content.'));
                   }}
                 >Save</button>
                 {pageSaveStatus && <span className="text-xs text-gray-600 ml-2">{pageSaveStatus}</span>}
