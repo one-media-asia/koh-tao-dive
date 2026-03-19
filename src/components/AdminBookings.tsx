@@ -85,16 +85,24 @@ const AdminBookings: React.FC = () => {
   };
   const handleSaveComment = async () => {
     if (!modalBookingId) return;
-    // Save comment as internal_notes
-    await fetch(`/api/bookings/${modalBookingId}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ internal_notes: commentDraft }),
-    });
-    setBookings(prev => prev.map(b => b.id === modalBookingId ? { ...b, internal_notes: commentDraft } : b));
-    setShowModal(false);
-    setModalBookingId(null);
-    setCommentDraft('');
+    try {
+      const res = await fetch(`/api/bookings/${modalBookingId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ internal_notes: commentDraft }),
+      });
+      if (!res.ok) {
+        const result = await res.json();
+        alert('Failed to save comment: ' + (result.error || res.status));
+        return;
+      }
+      setBookings(prev => prev.map(b => b.id === modalBookingId ? { ...b, internal_notes: commentDraft } : b));
+      setShowModal(false);
+      setModalBookingId(null);
+      setCommentDraft('');
+    } catch (err) {
+      alert('Error saving comment: ' + (err?.message || err));
+    }
   };
 
   if (loading) return <div>Loading bookings...</div>;
