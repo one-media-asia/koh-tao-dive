@@ -180,7 +180,14 @@ const Admin = () => {
                 className="border rounded px-2 py-1"
                 list="section-keys"
                 value={selectedSection}
-                onChange={e => setSelectedSection(e.target.value)}
+                onChange={e => {
+                  const val = e.target.value;
+                  // If new section, clear content
+                  setSelectedSection(val);
+                  if (!sectionKeyList.includes(val)) {
+                    setPageContent('');
+                  }
+                }}
                 placeholder="Type or select section key"
               />
               <datalist id="section-keys">
@@ -203,8 +210,12 @@ const Admin = () => {
               <div className="flex gap-2 mt-4 justify-end">
                 <button
                   className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
+                  disabled={!selectedSection.trim()}
                   onClick={async () => {
-                    setPageSaveStatus('Saving...');
+                    if (!selectedSection.trim()) {
+                      setPageSaveStatus('Section key required.');
+                      return;
+                    }
                     setPageSaveStatus('Saving...');
                     const plainText = pageContent.replace(/<[^>]+>/g, '');
                     const res = await fetch('/api/admin-upsert-page-content', {
@@ -220,6 +231,10 @@ const Admin = () => {
                     });
                     const result = await res.json();
                     setPageSaveStatus(res.ok ? 'Saved!' : (result.error || 'Error saving content.'));
+                    // If new section, update sectionKeyList and select it
+                    if (res.ok && !sectionKeyList.includes(selectedSection)) {
+                      setSectionKeyList(prev => [...prev, selectedSection]);
+                    }
                   }}
                 >Save</button>
                 {pageSaveStatus && <span className="text-xs text-gray-600 ml-2">{pageSaveStatus}</span>}
