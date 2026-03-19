@@ -133,12 +133,9 @@ const AdminBookings: React.FC = () => {
             <th className="border px-2 py-1">Phone</th>
             <th className="border px-2 py-1">Course</th>
             <th className="border px-2 py-1">Date</th>
-            <th className="border px-2 py-1">Total</th>
-            <th className="border px-2 py-1">Deposit</th>
-            <th className="border px-2 py-1">To Be Paid</th>
+            <th className="border px-2 py-1">Finance</th>
             <th className="border px-2 py-1">PayPal</th>
             <th className="border px-2 py-1">Comments</th>
-            <th className="border px-2 py-1">Finance</th>
           </tr>
         </thead>
         <tbody>
@@ -150,9 +147,8 @@ const AdminBookings: React.FC = () => {
               <td className="border px-2 py-1">{b.course_title}</td>
               <td className="border px-2 py-1">{b.preferred_date || '-'}</td>
               <td className="border px-2 py-1">
-                {typeof b.total_amount === 'number' ? b.total_amount : (typeof b.total_payable_now === 'number' ? b.total_payable_now : '-')}</td>
-              <td className="border px-2 py-1">{typeof b.deposit_amount === 'number' ? b.deposit_amount : '-'}</td>
-              <td className="border px-2 py-1">{typeof b.due_amount === 'number' ? b.due_amount : (typeof b.total_amount === 'number' && typeof b.deposit_amount === 'number' ? b.total_amount - b.deposit_amount : '-')}</td>
+                <button onClick={() => handleOpenFinance(b)} className="text-blue-600 underline">Finance</button>
+              </td>
               <td className="border px-2 py-1">
                 {(b.total_payable_now || b.deposit_amount || b.total_amount) && (
                   <a
@@ -167,9 +163,6 @@ const AdminBookings: React.FC = () => {
               </td>
               <td className="border px-2 py-1">
                 <button onClick={() => handleOpenModal(b.id)} className="text-blue-600 underline">Add Comment</button>
-              </td>
-              <td className="border px-2 py-1">
-                <button onClick={() => handleOpenFinance(b)} className="text-blue-600 underline">Finance</button>
               </td>
             </tr>
           ))}
