@@ -74,38 +74,6 @@ const Admin = () => {
       {activeTab === 'calendar' && (
         <div className="bg-white rounded shadow p-4">Calendar view coming soon.</div>
       )}
-// ...existing code...
-                    className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
-                    disabled={!selectedSection}
-                    onClick={async () => {
-                      if (!selectedSection) return;
-                      setPageSaveStatus('Saving...');
-                      const plainText = pageContent.replace(/<[^>]+>/g, '');
-                      const res = await fetch('/api/admin-upsert-page-content', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                          page_slug: selectedPage,
-                          locale: selectedLang,
-                          section_key: selectedSection,
-                          content_type: 'text',
-                          content_value: plainText
-                        })
-                      });
-                      const result = await res.json();
-                      setPageSaveStatus(res.ok ? 'Saved!' : (result.error || 'Error saving content.'));
-                      if (res.ok && !sectionKeyList.includes(selectedSection)) {
-                        setSectionKeyList(prev => [...prev, selectedSection]);
-                      }
-                    }}
-                  >Save</button>
-                  {pageSaveStatus && <span className="text-xs text-gray-600 ml-2">{pageSaveStatus}</span>}
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      )}
     </>
   );
 };
