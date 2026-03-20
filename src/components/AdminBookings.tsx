@@ -29,6 +29,9 @@ const AdminBookings: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   // Comments and finance modal removed
 
+  const [exporting, setExporting] = useState(false);
+  const [exportResult, setExportResult] = useState<string | null>(null);
+
   useEffect(() => {
     fetch('/api/bookings')
       .then((res) => {
