@@ -1,203 +1,7 @@
 import AdminBookings from '../components/AdminBookings';
-
-// Field definitions for multi-field info pages
-const PAGE_FIELDS = {
-  home: [
-    { key: 'about_headline', label: 'Headline' },
-    { key: 'about_sites_line', label: 'Sites Line' },
-    { key: 'about_map_alt', label: 'Map Alt Text' },
-    { key: 'about_title', label: 'Title' },
-    { key: 'about_paragraph_1', label: 'Paragraph 1' },
-    { key: 'about_paragraph_2', label: 'Paragraph 2' },
-  ],
-  'koh-tao-info': [
-    { key: 'title', label: 'Title' },
-    { key: 'description', label: 'Description' },
-    { key: 'facts', label: 'Facts (one per line)' },
-    { key: 'highlightsTitle', label: 'Highlights Title' },
-    { key: 'highlights', label: 'Highlights (one per line)' },
-  ],
-  'accommodation': [
-    { key: 'heroTitle', label: 'Hero Title' },
-    { key: 'heroSubtitle', label: 'Hero Subtitle' },
-    { key: 'roomsTitle', label: 'Rooms Title' },
-    { key: 'roomsIntro', label: 'Rooms Intro' },
-    { key: 'pricingNote', label: 'Pricing Note' },
-    { key: 'featuresTitle', label: 'Features Title' },
-    { key: 'whyStayTitle', label: 'Why Stay Title' },
-    { key: 'whyStayBody', label: 'Why Stay Body' },
-    { key: 'ctaTitle', label: 'CTA Title' },
-    { key: 'ctaBody', label: 'CTA Body' },
-    // Add more as needed
-  ],
-  'food-drink': [
-    { key: 'title', label: 'Title' },
-    { key: 'description', label: 'Description' },
-    { key: 'main', label: 'Main Content' },
-  ],
-  'marine-life': [
-    { key: 'title', label: 'Title' },
-    { key: 'description', label: 'Description' },
-    { key: 'main', label: 'Main Content' },
-  ],
-  'medical-services': [
-    { key: 'title', label: 'Title' },
-    { key: 'description', label: 'Description' },
-    { key: 'main', label: 'Main Content' },
-  ],
-  'fun-diving': [
-    { key: 'fun_diving_hero_title', label: 'Hero Title' },
-    { key: 'fun_diving_hero_subtitle', label: 'Hero Subtitle' },
-    { key: 'fun_diving_overview_title', label: 'Overview Title' },
-    { key: 'fun_diving_overview_body', label: 'Overview Body' },
-    { key: 'fun_diving_world_class_title', label: 'World Class Title' },
-    { key: 'fun_diving_world_class_body', label: 'World Class Body' },
-    { key: 'fun_diving_expert_title', label: 'Expert Title' },
-    { key: 'fun_diving_expert_body', label: 'Expert Body' },
-    { key: 'fun_diving_marine_life_title', label: 'Marine Life Title' },
-    { key: 'fun_diving_marine_life_body', label: 'Marine Life Body' },
-    { key: 'fun_diving_flexible_title', label: 'Flexible Title' },
-    { key: 'fun_diving_flexible_body', label: 'Flexible Body' },
-    { key: 'fun_diving_ready_title', label: 'Ready Title' },
-    { key: 'fun_diving_ready_body', label: 'Ready Body' },
-    // Add more as needed
-  ],
-  'efr': [
-    { key: 'title', label: 'Title' },
-    { key: 'description', label: 'Description' },
-    { key: 'prerequisites', label: 'Prerequisites' },
-    { key: 'what_you_learn', label: "What you'll learn (one per line)" },
-    { key: 'inclusions', label: 'Inclusions (one per line)' },
-    { key: 'faq', label: 'FAQ' },
-    { key: 'main', label: 'Main Content' },
-  ],
-  'idc': [
-    { key: 'title', label: 'Title' },
-    { key: 'program_overview', label: 'Program Overview' },
-    { key: 'prerequisites', label: 'Prerequisites' },
-    { key: 'what_you_learn', label: "What you'll learn (one per line)" },
-    { key: 'inclusions', label: 'Inclusions (one per line)' },
-    { key: 'faq', label: 'FAQ' },
-    { key: 'main', label: 'Main Content' },
-  ],
-  'discover-scuba-deluxe': [
-    { key: 'hero_title', label: 'Hero Title' },
-    { key: 'hero_subtitle', label: 'Hero Subtitle' },
-    { key: 'course_overview', label: 'Course Overview' },
-    { key: 'price_thb', label: 'Price (THB)' },
-    { key: 'price_usd', label: 'Price (USD)' },
-    { key: 'price_eur', label: 'Price (EUR)' },
-    { key: 'duration', label: 'Duration' },
-    { key: 'section_1_title', label: 'Section 1 Title' },
-    { key: 'section_1_content', label: 'Section 1 Content (one per line)' },
-    { key: 'section_2_title', label: 'Section 2 Title' },
-    { key: 'section_2_content', label: 'Section 2 Content (one per line)' },
-    { key: 'faq_1_question', label: 'FAQ 1 Question' },
-    { key: 'faq_1_answer', label: 'FAQ 1 Answer' },
-    { key: 'faq_2_question', label: 'FAQ 2 Question' },
-    { key: 'faq_2_answer', label: 'FAQ 2 Answer' },
-    { key: 'faq_3_question', label: 'FAQ 3 Question' },
-    { key: 'faq_3_answer', label: 'FAQ 3 Answer' },
-    { key: 'faq_4_question', label: 'FAQ 4 Question' },
-    { key: 'faq_4_answer', label: 'FAQ 4 Answer' },
-  ],
-  'dive-sites/sail-rock': [
-    { key: 'overview', label: 'Overview' },
-    { key: 'marine_life_highlights', label: 'Marine life highlights' },
-    { key: 'diving_tips', label: 'Diving tips' },
-    { key: 'quick_facts', label: 'Quick facts' },
-    { key: 'ready_to_dive', label: 'Ready to dive?' },
-  ],
-};
-
-function MultiFieldPageEditor({ pageSlug, locale, onSaveStatus }) {
-  const fieldsDef = PAGE_FIELDS[pageSlug] || [{ key: 'main', label: 'Main Content' }];
-  const [fields, setFields] = React.useState({});
-  const [loading, setLoading] = React.useState(true);
-  React.useEffect(() => {
-    setLoading(true);
-    fetch(`/api/get-page-content?page_slug=${pageSlug}&locale=${locale}&t=${Date.now()}`)
-      .then(res => res.json())
-      .then(result => {
-        const data = result.content || [];
-        const dbContent = {};
-        data.forEach(row => {
-          dbContent[row.section_key] = row.content_value;
-        });
-        setFields(dbContent);
-      })
-      .finally(() => setLoading(false));
-  }, [pageSlug, locale]);
-
-  const handleChange = (key, value) => {
-    setFields(f => ({ ...f, [key]: value }));
-  };
-
-  const handleSave = async (key) => {
-    onSaveStatus('Saving...');
-    const plainText = (fields[key] || '').replace(/<[^>]+>/g, '');
-    const res = await fetch('/api/admin-upsert-page-content', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        page_slug: pageSlug,
-        locale,
-        section_key: key,
-        content_type: 'text',
-        content_value: plainText
-      })
-    });
-    const result = await res.json();
-    onSaveStatus(res.ok ? 'Saved!' : (result.error || 'Error saving content.'));
-  };
-
-  if (loading) return <div className="text-gray-500 text-sm mb-2">Loading content...</div>;
-
-  return (
-    <div className="flex flex-col gap-4">
-      {fieldsDef.map(f => (
-        <div key={f.key} className="flex flex-col gap-1">
-          <label className="text-xs font-medium">{f.label}</label>
-          <textarea
-            className="w-full min-h-[60px] border rounded p-2 text-base"
-            value={fields[f.key] || ''}
-            onChange={e => handleChange(f.key, e.target.value)}
-            placeholder={`Edit ${f.label}...`}
-          />
-          <button
-            className="self-end bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 mt-1"
-            onClick={() => handleSave(f.key)}
-          >Save {f.label}</button>
-        </div>
-      ))}
-    </div>
-  );
-}
+import AdminBookings from '../components/AdminBookings';
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-// import RichTextEditor from '@/components/RichTextEditor';
-
-const pageList = [
-  { slug: 'open-water', label: 'Open Water' },
-  { slug: 'advanced', label: 'Advanced' },
-  { slug: 'rescue', label: 'Rescue' },
-  { slug: 'divemaster', label: 'Divemaster (Pro)' },
-  { slug: 'scuba-diver', label: 'Scuba Diver' },
-  { slug: 'discover-scuba-deluxe', label: 'Discover Scuba Deluxe' },
-  { slug: 'home', label: 'Home/About' },
-  { slug: 'dive-sites/sail-rock', label: 'Sail Rock (Dive Site)' },
-];
-
-const COURSE_SLUGS = [
-  'open-water',
-  'advanced',
-  'rescue',
-  'divemaster',
-  'idc',
-  'scuba-diver',
-  'discover-scuba-deluxe',
-];
-const languageList = [
   { code: 'en', label: 'English' },
   { code: 'nl', label: 'Dutch' },
 ];
@@ -211,33 +15,6 @@ const Admin = () => {
   const [activeTab, setActiveTab] = useState('bookings');
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedPage, setSelectedPage] = useState(pageList[0].slug);
-  const [selectedLang, setSelectedLang] = useState(languageList[0].code);
-  const [sectionKeyList, setSectionKeyList] = useState([]);
-  const [selectedSection, setSelectedSection] = useState('');
-    // Fetch all section_keys for the selected page and language
-    useEffect(() => {
-      if (activeTab === 'pages') {
-        supabase
-          .from('page_content')
-          .select('section_key')
-          .eq('page_slug', selectedPage)
-          .eq('locale', selectedLang)
-          .then(({ data }) => {
-            const keys = (data || []).map(row => row.section_key);
-            setSectionKeyList(keys);
-            // If the current selectedSection is not in the new list, select the first one
-            if (keys.length > 0) {
-              setSelectedSection(prev => keys.includes(prev) ? prev : keys[0]);
-            } else {
-              setSelectedSection('');
-            }
-          });
-      }
-    }, [activeTab, selectedPage, selectedLang]);
-  const [pageContent, setPageContent] = useState('');
-  const [pageLoading, setPageLoading] = useState(false);
-  const [pageSaveStatus, setPageSaveStatus] = useState('');
 
   useEffect(() => {
     if (activeTab === 'bookings') {
@@ -289,10 +66,6 @@ const Admin = () => {
           className={`px-3 py-1 rounded font-semibold transition-colors duration-150 ${activeTab === 'calendar' ? 'bg-blue-600 text-white shadow' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
           onClick={() => setActiveTab('calendar')}
         >Calendar</button>
-        <button
-          className={`px-3 py-1 rounded font-semibold transition-colors duration-150 ${activeTab === 'pages' ? 'bg-blue-600 text-white shadow' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
-          onClick={() => setActiveTab('pages')}
-        >Pages</button>
       </div>
 
       {activeTab === 'bookings' && (
@@ -304,20 +77,6 @@ const Admin = () => {
       {activeTab === 'calendar' && (
         <div className="bg-white rounded shadow p-4">Calendar view coming soon.</div>
       )}
-
-      {activeTab === 'pages' && (
-        <div className="bg-white rounded shadow p-4">
-          <h2 className="text-base font-semibold mb-2">Page Content Editor</h2>
-          <div className="max-w-2xl mx-auto">
-            <div className="flex gap-2 mb-4">
-              <label className="font-medium">Page:</label>
-              <select
-                className="border rounded px-2 py-1 text-sm"
-                value={selectedPage}
-                onChange={e => {
-                  setSelectedPage(e.target.value);
-                  setSelectedSection('');
-                }}
               >
                 {pageList.map(page => (
                   <option key={page.slug} value={page.slug}>{page.label}</option>
