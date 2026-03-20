@@ -1,3 +1,4 @@
+
 // AdminBookings.tsx
 // Clean admin bookings table: shows Name, Email, Phone, Course, Date, Total, Deposit, To Be Paid, PayPal link.
 // To add more columns or features, edit below. For comments or notes, add a new column and input logic as needed.
@@ -22,6 +23,25 @@ interface Booking {
 }
 
 const AdminBookings: React.FC = () => {
+  const [statusUpdating, setStatusUpdating] = useState<{[id: string]: boolean}>({});
+
+  // Function to handle status change and update local state
+  async function handleSaveStatus(id: string, newStatus: string) {
+    setStatusUpdating(s => ({ ...s, [id]: true }));
+    try {
+      const res = await fetch('/api/booking_inquiries', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status: newStatus })
+      });
+      if (!res.ok) throw new Error('Failed to update status');
+      setBookings(prev => prev.map(b => b.id === id ? { ...b, status: newStatus } : b));
+    } catch (e) {
+      alert('Error updating status: ' + (e instanceof Error ? e.message : e));
+    } finally {
+      setStatusUpdating(s => ({ ...s, [id]: false }));
+    }
+  }
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,34 +67,7 @@ const AdminBookings: React.FC = () => {
       });
   }, []);
 
-  const handleEditNotes = (id: string, internal_notes: string = '') => {
-    setEditingNotesId(id);
-    setNotesDraft(internal_notes);
-  };
-  const handleSaveNotes = async (id: string) => {
-    await fetch(`/api/bookings/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ internal_notes: notesDraft }),
-    });
-    setEditingNotesId(null);
-    setNotesDraft('');
-    setBookings((prev) => prev.map(b => b.id === id ? { ...b, internal_notes: notesDraft } : b));
-  };
-  const handleEditStatus = (id: string, status: string) => {
-    setEditingStatusId(id);
-    setStatusDraft(status);
-  };
-  const handleSaveStatus = async (id: string) => {
-    await fetch(`/api/bookings/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: statusDraft }),
-    });
-    setEditingStatusId(null);
-    setStatusDraft('');
-    setBookings((prev) => prev.map(b => b.id === id ? { ...b, status: statusDraft } : b));
-  };
+  // Removed unused notes/status edit functions (now handled inline)
   const handleOpenModal = (id: string) => {
     setModalBookingId(id);
     setShowModal(true);
@@ -133,6 +126,7 @@ const AdminBookings: React.FC = () => {
             <th className="border px-2 py-1">Phone</th>
             <th className="border px-2 py-1">Course</th>
             <th className="border px-2 py-1">Date</th>
+            <th className="border px-2 py-1">Status</th>
             <th className="border px-2 py-1">Finance</th>
             <th className="border px-2 py-1">PayPal</th>
           </tr>
@@ -141,7 +135,9 @@ const AdminBookings: React.FC = () => {
           {bookings.map((b) => {
             let rowClass = '';
             if (b.status === 'pending') rowClass = 'bg-yellow-100';
-            else if (b.status === 'paid') rowClass = 'bg-green-100';
+            else if (b.status === 'confirmed') rowClass = 'bg-green-100';
+            else if (b.status === 'deposit paid') rowClass = 'bg-blue-100';
+            else if (b.status === 'fully paid') rowClass = 'bg-purple-100';
             else if (b.status === 'cancelled') rowClass = 'bg-red-100';
             else rowClass = 'bg-white';
             return (
@@ -151,6 +147,21 @@ const AdminBookings: React.FC = () => {
                 <td className="border px-2 py-1">{b.phone || '-'}</td>
                 <td className="border px-2 py-1">{b.course_title}</td>
                 <td className="border px-2 py-1">{b.preferred_date || '-'}</td>
+                <td className="border px-2 py-1">
+                  <select
+                    value={b.status}
+                    onChange={e => handleSaveStatus(b.id, e.target.value)}
+                    className="border rounded px-1 py-0.5 bg-white"
+                    disabled={!!statusUpdating[b.id]}
+                    aria-label="Booking status"
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="deposit paid">Deposit Paid</option>
+                    <option value="fully paid">Fully Paid</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </td>
                 <td className="border px-2 py-1">
                   <button onClick={() => handleOpenFinance(b)} className="text-blue-600 underline">Finance</button>
                 </td>
