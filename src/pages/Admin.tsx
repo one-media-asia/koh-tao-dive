@@ -74,30 +74,7 @@ const Admin = () => {
       {activeTab === 'calendar' && (
         <div className="bg-white rounded shadow p-4">Calendar view coming soon.</div>
       )}
-              >
-                {pageList.map(page => (
-                  <option key={page.slug} value={page.slug}>{page.label}</option>
-                ))}
-              </select>
-              <label className="font-medium ml-4">Language:</label>
-              <select
-                className="border rounded px-2 py-1 text-sm"
-                value={selectedLang}
-                onChange={e => setSelectedLang(e.target.value)}
-              >
-                {languageList.map(l => (
-                  <option key={l.code} value={l.code}>{l.label}</option>
-                ))}
-              </select>
-            </div>
-            <div className="mb-2">
-              <label className="block text-xs font-medium mb-1">Section</label>
-              <div className="flex gap-2 items-end">
-                <select
-                  className="border rounded px-2 py-1 text-sm min-w-[160px]"
-                  value={selectedSection}
-                  onChange={e => setSelectedSection(e.target.value)}
-                >
+// ...existing code...
                   <option value="">-- Select section --</option>
                   {sectionKeyList.map(key => (
                     <option key={key} value={key}>{key}</option>
