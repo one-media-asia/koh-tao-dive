@@ -69,14 +69,20 @@ const Admin = () => {
               {bookings
                 .filter(b => b.preferred_date)
                 .sort((a, b) => (a.preferred_date > b.preferred_date ? 1 : -1))
-                .map((b) => (
-                  <tr key={b.id}>
-                    <td className="border px-2 py-1">{b.preferred_date}</td>
-                    <td className="border px-2 py-1">{b.name}</td>
-                    <td className="border px-2 py-1">{b.course_title}</td>
-                    <td className="border px-2 py-1">{b.status}</td>
-                  </tr>
-                ))}
+                .map((b) => {
+                  let statusClass = '';
+                  if (b.status === 'confirmed') statusClass = 'bg-green-100 text-green-800 font-semibold';
+                  else if (b.status === 'pending') statusClass = 'bg-yellow-100 text-yellow-800 font-semibold';
+                  else if (b.status === 'talking') statusClass = 'bg-blue-100 text-blue-800 font-semibold';
+                  return (
+                    <tr key={b.id}>
+                      <td className="border px-2 py-1">{b.preferred_date}</td>
+                      <td className="border px-2 py-1">{b.name}</td>
+                      <td className="border px-2 py-1">{b.course_title}</td>
+                      <td className={`border px-2 py-1 ${statusClass}`}>{b.status}</td>
+                    </tr>
+                  );
+                })}
             </tbody>
           </table>
           {bookings.filter(b => !b.preferred_date).length > 0 && (
