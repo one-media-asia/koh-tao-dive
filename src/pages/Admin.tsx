@@ -9,6 +9,12 @@ import { supabase } from '@/integrations/supabase/client';
 // Remove static sectionKeyList, use dynamic fetching
 
 const Admin = () => {
+    // Tab navigation UI
+    const tabs = [
+      { key: 'bookings', label: 'Bookings' },
+      { key: 'calendar', label: 'Calendar' },
+      { key: 'comments', label: 'Comments' },
+    ];
   const [activeTab, setActiveTab] = useState('bookings');
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -63,7 +69,18 @@ const Admin = () => {
 
 
   return (
-    <>
+    <div className="p-4">
+      <div className="flex gap-2 mb-6">
+        {tabs.map(tab => (
+          <button
+            key={tab.key}
+            className={`px-4 py-2 rounded-t ${activeTab === tab.key ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
+            onClick={() => setActiveTab(tab.key)}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
       {activeTab === 'bookings' && (
         <div className="bg-white rounded shadow p-2">
           <AdminBookings />
