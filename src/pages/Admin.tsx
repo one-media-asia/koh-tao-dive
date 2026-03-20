@@ -75,49 +75,6 @@ const Admin = () => {
         <div className="bg-white rounded shadow p-4">Calendar view coming soon.</div>
       )}
 // ...existing code...
-                      setPageContent('');
-                    }
-                  }}
-                >Add Section</button>
-                {selectedSection && (
-                  <button
-                    type="button"
-                    className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-xs"
-                    onClick={async () => {
-                      if (!window.confirm(`Delete section "${selectedSection}"? This cannot be undone.`)) return;
-                      // Remove from DB
-                      await fetch('/api/admin-upsert-page-content', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                          page_slug: selectedPage,
-                          locale: selectedLang,
-                          section_key: selectedSection,
-                          content_type: 'text',
-                          content_value: '' // Empty value means delete
-                        })
-                      });
-                      setSectionKeyList(prev => prev.filter(k => k !== selectedSection));
-                      setSelectedSection('');
-                      setPageContent('');
-                    }}
-                  >Delete</button>
-                )}
-              </div>
-            </div>
-            {pageLoading ? (
-              <div className="text-gray-500 text-sm mb-2">Loading content...</div>
-            ) : (
-              <>
-                <textarea
-                  className="w-full min-h-[120px] border rounded p-2 text-base"
-                  value={pageContent}
-                  onChange={e => setPageContent(e.target.value)}
-                  placeholder="Edit section content..."
-                  disabled={!selectedSection}
-                />
-                <div className="flex gap-2 mt-2 justify-end">
-                  <button
                     className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
                     disabled={!selectedSection}
                     onClick={async () => {
