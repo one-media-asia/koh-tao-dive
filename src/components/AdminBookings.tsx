@@ -29,10 +29,10 @@ const AdminBookings: React.FC = () => {
   async function handleSaveStatus(id: string, newStatus: string) {
     setStatusUpdating(s => ({ ...s, [id]: true }));
     try {
-      const res = await fetch('/api/booking_inquiries', {
+      const res = await fetch(`/api/booking_inquiries?id=${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, status: newStatus })
+        body: JSON.stringify({ status: newStatus })
       });
       if (!res.ok) throw new Error('Failed to update status');
       setBookings(prev => prev.map(b => b.id === id ? { ...b, status: newStatus } : b));
