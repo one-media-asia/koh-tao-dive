@@ -32,25 +32,7 @@ const Admin = () => {
     }
   }, [activeTab]);
 
-  useEffect(() => {
-    if (activeTab === 'pages') {
-      setPageLoading(true);
-      setPageSaveStatus('');
-      const isCourse = ['open-water','advanced','rescue','divemaster','scuba-diver','discover-scuba-deluxe'].includes(selectedPage);
-      supabase
-        .from('page_content')
-        .select('content_value')
-        .eq('page_slug', selectedPage)
-        .eq('locale', selectedLang)
-        .eq('section_key', isCourse ? selectedSection : 'main')
-        .single()
-        .then(({ data, error }) => {
-          setPageContent(data?.content_value || '');
-          setPageLoading(false);
-          if (error) setPageSaveStatus('Error loading content.');
-        });
-    }
-  }, [activeTab, selectedPage, selectedLang, selectedSection]);
+
 
   return (
     <>
