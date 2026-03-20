@@ -74,6 +74,10 @@ const Admin = () => {
           className={`px-3 py-1 rounded font-semibold transition-colors duration-150 ${activeTab === 'calendar' ? 'bg-blue-600 text-white shadow' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
           onClick={() => setActiveTab('calendar')}
         >Calendar</button>
+        <button
+          className={`px-3 py-1 rounded font-semibold transition-colors duration-150 ${activeTab === 'comments' ? 'bg-blue-600 text-white shadow' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
+          onClick={() => setActiveTab('comments')}
+        >Comments</button>
       </div>
 
       {activeTab === 'bookings' && (
