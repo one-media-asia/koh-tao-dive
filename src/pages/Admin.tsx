@@ -54,7 +54,35 @@ const Admin = () => {
       )}
 
       {activeTab === 'calendar' && (
-        <div className="bg-white rounded shadow p-4">Calendar view coming soon.</div>
+        <div className="bg-white rounded shadow p-4">
+          <h2 className="text-xl font-bold mb-4">Booking Calendar</h2>
+          <table className="min-w-full border text-sm">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="border px-2 py-1">Date</th>
+                <th className="border px-2 py-1">Name</th>
+                <th className="border px-2 py-1">Course</th>
+                <th className="border px-2 py-1">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {bookings
+                .filter(b => b.preferred_date)
+                .sort((a, b) => (a.preferred_date > b.preferred_date ? 1 : -1))
+                .map((b) => (
+                  <tr key={b.id}>
+                    <td className="border px-2 py-1">{b.preferred_date}</td>
+                    <td className="border px-2 py-1">{b.name}</td>
+                    <td className="border px-2 py-1">{b.course_title}</td>
+                    <td className="border px-2 py-1">{b.status}</td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+          {bookings.filter(b => !b.preferred_date).length > 0 && (
+            <div className="mt-4 text-xs text-gray-500">Some bookings have no preferred date and are not shown here.</div>
+          )}
+        </div>
       )}
     </>
   );
