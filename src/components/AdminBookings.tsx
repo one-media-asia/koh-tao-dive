@@ -169,8 +169,6 @@ const AdminBookings: React.FC = () => {
               </tr>
             );
           })}
-            </tr>
-          ))}
         </tbody>
       </table>
       {showModal && (
