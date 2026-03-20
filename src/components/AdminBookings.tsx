@@ -138,28 +138,37 @@ const AdminBookings: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {bookings.map((b) => (
-            <tr key={b.id}>
-              <td className="border px-2 py-1">{b.name}</td>
-              <td className="border px-2 py-1">{b.email}</td>
-              <td className="border px-2 py-1">{b.phone || '-'}</td>
-              <td className="border px-2 py-1">{b.course_title}</td>
-              <td className="border px-2 py-1">{b.preferred_date || '-'}</td>
-              <td className="border px-2 py-1">
-                <button onClick={() => handleOpenFinance(b)} className="text-blue-600 underline">Finance</button>
-              </td>
-              <td className="border px-2 py-1">
-                {(b.total_payable_now || b.deposit_amount || b.total_amount) && (
-                  <a
-                    href={`https://paypal.me/prodivingasia/${b.total_payable_now || b.deposit_amount || b.total_amount}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 underline"
-                  >
-                    PayPal
-                  </a>
-                )}
-              </td>
+          {bookings.map((b) => {
+            let rowClass = '';
+            if (b.status === 'pending') rowClass = 'bg-yellow-100';
+            else if (b.status === 'paid') rowClass = 'bg-green-100';
+            else if (b.status === 'cancelled') rowClass = 'bg-red-100';
+            else rowClass = 'bg-white';
+            return (
+              <tr key={b.id} className={rowClass}>
+                <td className="border px-2 py-1">{b.name}</td>
+                <td className="border px-2 py-1">{b.email}</td>
+                <td className="border px-2 py-1">{b.phone || '-'}</td>
+                <td className="border px-2 py-1">{b.course_title}</td>
+                <td className="border px-2 py-1">{b.preferred_date || '-'}</td>
+                <td className="border px-2 py-1">
+                  <button onClick={() => handleOpenFinance(b)} className="text-blue-600 underline">Finance</button>
+                </td>
+                <td className="border px-2 py-1">
+                  {(b.total_payable_now || b.deposit_amount || b.total_amount) && (
+                    <a
+                      href={`https://paypal.me/prodivingasia/${b.total_payable_now || b.deposit_amount || b.total_amount}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 underline"
+                    >
+                      PayPal
+                    </a>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
             </tr>
           ))}
         </tbody>
