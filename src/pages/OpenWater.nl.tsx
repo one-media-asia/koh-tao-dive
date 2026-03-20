@@ -18,6 +18,7 @@ const OpenWaterNl: React.FC = () => {
       heroImage="/images/openwater.png"
       images={['/images/downline.png', '/images/openwater.png', '/images/photo-1682686580849-3e7f67df4015.avif', '/images/photo-1647825194145-2d94e259c745.avif']}
       level="Beginner"
+      bookingItemName="PADI Open Water-cursus"
       sections={[
         {
           title: 'Wat je leert',
