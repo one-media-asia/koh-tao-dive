@@ -61,8 +61,9 @@ const Admin = () => {
     }
   };
 
-// The above button block was outside of a return statement and caused a syntax error. It is now removed. The correct button block is already present inside the return statement of the Admin component.
 
+  return (
+    <>
       {activeTab === 'bookings' && (
         <div className="bg-white rounded shadow p-2">
           <AdminBookings />
