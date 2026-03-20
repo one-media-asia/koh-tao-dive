@@ -308,123 +308,124 @@ const Admin = () => {
       {activeTab === 'pages' && (
         <div className="bg-white rounded shadow p-4">
           <h2 className="text-base font-semibold mb-2">Page Content Editor</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            {pageList.map(page => (
-              <div key={page.slug} className="border rounded p-3 flex flex-col gap-2 bg-gray-50">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold">{page.label}</span>
-                  <select
-                    className="border rounded px-2 py-1 text-xs"
-                    value={selectedPage === page.slug ? selectedLang : languageList[0].code}
-                    onChange={e => {
-                      setSelectedPage(page.slug);
-                      setSelectedLang(e.target.value);
-                    }}
-                  >
-                    {languageList.map(l => (
-                      <option key={l.code} value={l.code}>{l.label}</option>
-                    ))}
-                  </select>
+          <div className="max-w-2xl mx-auto">
+            <div className="flex gap-2 mb-4">
+              <label className="font-medium">Page:</label>
+              <select
+                className="border rounded px-2 py-1 text-sm"
+                value={selectedPage}
+                onChange={e => {
+                  setSelectedPage(e.target.value);
+                  setSelectedSection('');
+                }}
+              >
+                {pageList.map(page => (
+                  <option key={page.slug} value={page.slug}>{page.label}</option>
+                ))}
+              </select>
+              <label className="font-medium ml-4">Language:</label>
+              <select
+                className="border rounded px-2 py-1 text-sm"
+                value={selectedLang}
+                onChange={e => setSelectedLang(e.target.value)}
+              >
+                {languageList.map(l => (
+                  <option key={l.code} value={l.code}>{l.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="mb-2">
+              <label className="block text-xs font-medium mb-1">Section</label>
+              <div className="flex gap-2 items-end">
+                <select
+                  className="border rounded px-2 py-1 text-sm min-w-[160px]"
+                  value={selectedSection}
+                  onChange={e => setSelectedSection(e.target.value)}
+                >
+                  <option value="">-- Select section --</option>
+                  {sectionKeyList.map(key => (
+                    <option key={key} value={key}>{key}</option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  className="px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs"
+                  onClick={() => {
+                    const newKey = window.prompt('Enter new section name:');
+                    if (newKey && !sectionKeyList.includes(newKey)) {
+                      setSectionKeyList(prev => [...prev, newKey]);
+                      setSelectedSection(newKey);
+                      setPageContent('');
+                    }
+                  }}
+                >Add Section</button>
+                {selectedSection && (
                   <button
-                    className="ml-auto bg-blue-600 text-white px-2 py-1 rounded text-xs hover:bg-blue-700"
-                    onClick={() => {
-                      setSelectedPage(page.slug);
-                      setSelectedLang(selectedLang);
+                    type="button"
+                    className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-xs"
+                    onClick={async () => {
+                      if (!window.confirm(`Delete section "${selectedSection}"? This cannot be undone.`)) return;
+                      // Remove from DB
+                      await fetch('/api/admin-upsert-page-content', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          page_slug: selectedPage,
+                          locale: selectedLang,
+                          section_key: selectedSection,
+                          content_type: 'text',
+                          content_value: '' // Empty value means delete
+                        })
+                      });
+                      setSectionKeyList(prev => prev.filter(k => k !== selectedSection));
+                      setSelectedSection('');
+                      setPageContent('');
                     }}
-                  >Edit</button>
-                </div>
-                {selectedPage === page.slug && (
-                  <>
-                    {/* Home/About and info pages: show all editable fields */}
-                    {['home','koh-tao-info','accommodation','food-drink','marine-life','medical-services','fun-diving','efr'].includes(page.slug) ? (
-                      <MultiFieldPageEditor
-                        pageSlug={page.slug}
-                        locale={selectedLang}
-                        onSaveStatus={setPageSaveStatus}
-                      />
-                    ) : (
-                      <>
-                        {/* Course pages: show section and main content fields */}
-                        {COURSE_SLUGS.includes(page.slug) && (
-                          <div className="flex items-end gap-2 mb-2">
-                            <div>
-                              <label className="block text-xs font-medium mb-1">Section</label>
-                              <select
-                                className="border rounded px-2 py-1 text-xs"
-                                value={selectedSection}
-                                onChange={e => setSelectedSection(e.target.value)}
-                                disabled={sectionKeyList.length === 0}
-                              >
-                                {sectionKeyList.map(key => (
-                                  <option key={key} value={key}>{key}</option>
-                                ))}
-                              </select>
-                            </div>
-                            <button
-                              type="button"
-                              className="ml-2 px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs"
-                              onClick={() => {
-                                const newKey = window.prompt('Enter new section name:');
-                                if (newKey && !sectionKeyList.includes(newKey)) {
-                                  setSectionKeyList(prev => [...prev, newKey]);
-                                  setSelectedSection(newKey);
-                                  setPageContent('');
-                                }
-                              }}
-                            >Add Section</button>
-                          </div>
-                        )}
-                        {pageLoading ? (
-                          <div className="text-gray-500 text-sm mb-2">Loading content...</div>
-                        ) : (
-                          <>
-                            <textarea
-                              className="w-full min-h-[120px] border rounded p-2 text-base"
-                              value={pageContent}
-                              onChange={e => setPageContent(e.target.value)}
-                              placeholder="Edit main content..."
-                            />
-                            <div className="flex gap-2 mt-2 justify-end">
-                              <button
-                                className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
-                                disabled={COURSE_SLUGS.includes(page.slug) ? !selectedSection.trim() : false}
-                                onClick={async () => {
-                                  if (COURSE_SLUGS.includes(page.slug) && !selectedSection.trim()) {
-                                    setPageSaveStatus('Section key required.');
-                                    return;
-                                  }
-                                  setPageSaveStatus('Saving...');
-                                  const plainText = pageContent.replace(/<[^>]+>/g, '');
-                                  const res = await fetch('/api/admin-upsert-page-content', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({
-                                      page_slug: page.slug,
-                                      locale: selectedLang,
-                                      section_key: COURSE_SLUGS.includes(page.slug) ? selectedSection : 'main',
-                                      content_type: 'text',
-                                      content_value: plainText
-                                    })
-                                  });
-                                  const result = await res.json();
-                                  setPageSaveStatus(res.ok ? 'Saved!' : (result.error || 'Error saving content.'));
-                                  if (res.ok && COURSE_SLUGS.includes(page.slug) && !sectionKeyList.includes(selectedSection)) {
-                                    setSectionKeyList(prev => [...prev, selectedSection]);
-                                  }
-                                }}
-                              >Save</button>
-                              {pageSaveStatus && <span className="text-xs text-gray-600 ml-2">{pageSaveStatus}</span>}
-                            </div>
-                          </>
-                        )}
-                      </>
-                    )}
-                  </>
+                  >Delete</button>
                 )}
-
-
               </div>
-            ))}
+            </div>
+            {pageLoading ? (
+              <div className="text-gray-500 text-sm mb-2">Loading content...</div>
+            ) : (
+              <>
+                <textarea
+                  className="w-full min-h-[120px] border rounded p-2 text-base"
+                  value={pageContent}
+                  onChange={e => setPageContent(e.target.value)}
+                  placeholder="Edit section content..."
+                  disabled={!selectedSection}
+                />
+                <div className="flex gap-2 mt-2 justify-end">
+                  <button
+                    className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
+                    disabled={!selectedSection}
+                    onClick={async () => {
+                      if (!selectedSection) return;
+                      setPageSaveStatus('Saving...');
+                      const plainText = pageContent.replace(/<[^>]+>/g, '');
+                      const res = await fetch('/api/admin-upsert-page-content', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          page_slug: selectedPage,
+                          locale: selectedLang,
+                          section_key: selectedSection,
+                          content_type: 'text',
+                          content_value: plainText
+                        })
+                      });
+                      const result = await res.json();
+                      setPageSaveStatus(res.ok ? 'Saved!' : (result.error || 'Error saving content.'));
+                      if (res.ok && !sectionKeyList.includes(selectedSection)) {
+                        setSectionKeyList(prev => [...prev, selectedSection]);
+                      }
+                    }}
+                  >Save</button>
+                  {pageSaveStatus && <span className="text-xs text-gray-600 ml-2">{pageSaveStatus}</span>}
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
