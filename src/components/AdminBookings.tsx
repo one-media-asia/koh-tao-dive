@@ -76,8 +76,6 @@ const AdminBookings: React.FC = () => {
         {exporting ? 'Exporting...' : 'Export to Jira'}
       </button>
       {exportResult && <div className="mb-4 text-green-700">{exportResult}</div>}
-        const [exporting, setExporting] = useState(false);
-        const [exportResult, setExportResult] = useState<string | null>(null);
       <table className="min-w-full border">
         <thead>
           <tr>
