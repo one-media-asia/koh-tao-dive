@@ -10,10 +10,9 @@ import { supabase } from '@/integrations/supabase/client';
 
 const Admin = () => {
     // Tab navigation UI
+    // Only Bookings tab remains
     const tabs = [
       { key: 'bookings', label: 'Bookings' },
-      { key: 'calendar', label: 'Calendar' },
-      { key: 'comments', label: 'Comments' },
     ];
   const [activeTab, setActiveTab] = useState('bookings');
   const [bookings, setBookings] = useState([]);
@@ -71,108 +70,21 @@ const Admin = () => {
   return (
     <div className="p-4">
       <div className="flex gap-2 mb-6">
-        {tabs.map(tab => (
-          <button
-            key={tab.key}
-            className={`px-4 py-2 rounded-t ${activeTab === tab.key ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
-            onClick={() => setActiveTab(tab.key)}
-          >
-            {tab.label}
-          </button>
-        ))}
+        <button
+          className={`px-4 py-2 rounded-t ${activeTab === 'bookings' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
+          onClick={() => setActiveTab('bookings')}
+        >
+          Bookings
+        </button>
       </div>
       {activeTab === 'bookings' && (
         <div className="bg-white rounded shadow p-2">
           <AdminBookings />
         </div>
       )}
-
-      {activeTab === 'calendar' && (
-        <div className="bg-white rounded shadow p-4">
-          <h2 className="text-xl font-bold mb-4">Booking Calendar</h2>
-          <table className="min-w-full border text-sm">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="border px-2 py-1">Date</th>
-                <th className="border px-2 py-1">Name</th>
-                <th className="border px-2 py-1">Course</th>
-                <th className="border px-2 py-1">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {bookings
-                .filter(b => b.preferred_date)
-                .sort((a, b) => (a.preferred_date > b.preferred_date ? 1 : -1))
-                .map((b) => {
-                  let statusClass = '';
-                  if (b.status === 'confirmed') statusClass = 'bg-green-100 text-green-800 font-semibold';
-                  else if (b.status === 'pending') statusClass = 'bg-yellow-100 text-yellow-800 font-semibold';
-                  else if (b.status === 'talking') statusClass = 'bg-blue-100 text-blue-800 font-semibold';
-                  return (
-                    <tr key={b.id}>
-                      <td className="border px-2 py-1">{b.preferred_date}</td>
-                      <td className="border px-2 py-1">{b.name}</td>
-                      <td className="border px-2 py-1">{b.course_title}</td>
-                      <td className={`border px-2 py-1 ${statusClass}`}>{b.status}</td>
-                    </tr>
-                  );
-                })}
-            </tbody>
-          </table>
-          {bookings.filter(b => !b.preferred_date).length > 0 && (
-            <div className="mt-4 text-xs text-gray-500">Some bookings have no preferred date and are not shown here.</div>
-          )}
-        </div>
-      )}
-
-      {activeTab === 'comments' && (
-        <div className="bg-white rounded shadow p-4">
-          <h2 className="text-xl font-bold mb-4">Booking Comments</h2>
-          <div className="flex gap-6">
-            <div className="w-1/3">
-              <div className="font-semibold mb-2">Select a booking:</div>
-              <ul className="max-h-96 overflow-y-auto border rounded divide-y">
-                {bookings.map(b => (
-                  <li
-                    key={b.id}
-                    className={`px-2 py-1 cursor-pointer hover:bg-blue-50 ${selectedBookingId === b.id ? 'bg-blue-100 font-bold' : ''}`}
-                    onClick={() => setSelectedBookingId(b.id)}
-                  >
-                    <div>{b.name} <span className="text-xs text-gray-500">({b.email})</span></div>
-                    <div className="text-xs text-gray-500">{b.course_title} | {b.preferred_date || 'No date'}</div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="flex-1">
-              {selectedBookingId ? (
-                <>
-                  <div className="mb-2 text-sm text-gray-600">Add or update comments for this booking. Visible to all admins.</div>
-                  <textarea
-                    className="w-full border rounded p-2 mb-2"
-                    rows={8}
-                    value={commentDraft}
-                    onChange={e => setCommentDraft(e.target.value)}
-                    placeholder="Enter comments, updates, or notes..."
-                  />
-                  <div className="flex gap-2">
-                    <button
-                      onClick={handleSaveComment}
-                      className="px-4 py-1 bg-blue-600 text-white rounded disabled:opacity-60"
-                      disabled={savingComment}
-                    >{savingComment ? 'Saving...' : 'Save Comment'}</button>
-                  </div>
-                </>
-              ) : (
-                <div className="text-gray-400 mt-8">Select a booking to view or add comments.</div>
-              )}
-            </div>
-          </div>
-
-        </div>
-      )}
     </div>
   );
+};
 };
 
 export default Admin;
