@@ -82,7 +82,7 @@ const       BookingPage: React.FC = () => {
     ? (apiBaseRaw.startsWith('http://') || apiBaseRaw.startsWith('https://')
         ? apiBaseRaw
         : `https://${apiBaseRaw}`)
-    : 'https://koh-tao-dive-dreams.vercel.app';
+    : 'https://koh-tao-dive-dreams-mocha.vercel.app';
   const apiBase = apiBaseNormalized.replace(/\/+$/, '');
   const apiUrl = (path: string) => `${apiBase}${path}`;
   const courseSlug = (searchParams.get('course') || '').trim();
@@ -211,7 +211,7 @@ const       BookingPage: React.FC = () => {
 
       let persisted = false;
       try {
-        const dbRes = await fetch('https://koh-tao-dive-dreams.vercel.app/api/bookings', {
+        const dbRes = await fetch('https://koh-tao-dive-dreams-mocha.vercel.app/api/bookings', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(apiBookingPayload),

@@ -11,7 +11,7 @@ export default function ContactForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('Sending...');
-    const apiBase = import.meta.env.VITE_API_BASE_URL || 'https://koh-tao-dive-dreams.vercel.app';
+    const apiBase = import.meta.env.VITE_API_BASE_URL || 'https://koh-tao-dive-dreams-mocha.vercel.app';
     try {
       const res = await fetch(`${apiBase.replace(/\/+$/, '')}/api/contact`, {
         method: 'POST',
