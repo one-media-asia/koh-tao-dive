@@ -252,7 +252,7 @@ const Navigation = ({ user, isAdmin, isAdminRoute }: { user?: any, isAdmin?: boo
                     </li>
                     <li>
                       <Link
-                        to="/SailRock"
+                        to="/dive-sites/sail-rock"
                         className="block py-1.5 text-sm text-gray-300 hover:text-white hover:pl-1 transition-all duration-150"
                       >
                         Sail Rock
