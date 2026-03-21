@@ -20,7 +20,7 @@ const AdminPanel: React.FC = () => {
   const fetchBookings = async () => {
     setLoading(true);
     const apiBase = import.meta.env.VITE_API_BASE_URL || 'https://koh-tao-dive-dreams-mocha.vercel.app';
-    const res = await fetch('https://koh-tao-dive-dreams-mocha.vercel.app/api/bookings');
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/bookings`);
     const jb = await res.json();
     // Map server booking schema to local Booking type
     const mapped = (jb || []).map((b: any) => ({
@@ -41,13 +41,13 @@ const AdminPanel: React.FC = () => {
 
   const updateStatus = async (id: string, status: string) => {
     const apiBase = import.meta.env.VITE_API_BASE_URL || 'https://koh-tao-dive-dreams-mocha.vercel.app';
-    await fetch(`https://koh-tao-dive-dreams-mocha.vercel.app/api/bookings/${id}/status`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) });
+    await fetch(`${import.meta.env.VITE_API_URL}/api/bookings/${id}/status`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) });
     fetchBookings();
   };
 
   const sendInvoice = async (id: string) => {
     const apiBase = import.meta.env.VITE_API_BASE_URL || 'https://koh-tao-dive-dreams-mocha.vercel.app';
-    await fetch(`https://koh-tao-dive-dreams-mocha.vercel.app/api/bookings/${id}/invoice`, { method: 'POST' });
+    await fetch(`${import.meta.env.VITE_API_URL}/api/bookings/${id}/invoice`, { method: 'POST' });
     alert('Invoice sent (if SMTP configured)');
   };
 
