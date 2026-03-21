@@ -244,7 +244,7 @@ const Navigation = ({ user, isAdmin, isAdminRoute }: { user?: any, isAdmin?: boo
                   <ul className="space-y-1">
                     <li>
                       <Link
-                        to="/DiveSitesPage"
+                        to="/koh-tao-dive-sites"
                         className="block py-1.5 text-sm text-gray-300 hover:text-white hover:pl-1 transition-all duration-150"
                       >
                         {labels.diveSitesOverview}
@@ -260,7 +260,7 @@ const Navigation = ({ user, isAdmin, isAdminRoute }: { user?: any, isAdmin?: boo
                     </li>
                     <li>
                       <Link
-                        to="/ChumphonPinnacle"
+                        to="/dive-sites/chumphon-pinnacle"
                         className="block py-1.5 text-sm text-gray-300 hover:text-white hover:pl-1 transition-all duration-150"
                       >
                         Chumphon Pinnacle
@@ -268,10 +268,18 @@ const Navigation = ({ user, isAdmin, isAdminRoute }: { user?: any, isAdmin?: boo
                     </li>
                     <li>
                       <Link
-                        to="/JapaneseGardens"
+                        to="/dive-sites/japanese-gardens"
                         className="block py-1.5 text-sm text-gray-300 hover:text-white hover:pl-1 transition-all duration-150"
                       >
                         Japanese Gardens
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/dive-sites/twins-pinnacle"
+                        className="block py-1.5 text-sm text-gray-300 hover:text-white hover:pl-1 transition-all duration-150"
+                      >
+                        Twins Pinnacle
                       </Link>
                     </li>
                     <li>
