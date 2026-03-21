@@ -131,22 +131,24 @@ const DiveSiteDetail: React.FC<DiveSiteDetailProps> = ({
           <h1 className="text-4xl md:text-6xl font-bold mb-4 text-white drop-shadow-lg">{name}</h1>
         </div>
       </section>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-2xl">{labels.tips}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <ul className="space-y-2">
-                        {divingTips.map((tip, index) => (
-                          <li key={index} className="flex items-start gap-2">
-                            <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0" />
-                            <span className="text-muted-foreground">{tip}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </CardContent>
-                  </Card>
-                </div>
+
+      {/* Tips Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl">{labels.tips}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ul className="space-y-2">
+            {divingTips.map((tip, index) => (
+              <li key={index} className="flex items-start gap-2">
+                <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0" />
+                <span className="text-muted-foreground">{tip}</span>
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
+
       {/* Booking Warning Dialog */}
       <AlertDialog open={showBookingWarning} onOpenChange={setShowBookingWarning}>
         <AlertDialogContent>
