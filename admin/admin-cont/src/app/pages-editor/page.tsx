@@ -39,6 +39,7 @@ export default function PagesEditor() {
       if (error) {
         setError('Failed to fetch pages: ' + error.message);
       } else {
+        console.log('Fetched pages from Supabase:', data);
         setPages(data || []);
       }
       setLoading(false);
