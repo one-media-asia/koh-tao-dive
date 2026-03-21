@@ -19,7 +19,7 @@ const SailRock = () => {
       whatYouCanSee: ['Whale sharks', 'Giant barracuda', 'Malabar grouper', 'Sailfish'],
       marineLifeHighlights: ['test'],
       divingTips: ['test'],
-      images: ['/images/photo-1682686580849-3e7f67df4015.avif'],
+      images: ['/images/sailrock.webp'],
     },
     nl: {
       overview: 'Dutch overview content here',
@@ -32,7 +32,7 @@ const SailRock = () => {
       whatYouCanSee: ['Walvishaaien', 'Reuzenbarracuda', 'Malabar grouper', 'Zeilvis'],
       marineLifeHighlights: ['Dutch marine life highlights here'],
       divingTips: ['Dutch quick facts here'],
-      images: ['/images/photo-1682686580849-3e7f67df4015.avif'],
+      images: ['/images/sailrock.webp'],
     },
   };
 

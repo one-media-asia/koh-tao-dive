@@ -18,7 +18,7 @@ const ChumphonPinnacle = () => {
       whatYouCanSee: ['Whale sharks', 'Trevally schools', 'Eagle rays', 'Chevron barracuda'],
       marineLifeHighlights: ['test'],
       divingTips: ['test'],
-      images: ['/images/photo-1682686580849-3e7f67df4015.avif'],
+      images: ['/images/whale-shark-snorkelling-fos-sustainable-certification-medium-1.webp'],
     },
     nl: {
       overview: 'Dutch overview content here',
@@ -31,7 +31,7 @@ const ChumphonPinnacle = () => {
       whatYouCanSee: ['Walvishaaien', 'Trevally-scholen', 'Adelaarsroggen', 'Chevron-barracuda'],
       marineLifeHighlights: ['Dutch marine life highlights here'],
       divingTips: ['Dutch quick facts here'],
-      images: ['/images/photo-1682686580849-3e7f67df4015.avif'],
+      images: ['/images/whale-shark-snorkelling-fos-sustainable-certification-medium-1.webp'],
     },
   };
 

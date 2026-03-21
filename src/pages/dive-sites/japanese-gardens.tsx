@@ -18,7 +18,7 @@ const JapaneseGardens = () => {
       whatYouCanSee: ['Pink-tailed triggerfish', 'Ocellated eagle ray', 'Colorful coral', 'Marbled octopus'],
       marineLifeHighlights: ['test'],
       divingTips: ['test'],
-      images: ['/images/photo-1682686580849-3e7f67df4015.avif'],
+      images: ['/images/japanese-gardensdwins.jpg'],
     },
     nl: {
       overview: 'Dutch overview content here',
@@ -31,7 +31,7 @@ const JapaneseGardens = () => {
       whatYouCanSee: ['Pink-tailed triggerfish', 'Ocellated adelaarsrog', 'Kleurrijk koraal', 'Gemarmerde octopus'],
       marineLifeHighlights: ['Dutch marine life highlights here'],
       divingTips: ['Dutch quick facts here'],
-      images: ['/images/photo-1682686580849-3e7f67df4015.avif'],
+      images: ['/images/japanese-gardensdwins.jpg'],
     },
   };
 

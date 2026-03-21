@@ -57,7 +57,7 @@ const TwinsPinnacle = () => {
           'Uitstekend voor mariene bewustwording',
           'Eenvoudige navigatie dankzij de drie pieken'
         ],
-        images: ['/images/twins-pinnacle.webp']
+        images: ['/images/twins-header.png']
       }
     : {
         overview: "Koh Tao's most popular dive site featuring three granite pinnacles with abundant marine life and perfect for all certification levels.",
@@ -109,7 +109,7 @@ const TwinsPinnacle = () => {
           'Excellent for marine awareness and identification courses',
           'Easy navigation thanks to the three pinnacles'
         ],
-        images: ['/images/twins-pinnacle.webp']
+        images: ['/images/twins-header.png']
       };
 
   const locale = isDutch ? 'nl' : 'en';
