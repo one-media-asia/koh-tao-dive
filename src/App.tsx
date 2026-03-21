@@ -11,7 +11,7 @@ import { hasAdminAccess } from '@/lib/adminAccess';
 import Layout from './components/Layout';
 import Courses from './components/Courses';
 
-import Index from './pages/Index';
+import Index from './pages/index';
 import NotFound from './pages/NotFound';
 import BookingAffiliate from './pages/BookingAffiliate';
 import AgodaHotels from './pages/AgodaHotels';
@@ -37,13 +37,14 @@ import SpecialtyDetail from './pages/SpecialtyDetail';
 
 import FunDiving from './pages/FunDiving';
 import DiveSitesPage from './pages/DiveSitesPage';
-import SailRock from './pages/SailRock';
-import ChumphonPinnacle from './pages/ChumphonPinnacle';
-import JapaneseGardens from './pages/JapaneseGardens';
+import SailRock from './pages/dive-sites/sail-rock';
+import ChumphonPinnacle from './pages/dive-sites/chumphon-pinnacle';
+import JapaneseGardens from './pages/dive-sites/japanese-gardens';
 import HTMSSattakut from './pages/HTMSSattakut';
-import Twins from './pages/Twins';
+import TwinsPinnacle from './pages/dive-sites/twins-pinnacle';
 import SharkIsland from './pages/SharkIsland';
-import MangoBay from './pages/MangoBay';
+import MangoBay from './pages/dive-sites/mango-bay';
+import SouthWestPinnacle from './pages/dive-sites/south-west-pinnacle';
 
 import MarineLifePage from './pages/MarineLifePage';
 import Whaleshark from './pages/Whaleshark';
@@ -245,7 +246,7 @@ const App = () => (
             <Route path="/dive-sites/chumphon-pinnacle" element={<ChumphonPinnacle />} />
             <Route path="/dive-sites/japanese-gardens" element={<JapaneseGardens />} />
             <Route path="/dive-sites/htms-sattakut" element={<HTMSSattakut />} />
-            <Route path="/dive-sites/twins-pinnacle" element={<Twins />} />
+            <Route path="/dive-sites/twins-pinnacle" element={<TwinsPinnacle />} />
             <Route path="/dive-sites/shark-island" element={<SharkIsland />} />
             <Route path="/dive-sites/mango-bay" element={<MangoBay />} />
             <Route path="/dive-sites/south-west-pinnacle" element={<SouthWestPinnacle />} />

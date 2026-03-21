@@ -192,23 +192,6 @@ const DiveSiteDetail: React.FC<DiveSiteDetailProps> = ({
                 </AlertDialogContent>
               </AlertDialog>
             </div>
-          </div>
-
-          {/* Booking Warning Dialog */}
-          <AlertDialog open={showBookingWarning} onOpenChange={setShowBookingWarning}>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>{labels.warningTitle}</AlertDialogTitle>
-                <AlertDialogDescription>
-                  {labels.warningMessage}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>{labels.cancel}</AlertDialogCancel>
-                <AlertDialogAction onClick={confirmBooking}>{labels.continueBooking}</AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
         </>
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
