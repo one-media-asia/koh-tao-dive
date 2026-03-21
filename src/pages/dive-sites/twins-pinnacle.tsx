@@ -123,7 +123,6 @@ const TwinsPinnacle = () => {
       whatYouCanSee={data.whatYouCanSee}
       marineLifeHighlights={data.marineLifeHighlights}
       divingTips={data.divingTips}
-      images={data.images}
     />
   );
 };
