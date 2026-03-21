@@ -118,6 +118,98 @@ const DiveSiteDetail: React.FC<DiveSiteDetailProps> = ({
   // ...existing code...
 
   return (
+        <>
+          <div className="min-h-screen bg-background">
+            {/* Hero Section */}
+            <section className={`relative flex items-center justify-center overflow-hidden ${fullHeightHero ? 'min-h-[calc(100vh-4rem)]' : 'h-96'}`}>
+              <img src={hero} alt={name} className="absolute inset-0 w-full h-full object-cover" />
+              {!noOverlay && <div className="absolute inset-0 bg-black/35" />}
+              <div className={`relative z-10 text-center px-4 ${noOverlay ? 'bg-black/30 rounded-xl py-6' : 'text-white'}`}>
+                <Link to="/koh-tao-dive-sites" className="inline-flex items-center text-white/80 hover:text-white mb-4 transition-colors">
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  {labels.back}
+                </Link>
+                <h1 className="text-4xl md:text-6xl font-bold mb-4 text-white drop-shadow-lg">{name}</h1>
+              </div>
+            </section>
+
+            {/* Tips Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-2xl">{labels.tips}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2">
+                  {divingTips.map((tip, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0" />
+                      <span className="text-muted-foreground">{tip}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+
+            <div className="space-y-6">
+              {/* Quick Facts */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>{labels.quickFacts}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div>
+                    <span className="font-medium text-sm">{labels.depthRange}:</span>
+                    <p className="text-sm text-muted-foreground">{quickFacts.depth}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-sm">{labels.level}:</span>
+                    <p className="text-sm text-muted-foreground">{quickFacts.difficulty}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-sm">{labels.location}:</span>
+                    <p className="text-sm text-muted-foreground">{quickFacts.location}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-sm">{labels.bestTime}:</span>
+                    <p className="text-sm text-muted-foreground">{quickFacts.bestTime}</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Booking Warning Dialog */}
+              <AlertDialog open={showBookingWarning} onOpenChange={setShowBookingWarning}>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>{labels.warningTitle}</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      {labels.warningMessage}
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>{labels.cancel}</AlertDialogCancel>
+                    <AlertDialogAction onClick={confirmBooking}>{labels.continueBooking}</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </div>
+
+          {/* Booking Warning Dialog */}
+          <AlertDialog open={showBookingWarning} onOpenChange={setShowBookingWarning}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>{labels.warningTitle}</AlertDialogTitle>
+                <AlertDialogDescription>
+                  {labels.warningMessage}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>{labels.cancel}</AlertDialogCancel>
+                <AlertDialogAction onClick={confirmBooking}>{labels.continueBooking}</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </>
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className={`relative flex items-center justify-center overflow-hidden ${fullHeightHero ? 'min-h-[calc(100vh-4rem)]' : 'h-96'}`}>
