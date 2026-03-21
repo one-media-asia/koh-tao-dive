@@ -11,14 +11,20 @@ import Contact from '../components/Contact';
 import FunDiving from './FunDiving';
 
 const Index = () => {
-	// Always scroll to top on mount to prevent anchor jumps
-	useEffect(() => {
-		window.scrollTo(0, 0);
-	}, []);
-
 	const location = useLocation();
 
-	// Removed auto-scroll logic for normal homepage behavior
+	useEffect(() => {
+		// Scroll to anchor if hash is present
+		if (location.hash) {
+			const el = document.getElementById(location.hash.replace('#', ''));
+			if (el) {
+				el.scrollIntoView({ behavior: 'smooth' });
+			}
+		} else {
+			window.scrollTo(0, 0);
+		}
+	}, [location]);
+
 	return (
 		<div className="min-h-screen bg-background">
 			<Hero />
