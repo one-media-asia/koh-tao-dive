@@ -24,7 +24,7 @@ export default function DiveSitePage() {
       if (!supportedLocales.includes(locale)) {
         locale = 'en-US';
       }
-      const url = `https://cdn.contentful.com/spaces/${SPACE_ID}/environments/master/entries?access_token=${ACCESS_TOKEN}&content_type=diveSites&locale=${locale}&include=2`;
+      const url = `https://cdn.contentful.com/spaces/${SPACE_ID}/environments/master/entries?access_token=${ACCESS_TOKEN}&content_type=pageContent&locale=${locale}&include=2`;
       try {
         const res = await fetch(url);
         const json = await res.json();
