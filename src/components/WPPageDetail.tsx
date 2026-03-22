@@ -58,6 +58,14 @@ const WPPageDetail: React.FC<{ slug: string }> = ({ slug }) => {
   const overview: string = content.acf?.overview || content.content.rendered;
   // Quick facts from ACF
   const quickFacts = content.acf?.quick_facts || {};
+
+  // Header image: use provided image for Japanese Gardens, else first gallery image
+  let headerImage = '';
+  if (slug === 'japanese-gardens') {
+    headerImage = '/images/japanese-gardens-header.jpg'; // Place the provided image in public/images with this name
+  } else if (gallery.length > 0) {
+    headerImage = gallery[0];
+  }
   // What you can see from ACF
   const whatYouCanSee: string[] = content.acf?.what_you_can_see || [];
   // Marine life highlights from ACF
@@ -67,27 +75,31 @@ const WPPageDetail: React.FC<{ slug: string }> = ({ slug }) => {
   const bookingUrl: string = content.acf?.booking_url || '#';
 
   return (
-    <div className="bg-[#d4f0fc] min-h-screen py-8 px-2 md:px-8">
-      {/* Gallery */}
-      {gallery.length > 0 && (
-        <section className="mb-10">
-          <h2 className="text-4xl font-bold text-center mb-8 text-blue-900">Gallery</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-            {gallery.map((img, i) => (
-              <img
-                key={i}
-                src={img}
-                alt="Gallery image"
-                className="rounded-2xl object-cover w-full h-64 shadow-lg border border-blue-200"
-                loading="lazy"
-              />
-            ))}
-          </div>
-        </section>
+    <div className="bg-[#d4f0fc] min-h-screen pb-8 px-2 md:px-8">
+      {/* Header image */}
+      {headerImage && (
+        <div className="w-full max-w-5xl mx-auto mt-6 mb-8">
+          <img
+            src={headerImage}
+            alt="Header"
+            className="w-full h-64 md:h-96 object-cover rounded-2xl shadow-lg border border-blue-200"
+            style={{ objectPosition: 'center' }}
+          />
+        </div>
       )}
+      {/* Overview section */}
+      <div className="max-w-5xl mx-auto mb-8">
+        <section className="bg-[#b3e0f7] rounded-2xl p-8 shadow-xl border border-blue-200">
+          <h2 className="text-2xl font-bold mb-4 text-blue-900">Overview</h2>
+          <div
+            className="mb-2 text-blue-900 text-lg"
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(overview) }}
+          />
+        </section>
+      </div>
 
       {/* Main content grid */}
-      <div className="grid md:grid-cols-3 gap-8 mb-10">
+      <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-8 mb-10">
         {/* Overview */}
         <section className="md:col-span-2 bg-[#b3e0f7] rounded-2xl p-8 shadow-xl border border-blue-200">
           <h2 className="text-2xl font-bold mb-4 text-blue-900">Overview</h2>
