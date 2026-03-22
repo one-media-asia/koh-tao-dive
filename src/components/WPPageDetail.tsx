@@ -62,7 +62,7 @@ const WPPageDetail: React.FC<{ slug: string }> = ({ slug }) => {
   // Header image: use provided image for Japanese Gardens, else first gallery image
   let headerImage = '';
   if (slug === 'japanese-gardens') {
-    headerImage = '/images/japanese-gardens-header.jpg'; // Place the provided image in public/images with this name
+    headerImage = '/images/japanandwins.jpg';
   } else if (gallery.length > 0) {
     headerImage = gallery[0];
   }
@@ -87,7 +87,7 @@ const WPPageDetail: React.FC<{ slug: string }> = ({ slug }) => {
           />
         </div>
       )}
-      {/* Overview section */}
+      {/* Overview section as a card */}
       <div className="max-w-5xl mx-auto mb-8">
         <section className="bg-[#b3e0f7] rounded-2xl p-8 shadow-xl border border-blue-200">
           <h2 className="text-2xl font-bold mb-4 text-blue-900">Overview</h2>
