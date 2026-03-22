@@ -81,71 +81,83 @@ const WPPageDetail: React.FC<{ slug: string }> = ({ slug }) => {
     <div className="max-w-3xl mx-auto p-4">
       <h1 className="text-3xl font-bold mb-4">{page?.title?.rendered}</h1>
       {/* Overview */}
-      {overview && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>{overview.title}</CardTitle>
-          </CardHeader>
-          <CardContent>
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Overview</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {overview ? (
             <div className="text-muted-foreground text-base" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(overview.content, {ALLOWED_TAGS: ['p','ul','ol','li','strong','em','a','img','br','span','b','i','u','h3','h4','h5','h6'], ALLOWED_ATTR: ['href','src','alt']}) }} />
-          </CardContent>
-        </Card>
-      )}
+          ) : (
+            <span className="text-muted-foreground">No overview provided.</span>
+          )}
+        </CardContent>
+      </Card>
       {/* Quick Facts */}
-      {quickFacts && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>{quickFacts.title}</CardTitle>
-          </CardHeader>
-          <CardContent>
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Quick Facts</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {quickFacts ? (
             <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(quickFacts.content, {ALLOWED_TAGS: ['p','ul','ol','li','strong','em','a','img','br','span','b','i','u','h3','h4','h5','h6'], ALLOWED_ATTR: ['href','src','alt']}) }} />
-          </CardContent>
-        </Card>
-      )}
+          ) : (
+            <span className="text-muted-foreground">No quick facts provided.</span>
+          )}
+        </CardContent>
+      </Card>
       {/* What You Can See */}
-      {whatYouCanSee && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>{whatYouCanSee.title}</CardTitle>
-          </CardHeader>
-          <CardContent>
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>What You Can See</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {whatYouCanSee ? (
             <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(whatYouCanSee.content, {ALLOWED_TAGS: ['p','ul','ol','li','strong','em','a','img','br','span','b','i','u','h3','h4','h5','h6'], ALLOWED_ATTR: ['href','src','alt']}) }} />
-          </CardContent>
-        </Card>
-      )}
+          ) : (
+            <span className="text-muted-foreground">No details provided.</span>
+          )}
+        </CardContent>
+      </Card>
       {/* Marine Life Highlights */}
-      {marineLifeHighlights && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>{marineLifeHighlights.title}</CardTitle>
-          </CardHeader>
-          <CardContent>
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Marine Life Highlights</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {marineLifeHighlights ? (
             <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marineLifeHighlights.content, {ALLOWED_TAGS: ['p','ul','ol','li','strong','em','a','img','br','span','b','i','u','h3','h4','h5','h6'], ALLOWED_ATTR: ['href','src','alt']}) }} />
-          </CardContent>
-        </Card>
-      )}
+          ) : (
+            <span className="text-muted-foreground">No highlights provided.</span>
+          )}
+        </CardContent>
+      </Card>
       {/* Diving Tips */}
-      {divingTips && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>{divingTips.title}</CardTitle>
-          </CardHeader>
-          <CardContent>
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Diving Tips</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {divingTips ? (
             <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(divingTips.content, {ALLOWED_TAGS: ['p','ul','ol','li','strong','em','a','img','br','span','b','i','u','h3','h4','h5','h6'], ALLOWED_ATTR: ['href','src','alt']}) }} />
-          </CardContent>
-        </Card>
-      )}
+          ) : (
+            <span className="text-muted-foreground">No tips provided.</span>
+          )}
+        </CardContent>
+      </Card>
       {/* Gallery */}
-      {gallery && (
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>{gallery.title}</CardTitle>
-          </CardHeader>
-          <CardContent>
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>Gallery</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {gallery ? (
             <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(gallery.content, {ALLOWED_TAGS: ['p','ul','ol','li','strong','em','a','img','br','span','b','i','u','h3','h4','h5','h6'], ALLOWED_ATTR: ['href','src','alt']}) }} />
-          </CardContent>
-        </Card>
-      )}
+          ) : (
+            <span className="text-muted-foreground">No gallery provided.</span>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 };
