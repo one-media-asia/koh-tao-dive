@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import DOMPurify from 'dompurify';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -86,7 +87,7 @@ const WPPageDetail: React.FC<{ slug: string }> = ({ slug }) => {
             <CardTitle>{overview.title}</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-muted-foreground text-base" dangerouslySetInnerHTML={{ __html: overview.content }} />
+            <div className="text-muted-foreground text-base" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(overview.content, {ALLOWED_TAGS: ['p','ul','ol','li','strong','em','a','img','br','span','b','i','u','h3','h4','h5','h6'], ALLOWED_ATTR: ['href','src','alt']}) }} />
           </CardContent>
         </Card>
       )}
@@ -97,7 +98,7 @@ const WPPageDetail: React.FC<{ slug: string }> = ({ slug }) => {
             <CardTitle>{quickFacts.title}</CardTitle>
           </CardHeader>
           <CardContent>
-            <div dangerouslySetInnerHTML={{ __html: quickFacts.content }} />
+            <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(quickFacts.content, {ALLOWED_TAGS: ['p','ul','ol','li','strong','em','a','img','br','span','b','i','u','h3','h4','h5','h6'], ALLOWED_ATTR: ['href','src','alt']}) }} />
           </CardContent>
         </Card>
       )}
@@ -108,7 +109,7 @@ const WPPageDetail: React.FC<{ slug: string }> = ({ slug }) => {
             <CardTitle>{whatYouCanSee.title}</CardTitle>
           </CardHeader>
           <CardContent>
-            <div dangerouslySetInnerHTML={{ __html: whatYouCanSee.content }} />
+            <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(whatYouCanSee.content, {ALLOWED_TAGS: ['p','ul','ol','li','strong','em','a','img','br','span','b','i','u','h3','h4','h5','h6'], ALLOWED_ATTR: ['href','src','alt']}) }} />
           </CardContent>
         </Card>
       )}
@@ -119,7 +120,7 @@ const WPPageDetail: React.FC<{ slug: string }> = ({ slug }) => {
             <CardTitle>{marineLifeHighlights.title}</CardTitle>
           </CardHeader>
           <CardContent>
-            <div dangerouslySetInnerHTML={{ __html: marineLifeHighlights.content }} />
+            <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marineLifeHighlights.content, {ALLOWED_TAGS: ['p','ul','ol','li','strong','em','a','img','br','span','b','i','u','h3','h4','h5','h6'], ALLOWED_ATTR: ['href','src','alt']}) }} />
           </CardContent>
         </Card>
       )}
@@ -130,7 +131,7 @@ const WPPageDetail: React.FC<{ slug: string }> = ({ slug }) => {
             <CardTitle>{divingTips.title}</CardTitle>
           </CardHeader>
           <CardContent>
-            <div dangerouslySetInnerHTML={{ __html: divingTips.content }} />
+            <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(divingTips.content, {ALLOWED_TAGS: ['p','ul','ol','li','strong','em','a','img','br','span','b','i','u','h3','h4','h5','h6'], ALLOWED_ATTR: ['href','src','alt']}) }} />
           </CardContent>
         </Card>
       )}
@@ -141,7 +142,7 @@ const WPPageDetail: React.FC<{ slug: string }> = ({ slug }) => {
             <CardTitle>{gallery.title}</CardTitle>
           </CardHeader>
           <CardContent>
-            <div dangerouslySetInnerHTML={{ __html: gallery.content }} />
+            <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(gallery.content, {ALLOWED_TAGS: ['p','ul','ol','li','strong','em','a','img','br','span','b','i','u','h3','h4','h5','h6'], ALLOWED_ATTR: ['href','src','alt']}) }} />
           </CardContent>
         </Card>
       )}
