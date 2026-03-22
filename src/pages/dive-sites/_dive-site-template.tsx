@@ -41,7 +41,7 @@ export default function DiveSitePage() {
           const slugs = json.items.map(item => item.fields.slug);
           console.log('Available slugs:', slugs, 'Current locale:', locale);
           // Filter for the entry with slug 'chumphon-pinnacle'
-          const item = json.items.find(item => item.fields.slug === 'divinginasia');
+          const item = json.items.find(item => item.fields.slug === 'Diveasia');
           if (item) {
             const fields = item.fields;
             // Resolve images from includes
@@ -128,7 +128,7 @@ export default function DiveSitePage() {
       {data && (
         <>
           <div style={{marginBottom:12, fontSize:13, color:'#888'}}>
-            <strong>Debug info:</strong> Locale: {i18n.language} | Name: {data.name || <span style={{color:'orange'}}>Missing</span>} | Slug: divinginasia
+            <strong>Debug info:</strong> Locale: {i18n.language} | Name: {data.name || <span style={{color:'orange'}}>Missing</span>} | Slug: Diveasia
           </div>
           <DiveSiteDetail
             name={data.withFallback(data.name, 'Name')}
