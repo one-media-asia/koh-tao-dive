@@ -39,7 +39,7 @@ export default function DiveSitePage() {
           const slugs = json.items.map(item => item.fields.slug);
           console.log('Available slugs:', slugs, 'Current locale:', locale);
           // Filter for the entry with slug 'chumphon-pinnacle'
-          const item = json.items.find(item => item.fields.slug === 'chumphon-pinnacle');
+          const item = json.items.find(item => item.fields.slug === 'divinginasia');
           if (item) {
             const fields = item.fields;
             // Resolve images from includes
