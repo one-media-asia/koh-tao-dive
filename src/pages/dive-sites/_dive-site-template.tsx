@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import DiveSiteDetail from '@/components/DiveSiteDetail';
 
-const SPACE_ID = '5uphqssjz3hc';
-const ACCESS_TOKEN = 'FychplmXWcmvE85YBhlKXGvFfR5sgJGWMyF9cirU--4';
+const SPACE_ID = 'dxz3091tnbzu';
+const ACCESS_TOKEN = 'YArIMzW5Pl74W0-ODfe0MAwFGvwoIeRtAacuh4m2iII';
 
 // USAGE: Copy this file and rename it for your new dive site page.
 // Replace 'DIVE_SITE_NAME' and 'Dive Site Name' with the correct slug and display name.
@@ -49,10 +49,10 @@ export default function DiveSitePage() {
             const images = (fields.images || []).map(img => assets[img.sys.id]);
             // Debug: log the fields object to inspect structure
             console.log('Contentful fields:', fields);
-            // Helper to get field value with current locale fallback to English
+            // Helper to get field value with Dutch fallback to English
             const getField = (field) => {
               if (typeof field === 'object' && field !== null) {
-                return field[locale] || field['en-US'] || '';
+                return field['nl'] || field['en-US'] || '';
               }
               return field;
             };
