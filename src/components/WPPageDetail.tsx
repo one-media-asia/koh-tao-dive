@@ -98,56 +98,8 @@ const WPPageDetail: React.FC<{ slug: string }> = ({ slug }) => {
         </section>
       </div>
 
-      {/* Main content grid */}
+      {/* Main content grid: Quick facts, What you can see */}
       <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-8 mb-10">
-        {/* Overview */}
-        <section className="md:col-span-2 bg-[#b3e0f7] rounded-2xl p-8 shadow-xl border border-blue-200">
-          <h2 className="text-2xl font-bold mb-4 text-blue-900">Overview</h2>
-          <div
-            className="mb-6 text-blue-900 text-lg"
-            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(overview) }}
-          />
-          <div className="flex flex-wrap gap-x-10 gap-y-3 text-blue-900 text-base">
-            {quickFacts.depth && (
-              <div className="flex items-center gap-2 min-w-[180px]">
-                <span role="img" aria-label="Depth">🌊</span>
-                <span className="font-semibold">Depth:</span> {quickFacts.depth}
-              </div>
-            )}
-            {quickFacts.location && (
-              <div className="flex items-center gap-2 min-w-[220px]">
-                <span role="img" aria-label="Location">🕒</span>
-                <span className="font-semibold">Location:</span> {quickFacts.location}
-              </div>
-            )}
-            {quickFacts.visibility && (
-              <div className="flex items-center gap-2 min-w-[220px]">
-                <span role="img" aria-label="Visibility">👁️</span>
-                <span className="font-semibold">Visibility:</span> {quickFacts.visibility}
-              </div>
-            )}
-            {quickFacts.current && (
-              <div className="flex items-center gap-2 min-w-[220px]">
-                <span role="img" aria-label="Current">🌀</span>
-                <span className="font-semibold">Current:</span> {quickFacts.current}
-              </div>
-            )}
-          </div>
-          <div className="flex flex-wrap gap-x-8 gap-y-2 mt-4 text-blue-900 text-base">
-            {quickFacts.level && (
-              <div className="flex items-center gap-2">
-                <span className="font-semibold">Level:</span>
-                <span className="bg-yellow-200 rounded-full px-3 py-1 text-sm font-semibold text-yellow-900 shadow border border-yellow-300">{quickFacts.level}</span>
-              </div>
-            )}
-            {quickFacts.best_time && (
-              <div className="flex items-center gap-2">
-                <span className="font-semibold">Best time:</span> <span className="text-blue-700">{quickFacts.best_time}</span>
-              </div>
-            )}
-          </div>
-        </section>
-
         {/* Quick facts */}
         <aside className="bg-[#b3e0f7] rounded-2xl p-8 shadow-xl border border-blue-200 flex flex-col gap-4 h-fit">
           <h3 className="text-xl font-bold mb-2 text-blue-900">Quick facts</h3>
