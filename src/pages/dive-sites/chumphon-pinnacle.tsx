@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { createClient } from 'contentful';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import DiveSiteDetail from '@/components/DiveSiteDetail';
 
-const client = createClient({
-  space: '5uphqssjz3hc',
-  accessToken: 'FychplmXWcmvE85YBhlKXGvFfR5sgJGWMyF9cirU--4',
-});
+const SPACE_ID = '5uphqssjz3hc';
+const ACCESS_TOKEN = 'FychplmXWcmvE85YBhlKXGvFfR5sgJGWMyF9cirU--4';
 
 export default function ChumphonPinnaclePage() {
   const { i18n } = useTranslation();
@@ -15,13 +12,20 @@ export default function ChumphonPinnaclePage() {
   useEffect(() => {
     const fetchDiveSite = async () => {
       const locale = i18n.language.startsWith('nl') ? 'nl' : 'en-US';
-      const entries = await client.getEntries({
-        content_type: 'diveSite', // Use your Content Model ID
-        'fields.slug': 'chumphon-pinacle', // Use your slug field value
-        locale,
-      });
-      if (entries.items.length > 0) {
-        setData(entries.items[0].fields);
+      const url = `https://cdn.contentful.com/spaces/${SPACE_ID}/environments/master/entries?access_token=${ACCESS_TOKEN}&content_type=diveSite&fields.slug=chumphon-pinacle&locale=${locale}&include=2`;
+      const res = await fetch(url);
+      const json = await res.json();
+      if (json.items.length > 0) {
+        const fields = json.items[0].fields;
+        // Resolve images from includes
+        const assets = {};
+        if (json.includes && json.includes.Asset) {
+          json.includes.Asset.forEach(asset => {
+            assets[asset.sys.id] = asset.fields.file.url;
+          });
+        }
+        const images = (fields.images || []).map(img => assets[img.sys.id]);
+        setData({ ...fields, images });
       }
     };
     fetchDiveSite();
@@ -43,7 +47,7 @@ export default function ChumphonPinnaclePage() {
         whatYouCanSee={data.whatYouCanSee}
         marineLifeHighlights={data.marineLifeHighlights}
         divingTips={data.divingTips}
-        images={data.images.map(img => img.fields.file.url)}
+        images={data.images}
       />
     </div>
   );
