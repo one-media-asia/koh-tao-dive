@@ -49,10 +49,10 @@ export default function DiveSitePage() {
             const images = (fields.images || []).map(img => assets[img.sys.id]);
             // Debug: log the fields object to inspect structure
             console.log('Contentful fields:', fields);
-            // Helper to get field value with Dutch fallback to English
+            // Helper to get field value with current locale fallback to English
             const getField = (field) => {
               if (typeof field === 'object' && field !== null) {
-                return field['nl'] || field['en-US'] || '';
+                return field[locale] || field['en-US'] || '';
               }
               return field;
             };
