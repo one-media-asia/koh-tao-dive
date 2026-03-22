@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import React, { useState, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 import {
   AlertDialog,
   AlertDialogAction,
