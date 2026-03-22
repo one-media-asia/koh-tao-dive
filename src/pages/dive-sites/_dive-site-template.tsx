@@ -35,8 +35,8 @@ export default function DiveSitePage() {
           // Log all available slugs for debugging
           const slugs = json.items.map(item => item.fields.slug);
           console.log('Available slugs:', slugs, 'Current locale:', locale);
-          // Filter for the entry with slug 'divesites'
-          const item = json.items.find(item => item.fields.slug === 'divesites');
+          // Filter for the entry with slug 'chumphon-pinnacle'
+          const item = json.items.find(item => item.fields.slug === 'chumphon-pinnacle');
           if (item) {
             const fields = item.fields;
             // Resolve images from includes
@@ -47,7 +47,26 @@ export default function DiveSitePage() {
               });
             }
             const images = (fields.images || []).map(img => assets[img.sys.id]);
-            setData({ ...fields, images });
+            // Helper to get field value with Dutch fallback to English
+            const getField = (field) => {
+              if (typeof field === 'object' && field !== null) {
+                return field['nl'] || field['en-US'] || '';
+              }
+              return field;
+            };
+            setData({
+              name: getField(fields.name),
+              overview: getField(fields.overview),
+              quickFacts: getField(fields.quickFacts),
+              depth: getField(fields.depth),
+              difficulty: getField(fields.difficulty),
+              location: getField(fields.location),
+              bestTime: getField(fields.bestTime),
+              marineLifeHighlights: getField(fields.marineLifeHighlights),
+              whatYouCanSee: getField(fields.whatYouCanSee),
+              divingTips: getField(fields.divingTips),
+              images,
+            });
             setError(null);
             // Debug log for locale and name
             console.log('Locale:', locale, 'Name:', fields.name);
