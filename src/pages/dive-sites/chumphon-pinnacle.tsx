@@ -8,32 +8,46 @@ const ACCESS_TOKEN = 'FychplmXWcmvE85YBhlKXGvFfR5sgJGWMyF9cirU--4';
 export default function ChumphonPinnaclePage() {
   const { i18n } = useTranslation();
   const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchDiveSite = async () => {
       const locale = i18n.language.startsWith('nl') ? 'nl' : 'en-US';
       const url = `https://cdn.contentful.com/spaces/${SPACE_ID}/environments/master/entries?access_token=${ACCESS_TOKEN}&content_type=diveSite&fields.slug=chumphon-pinacle&locale=${locale}&include=2`;
-      const res = await fetch(url);
-      const json = await res.json();
-      console.log('Contentful API response:', json); // DEBUG LOG
-      if (json.items.length > 0) {
-        const fields = json.items[0].fields;
-        // Resolve images from includes
-        const assets = {};
-        if (json.includes && json.includes.Asset) {
-          json.includes.Asset.forEach(asset => {
-            assets[asset.sys.id] = asset.fields.file.url;
-          });
+      try {
+        const res = await fetch(url);
+        const json = await res.json();
+        console.log('Contentful API response:', json); // DEBUG LOG
+        if (json.sys && json.sys.type === 'Error') {
+          setError(`Contentful API error: ${json.message}`);
+          setData(null);
+          return;
         }
-        const images = (fields.images || []).map(img => assets[img.sys.id]);
-        setData({ ...fields, images });
-      } else {
+        if (json.items && json.items.length > 0) {
+          const fields = json.items[0].fields;
+          // Resolve images from includes
+          const assets = {};
+          if (json.includes && json.includes.Asset) {
+            json.includes.Asset.forEach(asset => {
+              assets[asset.sys.id] = asset.fields.file.url;
+            });
+          }
+          const images = (fields.images || []).map(img => assets[img.sys.id]);
+          setData({ ...fields, images });
+          setError(null);
+        } else {
+          setData(null);
+          setError('No items found. Check slug, content type, and locale.');
+        }
+      } catch (e) {
+        setError('Network or parsing error: ' + e.message);
         setData(null);
       }
     };
     fetchDiveSite();
   }, [i18n.language]);
 
+  if (error) return <div style={{color:'red'}}>Error: {error}</div>;
   if (data === null) return <div>No data found for this dive site. Check the console for details.</div>;
 
   return (
