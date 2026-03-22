@@ -16,33 +16,32 @@ export default function DiveSitePage() {
   const [lastFetched, setLastFetched] = useState(null);
 
   const [apiResponse, setApiResponse] = useState(null);
+  // Get slug from file name (e.g., chumphon-pinnacle.tsx => 'chumphon-pinnacle')
+  const slug = typeof window !== 'undefined' ? window.location.pathname.split('/').pop().replace('.tsx', '') : 'Diveasia';
   const fetchDiveSite = async () => {
     setLoading(true);
-      // Use the current i18n.language directly as the Contentful locale, fallback to 'en-US' if not set
-      let locale = i18n.language || 'en-US';
-      // If Contentful doesn't have this locale, fallback to 'en-US'
-      const supportedLocales = ['en-US', 'nl']; // Add more as you add them in Contentful
-      if (!supportedLocales.includes(locale)) {
-        locale = 'en-US';
-      }
-      const url = `https://cdn.contentful.com/spaces/${SPACE_ID}/environments/master/entries?access_token=${ACCESS_TOKEN}&content_type=pageContent&locale=${locale}&include=2`;
-      try {
-        const res = await fetch(url);
-        const json = await res.json();
-        setApiResponse(json); // Save full API response for debugging
-        if (json.sys && json.sys.type === 'Error') {
-          setError(`Contentful API error: ${json.message}`);
-          setData(null);
+    let locale = i18n.language || 'en-US';
+    const supportedLocales = ['en-US', 'nl'];
+    if (!supportedLocales.includes(locale)) {
+      locale = 'en-US';
+    }
+    const url = `https://cdn.contentful.com/spaces/${SPACE_ID}/environments/master/entries?access_token=${ACCESS_TOKEN}&content_type=pageContent&locale=${locale}&include=2`;
+    try {
+      const res = await fetch(url);
+      const json = await res.json();
+      setApiResponse(json);
+      if (json.sys && json.sys.type === 'Error') {
+        setError(`Contentful API error: ${json.message}`);
+        setData(null);
         setLoading(false);
-          return;
-        }
-        if (json.items && json.items.length > 0) {
-          // Log all available slugs for debugging
-          const slugs = json.items.map(item => item.fields.slug);
-          console.log('Available slugs:', slugs, 'Current locale:', locale);
-          // Filter for the entry with slug 'chumphon-pinnacle'
-          const item = json.items.find(item => item.fields.slug === 'Diveasia');
-          if (item) {
+        return;
+      }
+      if (json.items && json.items.length > 0) {
+        const slugs = json.items.map(item => item.fields.slug);
+        console.log('Available slugs:', slugs, 'Current locale:', locale);
+        // Use dynamic slug
+        const item = json.items.find(item => item.fields.slug === slug);
+        if (item) {
             const fields = item.fields;
             // Resolve images from includes
             const assets = {};
