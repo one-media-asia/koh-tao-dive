@@ -13,7 +13,8 @@ export default function ChumphonPinnaclePage() {
   useEffect(() => {
     const fetchDiveSite = async () => {
       const locale = i18n.language.startsWith('nl') ? 'nl' : 'en-US';
-      const url = `https://cdn.contentful.com/spaces/${SPACE_ID}/environments/master/entries?access_token=${ACCESS_TOKEN}&content_type=diveSite&fields.slug=chumphon-pinnacle&locale=${locale}&include=2`;
+      // No slug field exists in DiveSites model, so fetch all and filter client-side if needed
+      const url = `https://cdn.contentful.com/spaces/${SPACE_ID}/environments/master/entries?access_token=${ACCESS_TOKEN}&content_type=diveSites&locale=${locale}&include=2`;
       try {
         const res = await fetch(url);
         const json = await res.json();
@@ -24,7 +25,9 @@ export default function ChumphonPinnaclePage() {
           return;
         }
         if (json.items && json.items.length > 0) {
-          const fields = json.items[0].fields;
+          // If you add a slug field later, filter here: .find(item => item.fields.slug === 'chumphon-pinnacle')
+          const item = json.items[0];
+          const fields = item.fields;
           // Resolve images from includes
           const assets = {};
           if (json.includes && json.includes.Asset) {
@@ -37,7 +40,7 @@ export default function ChumphonPinnaclePage() {
           setError(null);
         } else {
           setData(null);
-          setError('No items found. Check slug, content type, and locale.');
+          setError('No items found. Check content type and locale.');
         }
       } catch (e) {
         setError('Network or parsing error: ' + e.message);
