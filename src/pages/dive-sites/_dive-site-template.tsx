@@ -40,6 +40,8 @@ export default function DiveSitePage() {
             const images = (fields.images || []).map(img => assets[img.sys.id]);
             setData({ ...fields, images });
             setError(null);
+            // Debug log for locale and name
+            console.log('Locale:', locale, 'Name:', fields.name);
           } else {
             setData(null);
             setError('No entry found with the specified slug.');
