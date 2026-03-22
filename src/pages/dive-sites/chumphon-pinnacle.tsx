@@ -15,6 +15,7 @@ export default function ChumphonPinnaclePage() {
       const url = `https://cdn.contentful.com/spaces/${SPACE_ID}/environments/master/entries?access_token=${ACCESS_TOKEN}&content_type=diveSite&fields.slug=chumphon-pinacle&locale=${locale}&include=2`;
       const res = await fetch(url);
       const json = await res.json();
+      console.log('Contentful API response:', json); // DEBUG LOG
       if (json.items.length > 0) {
         const fields = json.items[0].fields;
         // Resolve images from includes
@@ -26,12 +27,14 @@ export default function ChumphonPinnaclePage() {
         }
         const images = (fields.images || []).map(img => assets[img.sys.id]);
         setData({ ...fields, images });
+      } else {
+        setData(null);
       }
     };
     fetchDiveSite();
   }, [i18n.language]);
 
-  if (!data) return <div>Loading…</div>;
+  if (data === null) return <div>No data found for this dive site. Check the console for details.</div>;
 
   return (
     <div className="px-4 md:px-8">
