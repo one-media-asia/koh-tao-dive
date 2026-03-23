@@ -609,9 +609,9 @@ const Navigation = ({ user, isAdmin, isAdminRoute }: { user?: any, isAdmin?: boo
                     <Link to="/dive-sites/sail-rock" className="block px-3 py-1.5 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsOpen(false)}>
                       Sail Rock
                     </Link>
-                    {/* <Link to="/dive-sites/chumphon-pinnacle" className="block px-3 py-1.5 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsOpen(false)}>
+                    <Link to="/dive-sites/chumphon-pinnacle" className="block px-3 py-1.5 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsOpen(false)}>
                       Chumphon Pinnacle
-                    </Link> */}
+                    </Link>
                     <Link to="/dive-sites/japanese-gardens" className="block px-3 py-1.5 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsOpen(false)}>
                       Japanese Gardens
                     </Link>
