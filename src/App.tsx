@@ -244,7 +244,6 @@ const App = () => (
             <Route path="/koh-tao-dive-sites" element={<DiveSitesPage />} />
             <Route path="/dive-sites/sail-rock" element={<SailRock />} />
             <Route path="/dive-sites/chumphon-pinnacle" element={<ChumphonPinnacle />} />
-            <Route path="/ChumphonPinnacle" element={<ChumphonPinnacle />} />
             {/* Redirect /ChumphonPinnacle to /dive-sites/chumphon-pinnacle for legacy support */}
             <Route path="/ChumphonPinnacle" element={<Navigate to="/dive-sites/chumphon-pinnacle" replace />} />
             <Route path="/dive-sites/japanese-gardens" element={<JapaneseGardens />} />
