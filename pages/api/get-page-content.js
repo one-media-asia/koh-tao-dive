@@ -6,34 +6,24 @@ export default function handler(req, res) {
 
   // You can customize this static data as needed
   const staticContent = {
-    en: {
-      overview: 'Static overview for ' + page_slug,
-      quickFacts: {
-        depth: '10-20m',
-        difficulty: 'Beginner',
-        location: 'Near the island',
-        bestTime: 'Year-round',
-      },
-      whatYouCanSee: ['Coral', 'Turtles', 'Reef fish'],
-      marineLifeHighlights: ['Turtles', 'Moray eels'],
-      divingTips: ['Go early for best visibility'],
-      images: ['/images/sample1.jpg', '/images/sample2.jpg'],
-    },
-    nl: {
-      overview: 'Statisch overzicht voor ' + page_slug,
-      quickFacts: {
-        depth: '10-20m',
-        difficulty: 'Beginner',
-        location: 'Dichtbij het eiland',
-        bestTime: 'Hele jaar',
-      },
-      whatYouCanSee: ['Koraal', 'Schildpadden', 'Rifvissen'],
-      marineLifeHighlights: ['Schildpadden', 'Murenen'],
-      divingTips: ['Ga vroeg voor beste zicht'],
-      images: ['/images/sample1.jpg', '/images/sample2.jpg'],
-    },
+    en: [
+      { section_key: 'overview', content_value: 'Static overview for ' + page_slug },
+      { section_key: 'quickFacts', content_value: JSON.stringify({ depth: '10-20m', difficulty: 'Beginner', location: 'Near the island', bestTime: 'Year-round' }) },
+      { section_key: 'whatYouCanSee', content_value: JSON.stringify(['Coral', 'Turtles', 'Reef fish']) },
+      { section_key: 'marineLifeHighlights', content_value: JSON.stringify(['Turtles', 'Moray eels']) },
+      { section_key: 'divingTips', content_value: JSON.stringify(['Go early for best visibility']) },
+      { section_key: 'images', content_value: JSON.stringify(['/images/sample1.jpg', '/images/sample2.jpg']) },
+    ],
+    nl: [
+      { section_key: 'overview', content_value: 'Statisch overzicht voor ' + page_slug },
+      { section_key: 'quickFacts', content_value: JSON.stringify({ depth: '10-20m', difficulty: 'Beginner', location: 'Dichtbij het eiland', bestTime: 'Hele jaar' }) },
+      { section_key: 'whatYouCanSee', content_value: JSON.stringify(['Koraal', 'Schildpadden', 'Rifvissen']) },
+      { section_key: 'marineLifeHighlights', content_value: JSON.stringify(['Schildpadden', 'Murenen']) },
+      { section_key: 'divingTips', content_value: JSON.stringify(['Ga vroeg voor beste zicht']) },
+      { section_key: 'images', content_value: JSON.stringify(['/images/sample1.jpg', '/images/sample2.jpg']) },
+    ],
   };
 
   const content = staticContent[locale] || staticContent['en'];
-  res.status(200).json({ content: [content] });
+  res.status(200).json({ content });
 }
