@@ -260,7 +260,7 @@ const Navigation = ({ user, isAdmin, isAdminRoute }: { user?: any, isAdmin?: boo
                     </li>
                     <li>
                       <Link
-                        // to="/dive-sites/chumphon-pinnacle" (removed)
+                        to="/dive-sites/chumphon-pinnacle"
                         className="block py-1.5 text-sm text-gray-300 hover:text-white hover:pl-1 transition-all duration-150"
                       >
                         Chumphon Pinnacle
