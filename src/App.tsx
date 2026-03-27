@@ -118,6 +118,11 @@ const RequireAdmin = ({ children }: { children: JSX.Element }) => {
     let isMounted = true;
 
     const checkAdmin = async () => {
+      if (window.localStorage.getItem('admin_authenticated') === '1') {
+        setStatus('allowed');
+        return;
+      }
+
       const { data: sessionData } = await supabase.auth.getSession();
       let user = sessionData.session?.user ?? null;
 
@@ -141,6 +146,11 @@ const RequireAdmin = ({ children }: { children: JSX.Element }) => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (window.localStorage.getItem('admin_authenticated') === '1') {
+        setStatus('allowed');
+        return;
+      }
+
       const user = session?.user ?? null;
       if (user && hasAdminAccess(user)) {
         setStatus('allowed');

@@ -6,18 +6,29 @@ import { toast } from 'sonner';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { hasAdminAccess } from '@/lib/adminAccess';
 
+const buildApiUrl = (path: string) => {
+  const rawBase = (import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || '').trim();
+  const base = rawBase.replace(/\/$/, '');
+  return base ? `${base}${path}` : path;
+};
+
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const isAdminLogin = location.pathname.startsWith('/admin');
 
   useEffect(() => {
-    const targetPath = location.pathname.startsWith('/admin') ? '/admin' : '/account';
-    const isAdminLogin = location.pathname.startsWith('/admin');
+    const targetPath = isAdminLogin ? '/admin' : '/account';
 
     const checkExistingSession = async () => {
+      if (isAdminLogin && window.localStorage.getItem('admin_authenticated') === '1') {
+        navigate('/admin', { replace: true });
+        return;
+      }
+
       const { data } = await supabase.auth.getSession();
       const user = data.session?.user || null;
       if (!user) return;
@@ -48,7 +59,7 @@ const Login: React.FC = () => {
     });
 
     return () => subscription.unsubscribe();
-  }, [location.pathname, navigate]);
+  }, [isAdminLogin, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,6 +70,25 @@ const Login: React.FC = () => {
 
     setIsLoading(true);
     try {
+      if (isAdminLogin) {
+        const response = await fetch(buildApiUrl('/api/admin-login'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok || !payload?.success) {
+          toast.error(payload?.error || 'Admin login failed');
+          return;
+        }
+
+        window.localStorage.setItem('admin_authenticated', '1');
+        toast.success('Admin login successful');
+        navigate('/admin', { replace: true });
+        return;
+      }
+
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
         toast.error(error.message || 'Login failed');
