@@ -20,12 +20,12 @@ const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabase
 
 interface PageContentRow {
   id: string;
-  language: 'en' | 'nl';
-  seo: boolean;
-  dive_site?: string;
-  page?: string;
-  section: string;
-  content: string;
+  page_slug: string;
+  section_key: string;
+  locale: 'en' | 'nl' | string;
+  content_type?: string;
+  content_value: string;
+  updated_at?: string;
 }
 
 const AdminPagesManager: React.FC = () => {
@@ -46,7 +46,10 @@ const AdminPagesManager: React.FC = () => {
 
       const { data, error } = await supabase
         .from('page_content')
-        .select('*');
+        .select('id,page_slug,section_key,locale,content_type,content_value,updated_at')
+        .order('page_slug', { ascending: true })
+        .order('section_key', { ascending: true })
+        .order('locale', { ascending: true });
       if (error) {
         setError(error.message);
       } else {
@@ -59,7 +62,7 @@ const AdminPagesManager: React.FC = () => {
 
   const handleEdit = (row: PageContentRow) => {
     setEditingId(row.id);
-    setEditContent(row.content);
+    setEditContent(row.content_value);
   };
 
   const handleSave = async (row: PageContentRow) => {
@@ -70,12 +73,12 @@ const AdminPagesManager: React.FC = () => {
 
     const { error } = await supabase
       .from('page_content')
-      .update({ content: editContent })
+      .update({ content_value: editContent })
       .eq('id', row.id);
     if (error) {
       alert('Error saving: ' + error.message);
     } else {
-      setData((prev) => prev.map((r) => (r.id === row.id ? { ...r, content: editContent } : r)));
+      setData((prev) => prev.map((r) => (r.id === row.id ? { ...r, content_value: editContent } : r)));
       setEditingId(null);
     }
   };
@@ -91,10 +94,12 @@ const AdminPagesManager: React.FC = () => {
         <thead>
           <tr>
             <th className="border border-gray-300 p-2 text-left">Actions</th>
-            <th className="border border-gray-300 p-2 text-left">ID</th>
-            <th className="border border-gray-300 p-2 text-left">Section</th>
-            <th className="border border-gray-300 p-2 text-left">Language</th>
+            <th className="border border-gray-300 p-2 text-left">Page</th>
+            <th className="border border-gray-300 p-2 text-left">Section Key</th>
+            <th className="border border-gray-300 p-2 text-left">Locale</th>
+            <th className="border border-gray-300 p-2 text-left">Type</th>
             <th className="border border-gray-300 p-2 text-left">Content</th>
+            <th className="border border-gray-300 p-2 text-left">ID</th>
           </tr>
         </thead>
         <tbody>
@@ -110,9 +115,10 @@ const AdminPagesManager: React.FC = () => {
                   <button className="font-semibold" onClick={() => handleEdit(row)}>Edit</button>
                 )}
               </td>
-              <td className="border border-gray-300 p-2">{row.id}</td>
-              <td className="border border-gray-300 p-2">{row.section}</td>
-              <td className="border border-gray-300 p-2">{row.language}</td>
+              <td className="border border-gray-300 p-2">{row.page_slug}</td>
+              <td className="border border-gray-300 p-2">{row.section_key}</td>
+              <td className="border border-gray-300 p-2">{row.locale}</td>
+              <td className="border border-gray-300 p-2">{row.content_type || 'text'}</td>
               <td className="border border-gray-300 p-2">
                 {editingId === row.id ? (
                   <textarea
@@ -120,13 +126,14 @@ const AdminPagesManager: React.FC = () => {
                     onChange={(e) => setEditContent(e.target.value)}
                     rows={3}
                     className="w-full rounded border border-gray-300 p-2"
-                    aria-label={`Edit content for ${row.section}`}
+                    aria-label={`Edit content for ${row.page_slug} ${row.section_key} ${row.locale}`}
                     placeholder="Edit content"
                   />
                 ) : (
-                  row.content
+                  row.content_value
                 )}
               </td>
+              <td className="border border-gray-300 p-2 text-xs text-muted-foreground">{row.id}</td>
             </tr>
           ))}
         </tbody>
