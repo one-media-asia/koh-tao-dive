@@ -404,14 +404,29 @@ const AdminPagesManager: React.FC = () => {
             <tr key={row.id} className={recentlyEdited[row.id] ? 'bg-emerald-50' : ''}>
               <td className="whitespace-nowrap border border-gray-300 p-2">
                 {editingId === row.id ? (
-                  <>
-                    <button className="mr-2 font-semibold" onClick={() => handleSave(row)}>Save</button>
-                    <button onClick={() => setEditingId(null)}>Cancel</button>
-                  </>
+                  <div className="flex flex-col gap-1">
+                    <button
+                      className="rounded bg-green-600 px-3 py-1 text-sm font-semibold text-white hover:bg-green-700"
+                      onClick={() => handleSave(row)}
+                    >
+                      Save
+                    </button>
+                    <button
+                      className="rounded bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-300"
+                      onClick={() => setEditingId(null)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
                 ) : (
-                  <button className="font-semibold" onClick={() => handleEdit(row)}>Edit</button>
+                  <button
+                    className="rounded bg-blue-600 px-3 py-1 text-sm font-semibold text-white hover:bg-blue-700"
+                    onClick={() => handleEdit(row)}
+                  >
+                    Edit
+                  </button>
                 )}
-                {recentlyEdited[row.id] && <span className="ml-2 text-xs text-emerald-700">Edited</span>}
+                {recentlyEdited[row.id] && <span className="ml-1 block text-xs text-emerald-700">Saved ✓</span>}
               </td>
               <td className="border border-gray-300 p-2">{row.page_slug}</td>
               <td className="border border-gray-300 p-2">{row.section_key}</td>
