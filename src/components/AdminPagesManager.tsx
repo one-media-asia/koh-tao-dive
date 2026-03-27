@@ -140,9 +140,6 @@ const AdminPagesManager: React.FC = () => {
     );
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-
   const filteredRows = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
 
@@ -178,7 +175,7 @@ const AdminPagesManager: React.FC = () => {
         (row.content_value || '').toLowerCase().includes(q)
       );
     });
-  }, [data, groupFilter, searchQuery]);
+  }, [data, groupFilter, quickFilters, searchQuery]);
 
   const groupedRows = useMemo(() => {
     const grouped = new Map<string, PageContentRow[]>();
@@ -193,6 +190,9 @@ const AdminPagesManager: React.FC = () => {
       .map((group) => [group, grouped.get(group) || []] as const)
       .filter(([, rows]) => rows.length > 0);
   }, [filteredRows]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="p-6">
