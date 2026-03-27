@@ -1,7 +1,12 @@
 // Vercel Serverless Function: Basic Admin Login
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAILS || 'peter@p.com';
+const ADMIN_EMAILS_RAW = process.env.ADMIN_EMAILS || 'peter@p.com';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || ',.,.,.,.';
+
+const ADMIN_EMAILS = ADMIN_EMAILS_RAW
+	.split(',')
+	.map((email) => String(email || '').trim().toLowerCase())
+	.filter(Boolean);
 
 export default async function handler(req, res) {
 	if (req.method !== 'POST') {
@@ -10,8 +15,9 @@ export default async function handler(req, res) {
 	}
 
 	const { email, password } = req.body;
+	const normalizedEmail = String(email || '').trim().toLowerCase();
 
-	if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+	if (ADMIN_EMAILS.includes(normalizedEmail) && password === ADMIN_PASSWORD) {
 		// In production, set a secure cookie or JWT here
 		res.status(200).json({ success: true, message: 'Login successful' });
 	} else {
