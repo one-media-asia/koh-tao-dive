@@ -150,7 +150,7 @@ const PAGE_DEFINITIONS: Record<string, ContentItem[]> = {
   'open-water': [
     { section_key: 'hero_title', content_value: 'PADI Open Water Course', content_type: 'text', label: 'Hero Title' },
     { section_key: 'hero_subtitle', content_value: "The world's most popular scuba course. Learn the fundamentals and get certified to dive independently to 18 metres/60 feet.", content_type: 'text', label: 'Hero Subtitle' },
-    { section_key: 'course_overview', content_value: 'The Open Water course combines knowledge development, confined water dives (pool) and open water dives.', content_type: 'text', label: 'Course Overview' },
+    { section_key: 'course_overview', content_value: "The Open Water course combines knowledge development, confined water dives (pool) and open water dives. You'll learn equipment setup, basic underwater skills, buoyancy control and dive planning. Our instructors keep groups small and emphasize safety and fun.", content_type: 'text', label: 'Course Overview' },
     { section_key: 'price_thb', content_value: '11000', content_type: 'text', label: 'Price (THB)' },
     { section_key: 'price_usd', content_value: '320', content_type: 'text', label: 'Price (USD)' },
     { section_key: 'price_eur', content_value: '290', content_type: 'text', label: 'Price (EUR)' },
