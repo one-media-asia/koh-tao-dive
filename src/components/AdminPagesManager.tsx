@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
 const cleanEnv = (value: string | undefined) =>
@@ -28,12 +28,51 @@ interface PageContentRow {
   updated_at?: string;
 }
 
+const getPageGroup = (pageSlug: string) => {
+  const slug = String(pageSlug || '').toLowerCase();
+
+  if (['open-water', 'discover-scuba', 'discover-scuba-deluxe', 'scuba-diver', 'scuba-review'].includes(slug)) {
+    return 'Beginner';
+  }
+
+  if (['advanced', 'rescue', 'efr'].includes(slug)) {
+    return 'Advanced';
+  }
+
+  if (['divemaster', 'instructor', 'msdt-program'].includes(slug)) {
+    return 'Professional';
+  }
+
+  if (slug.startsWith('specialty/')) {
+    return 'Specialties';
+  }
+
+  if (slug.startsWith('dive-sites/')) {
+    return 'Dive Sites';
+  }
+
+  if (slug.startsWith('marine-life/')) {
+    return 'Marine Life';
+  }
+
+  if (['home', 'contact', 'accommodation', 'koh-tao-info', 'how-to-get-here', 'things-to-do', 'weather'].includes(slug)) {
+    return 'Info';
+  }
+
+  return 'Other';
+};
+
+const GROUP_ORDER = ['Beginner', 'Advanced', 'Professional', 'Specialties', 'Dive Sites', 'Marine Life', 'Info', 'Other'];
+
 const AdminPagesManager: React.FC = () => {
   const [data, setData] = useState<PageContentRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [groupFilter, setGroupFilter] = useState('all');
+  const [showIds, setShowIds] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -86,9 +125,68 @@ const AdminPagesManager: React.FC = () => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
+  const filteredRows = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+
+    return data.filter((row) => {
+      const group = getPageGroup(row.page_slug);
+      if (groupFilter !== 'all' && group !== groupFilter) return false;
+
+      if (!q) return true;
+
+      return (
+        row.page_slug.toLowerCase().includes(q) ||
+        row.section_key.toLowerCase().includes(q) ||
+        row.locale.toLowerCase().includes(q) ||
+        (row.content_value || '').toLowerCase().includes(q)
+      );
+    });
+  }, [data, groupFilter, searchQuery]);
+
+  const groupedRows = useMemo(() => {
+    const grouped = new Map<string, PageContentRow[]>();
+
+    filteredRows.forEach((row) => {
+      const group = getPageGroup(row.page_slug);
+      if (!grouped.has(group)) grouped.set(group, []);
+      grouped.get(group)!.push(row);
+    });
+
+    return GROUP_ORDER
+      .map((group) => [group, grouped.get(group) || []] as const)
+      .filter(([, rows]) => rows.length > 0);
+  }, [filteredRows]);
+
   return (
     <div className="p-6">
-      <h1>Pages Manager</h1>
+      <h1 className="text-xl font-semibold">Pages Manager</h1>
+      <div className="mt-3 flex flex-wrap items-center gap-3">
+        <input
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search page, section, locale, or content"
+          className="min-w-[280px] flex-1 rounded border border-gray-300 px-3 py-2"
+          aria-label="Search page rows"
+        />
+
+        <select
+          value={groupFilter}
+          onChange={(e) => setGroupFilter(e.target.value)}
+          className="rounded border border-gray-300 px-3 py-2"
+          aria-label="Filter by section"
+        >
+          <option value="all">All Sections</option>
+          {GROUP_ORDER.map((group) => (
+            <option key={group} value={group}>{group}</option>
+          ))}
+        </select>
+
+        <label className="inline-flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={showIds} onChange={(e) => setShowIds(e.target.checked)} />
+          Show UUID
+        </label>
+      </div>
+
       <div className="mt-2 overflow-x-auto">
       <table className="w-full border-collapse">
         <thead>
@@ -99,11 +197,18 @@ const AdminPagesManager: React.FC = () => {
             <th className="border border-gray-300 p-2 text-left">Locale</th>
             <th className="border border-gray-300 p-2 text-left">Type</th>
             <th className="border border-gray-300 p-2 text-left">Content</th>
-            <th className="border border-gray-300 p-2 text-left">ID</th>
+            {showIds && <th className="border border-gray-300 p-2 text-left">ID</th>}
           </tr>
         </thead>
         <tbody>
-          {data.map((row) => (
+          {groupedRows.map(([group, rows]) => (
+            <React.Fragment key={group}>
+              <tr className="bg-gray-100">
+                <td colSpan={showIds ? 7 : 6} className="border border-gray-300 p-2 font-semibold">
+                  {group} ({rows.length})
+                </td>
+              </tr>
+              {rows.map((row) => (
             <tr key={row.id}>
               <td className="whitespace-nowrap border border-gray-300 p-2">
                 {editingId === row.id ? (
@@ -133,11 +238,16 @@ const AdminPagesManager: React.FC = () => {
                   row.content_value
                 )}
               </td>
-              <td className="border border-gray-300 p-2 text-xs text-muted-foreground">{row.id}</td>
+              {showIds && <td className="border border-gray-300 p-2 text-xs text-muted-foreground">{row.id}</td>}
             </tr>
+          ))}
+            </React.Fragment>
           ))}
         </tbody>
       </table>
+      {groupedRows.length === 0 && (
+        <div className="py-6 text-sm text-gray-500">No rows match your current filters.</div>
+      )}
       </div>
     </div>
   );
