@@ -1,9 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
-// Replace with your actual Supabase URL and anon key
-const supabaseUrl = process.env.REACT_APP_SUPABASE_URL || 'YOUR_SUPABASE_URL';
-const supabaseKey = process.env.REACT_APP_SUPABASE_ANON_KEY || 'YOUR_SUPABASE_ANON_KEY';
+const cleanEnv = (value: string | undefined) =>
+  String(value || '')
+    .replace(/\\n/g, '')
+    .trim();
+
+const supabaseUrl =
+  cleanEnv((import.meta.env.VITE_SUPABASE_URL as string | undefined)) ||
+  cleanEnv(process.env.REACT_APP_SUPABASE_URL) ||
+  '';
+const supabaseKey =
+  cleanEnv((import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined)) ||
+  cleanEnv((import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined)) ||
+  cleanEnv(process.env.REACT_APP_SUPABASE_ANON_KEY) ||
+  '';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 interface PageContentRow {
@@ -59,27 +70,27 @@ const PagesContent: React.FC = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div style={{ padding: 24 }}>
+    <div className="p-6">
       <h1>Pages Content (EN / NL)</h1>
       {Object.entries(grouped).map(([site, sections]) => (
-        <div key={site} style={{ marginBottom: 32 }}>
-          <h2 style={{ borderBottom: '1px solid #ccc' }}>{site}</h2>
-          <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 8 }}>
+        <div key={site} className="mb-8">
+          <h2 className="border-b border-gray-300">{site}</h2>
+          <table className="mt-2 w-full border-collapse">
             <thead>
               <tr>
-                <th style={{ border: '1px solid #ccc', padding: 8 }}>Section</th>
-                <th style={{ border: '1px solid #ccc', padding: 8 }}>EN Content</th>
-                <th style={{ border: '1px solid #ccc', padding: 8 }}>NL Content</th>
-                <th style={{ border: '1px solid #ccc', padding: 8 }}>SEO</th>
+                <th className="border border-gray-300 p-2 text-left">Section</th>
+                <th className="border border-gray-300 p-2 text-left">EN Content</th>
+                <th className="border border-gray-300 p-2 text-left">NL Content</th>
+                <th className="border border-gray-300 p-2 text-left">SEO</th>
               </tr>
             </thead>
             <tbody>
               {Object.entries(sections).map(([section, langs]) => (
                 <tr key={section}>
-                  <td style={{ border: '1px solid #ccc', padding: 8 }}>{section}</td>
-                  <td style={{ border: '1px solid #ccc', padding: 8 }}>{langs.en?.content || <em>—</em>}</td>
-                  <td style={{ border: '1px solid #ccc', padding: 8 }}>{langs.nl?.content || <em>—</em>}</td>
-                  <td style={{ border: '1px solid #ccc', padding: 8 }}>
+                  <td className="border border-gray-300 p-2">{section}</td>
+                  <td className="border border-gray-300 p-2">{langs.en?.content || <em>—</em>}</td>
+                  <td className="border border-gray-300 p-2">{langs.nl?.content || <em>—</em>}</td>
+                  <td className="border border-gray-300 p-2">
                     {langs.en?.seo || langs.nl?.seo ? '✅' : '—'}
                   </td>
                 </tr>

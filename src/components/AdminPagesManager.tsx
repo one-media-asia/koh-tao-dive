@@ -39,7 +39,7 @@ const AdminPagesManager: React.FC = () => {
     const fetchData = async () => {
       setLoading(true);
       if (!supabase) {
-        setError('Supabase is not configured for Admin Pages Manager. Set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY.');
+        setError('Supabase is not configured for Admin Pages Manager. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
         setLoading(false);
         return;
       }
