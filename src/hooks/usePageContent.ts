@@ -12,6 +12,22 @@ interface UsePageContentOptions {
   fallbackContent: PageContent;
 }
 
+interface PageContentRow {
+  page_slug: string;
+  locale: string;
+  section_key: string;
+  content_value: string | null;
+}
+
+const isPageContentRows = (value: unknown): value is PageContentRow[] =>
+  Array.isArray(value) &&
+  value.every(
+    (item) =>
+      typeof item === 'object' &&
+      item !== null &&
+      typeof (item as Record<string, unknown>).section_key === 'string'
+  );
+
 export function usePageContent({ pageSlug, locale, fallbackContent }: UsePageContentOptions) {
   const [content, setContent] = useState<PageContent>(fallbackContent);
   const [isLoading, setIsLoading] = useState(true);
@@ -19,10 +35,10 @@ export function usePageContent({ pageSlug, locale, fallbackContent }: UsePageCon
   useEffect(() => {
     setIsLoading(true);
 
-    const mergeRowsAndSet = (rows: any[] | null | undefined) => {
+    const mergeRowsAndSet = (rows: PageContentRow[] | null | undefined) => {
       if (rows && rows.length > 0) {
         const dbContent: PageContent = {};
-        rows.forEach((row: any) => {
+        rows.forEach((row) => {
           dbContent[row.section_key] = row.content_value;
         });
         setContent({ ...fallbackContent, ...dbContent });
@@ -31,7 +47,7 @@ export function usePageContent({ pageSlug, locale, fallbackContent }: UsePageCon
       return false;
     };
 
-    const applyRealtimeRow = (row: any) => {
+    const applyRealtimeRow = (row: Partial<PageContentRow> | null | undefined) => {
       if (!row || row.page_slug !== pageSlug || row.locale !== locale) {
         return;
       }
@@ -55,8 +71,13 @@ export function usePageContent({ pageSlug, locale, fallbackContent }: UsePageCon
         const res = await fetch(apiUrl);
         if (res.ok) {
           try {
-            const result = await res.json();
-            if (mergeRowsAndSet(result?.content)) return;
+            const result: unknown = await res.json();
+            const apiRows =
+              typeof result === 'object' && result !== null
+                ? (result as { content?: unknown }).content
+                : undefined;
+
+            if (isPageContentRows(apiRows) && mergeRowsAndSet(apiRows)) return;
           } catch {
             // Ignore invalid JSON and fallback to direct Supabase query.
           }
@@ -97,9 +118,9 @@ export function usePageContent({ pageSlug, locale, fallbackContent }: UsePageCon
           schema: 'public',
           table: 'page_content',
         },
-        (payload: RealtimePostgresChangesPayload<any>) => {
+        (payload: RealtimePostgresChangesPayload<PageContentRow>) => {
           if (payload.eventType === 'DELETE') {
-            const oldRow = payload.old as any;
+            const oldRow = payload.old;
             if (
               oldRow?.page_slug === pageSlug &&
               oldRow?.locale === locale &&
@@ -114,7 +135,7 @@ export function usePageContent({ pageSlug, locale, fallbackContent }: UsePageCon
           }
 
           if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
-            applyRealtimeRow(payload.new as any);
+            applyRealtimeRow(payload.new);
           }
         }
       )
