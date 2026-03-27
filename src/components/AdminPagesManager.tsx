@@ -72,6 +72,7 @@ const AdminPagesManager: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState('');
+  const [editContentType, setEditContentType] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [groupFilter, setGroupFilter] = useState('all');
   const [showIds, setShowIds] = useState(false);
@@ -112,6 +113,7 @@ const AdminPagesManager: React.FC = () => {
   const handleEdit = (row: PageContentRow) => {
     setEditingId(row.id);
     setEditContent(row.content_value);
+    setEditContentType(row.content_type || 'text');
   };
 
   const handleSave = async (row: PageContentRow) => {
@@ -122,12 +124,14 @@ const AdminPagesManager: React.FC = () => {
 
     const { error } = await supabase
       .from('page_content')
-      .update({ content_value: editContent })
-      .eq('id', row.id);
+      .upsert(
+        { ...row, content_value: editContent, content_type: editContentType || row.content_type || 'text' },
+        { onConflict: 'id' }
+      );
     if (error) {
       alert('Error saving: ' + error.message);
     } else {
-      setData((prev) => prev.map((r) => (r.id === row.id ? { ...r, content_value: editContent } : r)));
+      setData((prev) => prev.map((r) => (r.id === row.id ? { ...r, content_value: editContent, content_type: editContentType || r.content_type } : r)));
       setRecentlyEdited((prev) => ({ ...prev, [row.id]: true }));
       setTimeout(() => {
         setRecentlyEdited((prev) => {
@@ -412,7 +416,18 @@ const AdminPagesManager: React.FC = () => {
               <td className="border border-gray-300 p-2">{row.page_slug}</td>
               <td className="border border-gray-300 p-2">{row.section_key}</td>
               <td className="border border-gray-300 p-2">{row.locale}</td>
-              <td className="border border-gray-300 p-2">{row.content_type || 'text'}</td>
+              <td className="border border-gray-300 p-2">
+                {editingId === row.id ? (
+                  <input
+                    value={editContentType}
+                    onChange={(e) => setEditContentType(e.target.value)}
+                    className="w-full rounded border border-gray-300 p-1 text-sm"
+                    placeholder="text"
+                  />
+                ) : (
+                  row.content_type || 'text'
+                )}
+              </td>
               <td className="border border-gray-300 p-2">
                 {editingId === row.id ? (
                   <textarea
