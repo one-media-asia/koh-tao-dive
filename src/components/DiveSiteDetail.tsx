@@ -81,9 +81,9 @@ const DiveSiteDetail: React.FC<DiveSiteDetailProps> = ({
             <CardTitle>{labels.quickFacts}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div><span className="font-medium text-sm">{labels.depthRange}:</span> <span className="text-sm text-muted-foreground">{quickFacts.depth}</span></div>
-            <div><span className="font-medium text-sm">{labels.level}:</span> <span className="text-sm text-muted-foreground">{quickFacts.difficulty}</span></div>
-            <div><span className="font-medium text-sm">{labels.location}:</span> <span className="text-sm text-muted-foreground">{quickFacts.location}</span></div>
+              <div><span className="font-medium text-sm">{labels.depthRange}:</span> <span className="text-sm text-white/90">{quickFacts.depth}</span></div>
+              <div><span className="font-medium text-sm">{labels.level}:</span> <span className="text-sm text-white/90">{quickFacts.difficulty}</span></div>
+              <div><span className="font-medium text-sm">{labels.location}:</span> <span className="text-sm text-white/90">{quickFacts.location}</span></div>
           </CardContent>
         </Card>
 
@@ -95,7 +95,7 @@ const DiveSiteDetail: React.FC<DiveSiteDetailProps> = ({
           <CardContent>
             <div className="flex flex-wrap gap-2">
               {whatYouCanSee.map((item, index) => (
-                <Badge key={index} variant="outline">{item}</Badge>
+                  <Badge key={index} variant="outline" className="border-white/40 bg-white/10 text-white hover:bg-white/20">{item}</Badge>
               ))}
             </div>
           </CardContent>
@@ -110,7 +110,7 @@ const DiveSiteDetail: React.FC<DiveSiteDetailProps> = ({
             <ul className="space-y-2">
               {marineLifeHighlights.map((item, index) => (
                 <li key={index} className="flex items-start gap-2">
-                  <span className="text-muted-foreground">{item}</span>
+                  <span className="text-white/90">{item}</span>
                 </li>
               ))}
             </ul>
