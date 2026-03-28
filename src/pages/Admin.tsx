@@ -167,14 +167,14 @@ const Admin = () => {
           onClick={() => setFinanceModalOpen(true)}
           className="rounded bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
         >
-          Finance Settings
+          Global Finance Defaults
         </button>
       </div>
 
       <Dialog open={financeModalOpen} onOpenChange={setFinanceModalOpen}>
         <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Finance Settings</DialogTitle>
+            <DialogTitle>Global Finance Defaults</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             {financeLoading ? (

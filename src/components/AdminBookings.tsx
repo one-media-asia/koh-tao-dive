@@ -286,7 +286,7 @@ const AdminBookings: React.FC = () => {
                   onClick={() => setFinanceModalBooking(b)}
                   className="mt-2 rounded bg-slate-700 px-2 py-1 text-xs font-semibold text-white hover:bg-slate-800"
                 >
-                  Individual details
+                  Finance
                 </button>
               </td>
               <td className="border px-2 py-1">
