@@ -23,11 +23,12 @@ interface Booking {
 }
 
 const AdminBookings: React.FC = () => {
-  // Status editing removed
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  // Comments and finance modal removed
+  const [statusDrafts, setStatusDrafts] = useState<Record<string, string>>({});
+  const [statusSavingId, setStatusSavingId] = useState<string | null>(null);
+  const [statusResult, setStatusResult] = useState<string | null>(null);
 
   const [exporting, setExporting] = useState(false);
   const [exportResult, setExportResult] = useState<string | null>(null);
@@ -46,6 +47,11 @@ const AdminBookings: React.FC = () => {
       })
       .then((data) => {
         setBookings(data);
+        const initialDrafts: Record<string, string> = {};
+        data.forEach((booking: Booking) => {
+          initialDrafts[booking.id] = booking.status || 'pending';
+        });
+        setStatusDrafts(initialDrafts);
         setLoading(false);
       })
       .catch((err) => {
@@ -54,7 +60,35 @@ const AdminBookings: React.FC = () => {
       });
   }, []);
 
-  // Comments and finance modal logic removed
+  const saveStatus = async (bookingId: string, explicitStatus?: string) => {
+    const selectedStatus = explicitStatus || statusDrafts[bookingId];
+    if (!selectedStatus) return;
+
+    setStatusSavingId(bookingId);
+    setStatusResult(null);
+
+    try {
+      const res = await fetch(`/api/bookings/${bookingId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: selectedStatus }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData?.error || 'Failed to update booking status');
+      }
+
+      const updatedBooking = await res.json();
+      setBookings((prev) => prev.map((booking) => (booking.id === bookingId ? { ...booking, status: updatedBooking.status || selectedStatus } : booking)));
+      setStatusResult(`Status updated to ${updatedBooking.status || selectedStatus}.`);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to update booking status';
+      setStatusResult(message);
+    } finally {
+      setStatusSavingId(null);
+    }
+  };
 
   if (loading) return <div>Loading bookings...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -104,6 +138,7 @@ const AdminBookings: React.FC = () => {
       </div>
       {exportResult && <div className="mb-4 text-green-700">{exportResult}</div>}
       {copyResult && <div className="mb-4 text-slate-700">{copyResult}</div>}
+      {statusResult && <div className="mb-4 text-emerald-700">{statusResult}</div>}
       <table className="min-w-full border">
         <thead>
           <tr>
@@ -112,6 +147,7 @@ const AdminBookings: React.FC = () => {
             <th className="border px-2 py-1">Phone</th>
             <th className="border px-2 py-1">Course</th>
             <th className="border px-2 py-1">Date</th>
+            <th className="border px-2 py-1">Status</th>
             <th className="border px-2 py-1">Finance</th>
             <th className="border px-2 py-1">PayPal</th>
           </tr>
@@ -124,6 +160,41 @@ const AdminBookings: React.FC = () => {
               <td className="border px-2 py-1">{b.phone || '-'}</td>
               <td className="border px-2 py-1">{b.course_title}</td>
               <td className="border px-2 py-1">{b.preferred_date || '-'}</td>
+              <td className="border px-2 py-1">
+                <div className="flex items-center gap-2">
+                  <select
+                    className="border rounded px-2 py-1"
+                    value={statusDrafts[b.id] || b.status || 'pending'}
+                    onChange={(e) => {
+                      const nextStatus = e.target.value;
+                      setStatusDrafts((prev) => ({ ...prev, [b.id]: nextStatus }));
+                    }}
+                  >
+                    <option value="pending">pending</option>
+                    <option value="confirmed">confirmed</option>
+                    <option value="cancelled">cancelled</option>
+                  </select>
+                  <button
+                    className="px-2 py-1 text-xs bg-emerald-600 text-white rounded disabled:opacity-60"
+                    disabled={statusSavingId === b.id || (statusDrafts[b.id] || b.status) === b.status}
+                    onClick={() => saveStatus(b.id)}
+                  >
+                    {statusSavingId === b.id ? 'Saving...' : 'Save'}
+                  </button>
+                  {b.status !== 'confirmed' && (
+                    <button
+                      className="px-2 py-1 text-xs bg-blue-600 text-white rounded disabled:opacity-60"
+                      disabled={statusSavingId === b.id}
+                      onClick={() => {
+                        setStatusDrafts((prev) => ({ ...prev, [b.id]: 'confirmed' }));
+                        saveStatus(b.id, 'confirmed');
+                      }}
+                    >
+                      Confirm
+                    </button>
+                  )}
+                </div>
+              </td>
               <td className="border px-2 py-1">
                 <div><strong>Total:</strong> {typeof b.total_amount === 'number' ? b.total_amount : '-'}</div>
                 <div><strong>Deposit:</strong> {typeof b.deposit_amount === 'number' ? b.deposit_amount : '-'}</div>
