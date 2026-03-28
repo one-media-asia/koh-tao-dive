@@ -44,6 +44,9 @@ const AdminBookings: React.FC = () => {
     default_currency: 'THB',
     bank_transfer_details: '',
   });
+  const [noteDraft, setNoteDraft] = useState('');
+  const [noteSaving, setNoteSaving] = useState(false);
+  const [noteResult, setNoteResult] = useState<string | null>(null);
 
   const [exporting, setExporting] = useState(false);
   const [exportResult, setExportResult] = useState<string | null>(null);
@@ -109,6 +112,55 @@ const AdminBookings: React.FC = () => {
     const amount = getPayableNow(booking);
     if (amount === null) return null;
     return `${financeSettings.paypal_link}/${amount}${financeSettings.default_currency}`;
+  };
+
+  useEffect(() => {
+    if (!financeModalBooking) return;
+    setNoteDraft(financeModalBooking.internal_notes || '');
+    setNoteResult(null);
+  }, [financeModalBooking]);
+
+  const saveBookingNote = async () => {
+    if (!financeModalBooking) return;
+
+    setNoteSaving(true);
+    setNoteResult(null);
+    try {
+      const res = await fetch(`/api/booking_inquiries?id=${financeModalBooking.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ internal_notes: noteDraft }),
+      });
+
+      if (!res.ok) {
+        const payload = await res.json().catch(() => ({}));
+        throw new Error(payload?.error || 'Failed to save booking note');
+      }
+
+      setBookings((prev) =>
+        prev.map((b) =>
+          b.id === financeModalBooking.id
+            ? {
+                ...b,
+                internal_notes: noteDraft,
+              }
+            : b
+        )
+      );
+      setFinanceModalBooking((prev) =>
+        prev
+          ? {
+              ...prev,
+              internal_notes: noteDraft,
+            }
+          : prev
+      );
+      setNoteResult('Note saved.');
+    } catch (err) {
+      setNoteResult(err instanceof Error ? err.message : 'Failed to save note');
+    } finally {
+      setNoteSaving(false);
+    }
   };
 
   const saveStatus = async (bookingId: string, explicitStatus?: string) => {
@@ -348,6 +400,28 @@ const AdminBookings: React.FC = () => {
                   <pre className="mt-1 whitespace-pre-wrap rounded bg-slate-50 p-2 text-xs text-slate-700">{financeSettings.bank_transfer_details}</pre>
                 </div>
               ) : null}
+
+              <div>
+                <strong>Comments / Notes</strong>
+                <textarea
+                  value={noteDraft}
+                  onChange={(e) => setNoteDraft(e.target.value)}
+                  rows={4}
+                  className="mt-1 w-full rounded border border-gray-300 p-2"
+                  placeholder="Add notes for this booking..."
+                />
+                <div className="mt-2 flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={saveBookingNote}
+                    disabled={noteSaving}
+                    className="rounded bg-blue-600 px-3 py-1 text-xs font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {noteSaving ? 'Saving...' : 'Save note'}
+                  </button>
+                  {noteResult ? <span className="text-xs text-slate-600">{noteResult}</span> : null}
+                </div>
+              </div>
             </div>
           )}
         </DialogContent>
