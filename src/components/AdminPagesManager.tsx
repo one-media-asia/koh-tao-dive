@@ -1,5 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Underline from '@tiptap/extension-underline';
+import Link from '@tiptap/extension-link';
+import Placeholder from '@tiptap/extension-placeholder';
 
 interface PageContentRow {
   id: string;
@@ -10,6 +15,64 @@ interface PageContentRow {
   content_value: string;
   updated_at?: string;
 }
+
+interface RichTextEditorProps {
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  minHeightClassName?: string;
+}
+
+const RichTextEditor: React.FC<RichTextEditorProps> = ({
+  value,
+  onChange,
+  placeholder,
+  minHeightClassName = 'min-h-[120px]',
+}) => {
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Underline,
+      Link,
+      Placeholder.configure({
+        placeholder: placeholder || 'Start typing...',
+      }),
+    ],
+    content: value || '',
+    editorProps: {
+      attributes: {
+        class: `${minHeightClassName} rounded border border-gray-300 p-2 focus:outline-none`,
+      },
+    },
+    onUpdate: ({ editor: current }) => {
+      onChange(current.getHTML());
+    },
+  });
+
+  useEffect(() => {
+    if (!editor) return;
+    const current = editor.getHTML();
+    if (value !== current) {
+      editor.commands.setContent(value || '', { emitUpdate: false });
+    }
+  }, [editor, value]);
+
+  if (!editor) return null;
+
+  return (
+    <div className="space-y-2">
+      <div className="flex flex-wrap gap-1">
+        <button type="button" onClick={() => editor.chain().focus().toggleBold().run()} className={`rounded border px-2 py-1 text-xs ${editor.isActive('bold') ? 'bg-blue-600 text-white' : 'bg-white text-gray-700'}`}>Bold</button>
+        <button type="button" onClick={() => editor.chain().focus().toggleItalic().run()} className={`rounded border px-2 py-1 text-xs ${editor.isActive('italic') ? 'bg-blue-600 text-white' : 'bg-white text-gray-700'}`}>Italic</button>
+        <button type="button" onClick={() => editor.chain().focus().toggleUnderline().run()} className={`rounded border px-2 py-1 text-xs ${editor.isActive('underline') ? 'bg-blue-600 text-white' : 'bg-white text-gray-700'}`}>Underline</button>
+        <button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()} className={`rounded border px-2 py-1 text-xs ${editor.isActive('bulletList') ? 'bg-blue-600 text-white' : 'bg-white text-gray-700'}`}>Bullets</button>
+        <button type="button" onClick={() => editor.chain().focus().toggleOrderedList().run()} className={`rounded border px-2 py-1 text-xs ${editor.isActive('orderedList') ? 'bg-blue-600 text-white' : 'bg-white text-gray-700'}`}>Numbered</button>
+        <button type="button" onClick={() => editor.chain().focus().setParagraph().run()} className="rounded border px-2 py-1 text-xs bg-white text-gray-700">Paragraph</button>
+      </div>
+      <EditorContent editor={editor} />
+    </div>
+  );
+};
 
 const DIVE_SITE_SLUGS = [
   'sail-rock', 'shark-island', 'htms-sattakut', 'japanese-gardens',
@@ -122,6 +185,7 @@ const AdminPagesManager: React.FC = () => {
   const [newContentType, setNewContentType] = useState('text');
   const [newContentValue, setNewContentValue] = useState('');
   const [isAddingRow, setIsAddingRow] = useState(false);
+  const [useWysiwyg, setUseWysiwyg] = useState(true);
 
   const fetchData = async () => {
     setLoading(true);
@@ -479,6 +543,14 @@ const AdminPagesManager: React.FC = () => {
         >
           Row Table
         </button>
+        <label className="ml-2 inline-flex items-center gap-2 text-sm text-gray-700">
+          <input
+            type="checkbox"
+            checked={useWysiwyg}
+            onChange={(e) => setUseWysiwyg(e.target.checked)}
+          />
+          WYSIWYG editor
+        </label>
       </div>
 
       {editorMode === 'page' && (
@@ -544,18 +616,31 @@ const AdminPagesManager: React.FC = () => {
                             {toSectionLabel(sectionKey)}
                             <span className="ml-2 text-xs text-gray-400">({sectionKey})</span>
                           </label>
-                          <textarea
-                            value={pageDraft[sectionKey] || ''}
-                            onChange={(e) =>
-                              setPageDraft((prev) => ({
-                                ...prev,
-                                [sectionKey]: e.target.value,
-                              }))
-                            }
-                            rows={sectionKey === 'overview' ? 5 : 3}
-                            className="w-full rounded border border-gray-300 p-2"
-                            placeholder={`Edit ${sectionKey}`}
-                          />
+                          {useWysiwyg ? (
+                            <RichTextEditor
+                              value={pageDraft[sectionKey] || ''}
+                              onChange={(val) =>
+                                setPageDraft((prev) => ({
+                                  ...prev,
+                                  [sectionKey]: val,
+                                }))
+                              }
+                              placeholder={`Edit ${sectionKey}`}
+                            />
+                          ) : (
+                            <textarea
+                              value={pageDraft[sectionKey] || ''}
+                              onChange={(e) =>
+                                setPageDraft((prev) => ({
+                                  ...prev,
+                                  [sectionKey]: e.target.value,
+                                }))
+                              }
+                              rows={sectionKey === 'overview' ? 5 : 3}
+                              className="w-full rounded border border-gray-300 p-2"
+                              placeholder={`Edit ${sectionKey}`}
+                            />
+                          )}
                         </div>
                       ))}
                     </div>
@@ -758,14 +843,22 @@ const AdminPagesManager: React.FC = () => {
               </td>
               <td className="border border-gray-300 p-2">
                 {editingId === row.id ? (
-                  <textarea
-                    value={editContent}
-                    onChange={(e) => setEditContent(e.target.value)}
-                    rows={3}
-                    className="w-full rounded border border-gray-300 p-2"
-                    aria-label={`Edit content for ${row.page_slug} ${row.section_key} ${row.locale}`}
-                    placeholder="Edit content"
-                  />
+                  useWysiwyg ? (
+                    <RichTextEditor
+                      value={editContent}
+                      onChange={setEditContent}
+                      placeholder="Edit content"
+                    />
+                  ) : (
+                    <textarea
+                      value={editContent}
+                      onChange={(e) => setEditContent(e.target.value)}
+                      rows={3}
+                      className="w-full rounded border border-gray-300 p-2"
+                      aria-label={`Edit content for ${row.page_slug} ${row.section_key} ${row.locale}`}
+                      placeholder="Edit content"
+                    />
+                  )
                 ) : (
                   row.content_value
                 )}

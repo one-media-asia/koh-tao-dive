@@ -1,5 +1,6 @@
 import AdminBookings from '../components/AdminBookings';
 import AdminPagesManager from '../components/AdminPagesManager';
+import AdminUsersManager from '../components/AdminUsersManager';
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -239,7 +240,9 @@ const Admin = () => {
         </div>
       )}
       {activeTab === 'users' && (
-        <div className="bg-white rounded shadow p-4">User management coming soon...</div>
+        <div className="bg-white rounded shadow p-4">
+          <AdminUsersManager />
+        </div>
       )}
     </div>
   );
