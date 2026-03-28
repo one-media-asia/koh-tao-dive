@@ -30,6 +30,7 @@ export interface CoursePageProps {
     price_usd?: string;
     price_eur?: string;
     duration?: string;
+    [key: string]: string | undefined;
   };
   heroImage?: string;
   images?: string[];
@@ -72,6 +73,46 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
     fallbackContent,
   });
 
+  const parseListValue = (value: string) =>
+    String(value)
+      .split('\n')
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+  const buildCmsSections = (source: Record<string, string | undefined>): CourseSection[] => {
+    const parsed: CourseSection[] = [];
+
+    for (let idx = 1; idx <= 8; idx += 1) {
+      const title = source[`section_${idx}_title`];
+      const rawContent = source[`section_${idx}_content`];
+
+      if (!title || !rawContent) continue;
+
+      const items = parseListValue(rawContent);
+      parsed.push({
+        title,
+        content: items.length > 1 ? items : rawContent,
+      });
+    }
+
+    return parsed;
+  };
+
+  const buildCmsFaqs = (source: Record<string, string | undefined>): CourseFAQ[] => {
+    const parsed: CourseFAQ[] = [];
+
+    for (let idx = 1; idx <= 10; idx += 1) {
+      const question = source[`faq_${idx}_question`];
+      const answer = source[`faq_${idx}_answer`];
+
+      if (!question || !answer) continue;
+
+      parsed.push({ question, answer });
+    }
+
+    return parsed;
+  };
+
   if (isLoading) {
     return <div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>;
   }
@@ -90,6 +131,10 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
 
   const priceThb = content.price_thb || fallbackContent.price_thb || '0';
   const duration = content.duration || fallbackContent.duration || 'Contact us';
+  const cmsSections = buildCmsSections(content as Record<string, string | undefined>);
+  const cmsFaqs = buildCmsFaqs(content as Record<string, string | undefined>);
+  const displaySections = cmsSections.length > 0 ? cmsSections : sections;
+  const displayFaqs = cmsFaqs.length > 0 ? cmsFaqs : faqs;
   const thbAmount = parseAmount(priceThb);
   const bookingUrl = `/booking?item=${encodeURIComponent(bookingItemName || '')}&type=${bookingType}&price=${thbAmount}&currency=THB`;
 
@@ -125,7 +170,7 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
             </h2>
             <p className="mb-6 text-base leading-relaxed">{content.course_overview}</p>
 
-            {sections.map((section, idx) => (
+            {displaySections.map((section, idx) => (
               <div key={idx} className="mb-6">
                 <h3 className="text-xl font-semibold mb-3">{section.title}</h3>
                 {Array.isArray(section.content) ? (
@@ -140,13 +185,13 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
               </div>
             ))}
 
-            {faqs.length > 0 && (
+            {displayFaqs.length > 0 && (
               <>
                 <h3 className="text-xl font-semibold mb-4 mt-8">
                   {locale === 'nl' ? 'Veelgestelde Vragen' : 'Frequently Asked Questions'}
                 </h3>
                 <div className="space-y-4">
-                  {faqs.map((faq, idx) => (
+                  {displayFaqs.map((faq, idx) => (
                     <Card key={idx}>
                       <CardHeader>
                         <CardTitle className="text-lg">{faq.question}</CardTitle>

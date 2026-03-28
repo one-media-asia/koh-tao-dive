@@ -57,6 +57,10 @@ const slugs = [
   'blacktip-reef-shark',
   'hawksbill-sea-turtle',
   'marine-life-page',
+  'advanced',
+  'scuba-diver',
+  'discover-scuba',
+  'rescue',
 ];
 
 const endpoint = new URL('/rest/v1/page_content?select=page_slug,locale,section_key', supabaseUrl);
