@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface PageContentRow {
   id: string;
@@ -59,9 +58,6 @@ const getEditorGroup = (sectionKey: string) => {
   if (/title|overview|body|content|text|description|intro|highlight|tips|requirements/.test(key)) return 'Content';
   return 'Other';
 };
-
-const isPayPalField = (sectionKey: string) => /paypal|pay_pal/.test(String(sectionKey || '').toLowerCase());
-const DEFAULT_PAYPAL_KEY = 'paypal_link';
 
 const getPageGroup = (pageSlug: string) => {
   const slug = String(pageSlug || '').toLowerCase();
@@ -126,22 +122,6 @@ const AdminPagesManager: React.FC = () => {
   const [newContentType, setNewContentType] = useState('text');
   const [newContentValue, setNewContentValue] = useState('');
   const [isAddingRow, setIsAddingRow] = useState(false);
-  const [payPalModalSection, setPayPalModalSection] = useState<string | null>(null);
-  const [payPalModalValue, setPayPalModalValue] = useState('');
-
-  const openPayPalModal = (sectionKey: string) => {
-    setPayPalModalSection(sectionKey);
-    setPayPalModalValue(pageDraft[sectionKey] || '');
-  };
-
-  const savePayPalModal = () => {
-    if (!payPalModalSection) return;
-    setPageDraft((prev) => ({
-      ...prev,
-      [payPalModalSection]: payPalModalValue,
-    }));
-    setPayPalModalSection(null);
-  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -220,22 +200,6 @@ const AdminPagesManager: React.FC = () => {
     });
   }, [data, selectedLocale, selectedPageSlug]);
 
-  const payPalSectionKey = useMemo(
-    () => pageSectionKeys.find((key) => isPayPalField(key)) || DEFAULT_PAYPAL_KEY,
-    [pageSectionKeys]
-  );
-
-  const saveSectionKeys = useMemo(() => {
-    if (!selectedPageSlug) return pageSectionKeys;
-
-    const keys = new Set(pageSectionKeys);
-    if ((pageDraft[payPalSectionKey] || '').trim().length > 0 || pageSectionKeys.some((key) => isPayPalField(key))) {
-      keys.add(payPalSectionKey);
-    }
-
-    return Array.from(keys);
-  }, [pageDraft, pageSectionKeys, payPalSectionKey, selectedPageSlug]);
-
   const groupedPageSectionKeys = useMemo(() => {
     const grouped = new Map<string, string[]>();
 
@@ -245,13 +209,9 @@ const AdminPagesManager: React.FC = () => {
       grouped.get(group)!.push(sectionKey);
     });
 
-    if (!grouped.has('Finance')) {
-      grouped.set('Finance', []);
-    }
-
     return EDITOR_GROUP_ORDER
       .map((group) => ({ group, keys: grouped.get(group) || [] }))
-      .filter((entry) => entry.keys.length > 0 || entry.group === 'Finance');
+      .filter((entry) => entry.keys.length > 0);
   }, [pageSectionKeys]);
 
   useEffect(() => {
@@ -273,12 +233,8 @@ const AdminPagesManager: React.FC = () => {
       nextDraft[sectionKey] = localeRow?.content_value || '';
     });
 
-    if (!(payPalSectionKey in nextDraft)) {
-      nextDraft[payPalSectionKey] = '';
-    }
-
     setPageDraft(nextDraft);
-  }, [data, pageSectionKeys, payPalSectionKey, selectedLocale, selectedPageSlug]);
+  }, [data, pageSectionKeys, selectedLocale, selectedPageSlug]);
 
   const handleSavePage = async () => {
     if (!supabase) {
@@ -291,7 +247,7 @@ const AdminPagesManager: React.FC = () => {
       return;
     }
 
-    const rowsToUpsert = saveSectionKeys.map((sectionKey) => {
+    const rowsToUpsert = pageSectionKeys.map((sectionKey) => {
       const existing = data.find(
         (row) =>
           row.page_slug === selectedPageSlug &&
@@ -581,41 +537,6 @@ const AdminPagesManager: React.FC = () => {
                     <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-700">
                       {group} ({keys.length})
                     </h3>
-                    {group === 'Finance' && !keys.some((key) => isPayPalField(key)) && (
-                      <div className="mb-3 rounded border border-dashed border-blue-300 bg-blue-50 p-3">
-                        <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-blue-700">PayPal Link</div>
-                        <input
-                          value={pageDraft[payPalSectionKey] || ''}
-                          onChange={(e) =>
-                            setPageDraft((prev) => ({
-                              ...prev,
-                              [payPalSectionKey]: e.target.value,
-                            }))
-                          }
-                          className="w-full rounded border border-gray-300 px-3 py-2"
-                          placeholder="https://www.paypal.com/..."
-                        />
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          <button
-                            type="button"
-                            onClick={() => openPayPalModal(payPalSectionKey)}
-                            className="rounded border border-gray-300 px-3 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-50"
-                          >
-                            Edit in Modal
-                          </button>
-                          {pageDraft[payPalSectionKey] ? (
-                            <a
-                              href={pageDraft[payPalSectionKey]}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="rounded border border-blue-300 px-3 py-1 text-xs font-semibold text-blue-700 hover:bg-blue-50"
-                            >
-                              Open PayPal Link
-                            </a>
-                          ) : null}
-                        </div>
-                      </div>
-                    )}
                     <div className="space-y-3">
                       {keys.map((sectionKey) => (
                         <div key={sectionKey}>
@@ -623,53 +544,18 @@ const AdminPagesManager: React.FC = () => {
                             {toSectionLabel(sectionKey)}
                             <span className="ml-2 text-xs text-gray-400">({sectionKey})</span>
                           </label>
-                          {isPayPalField(sectionKey) ? (
-                            <div className="space-y-2">
-                              <input
-                                value={pageDraft[sectionKey] || ''}
-                                onChange={(e) =>
-                                  setPageDraft((prev) => ({
-                                    ...prev,
-                                    [sectionKey]: e.target.value,
-                                  }))
-                                }
-                                className="w-full rounded border border-gray-300 px-3 py-2"
-                                placeholder="https://www.paypal.com/..."
-                              />
-                              <div className="flex flex-wrap gap-2">
-                                <button
-                                  type="button"
-                                  onClick={() => openPayPalModal(sectionKey)}
-                                  className="rounded border border-gray-300 px-3 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-50"
-                                >
-                                  Edit in Modal
-                                </button>
-                                {pageDraft[sectionKey] ? (
-                                  <a
-                                    href={pageDraft[sectionKey]}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="rounded border border-blue-300 px-3 py-1 text-xs font-semibold text-blue-700 hover:bg-blue-50"
-                                  >
-                                    Open PayPal Link
-                                  </a>
-                                ) : null}
-                              </div>
-                            </div>
-                          ) : (
-                            <textarea
-                              value={pageDraft[sectionKey] || ''}
-                              onChange={(e) =>
-                                setPageDraft((prev) => ({
-                                  ...prev,
-                                  [sectionKey]: e.target.value,
-                                }))
-                              }
-                              rows={sectionKey === 'overview' ? 5 : 3}
-                              className="w-full rounded border border-gray-300 p-2"
-                              placeholder={`Edit ${sectionKey}`}
-                            />
-                          )}
+                          <textarea
+                            value={pageDraft[sectionKey] || ''}
+                            onChange={(e) =>
+                              setPageDraft((prev) => ({
+                                ...prev,
+                                [sectionKey]: e.target.value,
+                              }))
+                            }
+                            rows={sectionKey === 'overview' ? 5 : 3}
+                            className="w-full rounded border border-gray-300 p-2"
+                            placeholder={`Edit ${sectionKey}`}
+                          />
                         </div>
                       ))}
                     </div>
@@ -677,48 +563,14 @@ const AdminPagesManager: React.FC = () => {
                 ))}
               </div>
 
-              <Dialog open={Boolean(payPalModalSection)} onOpenChange={(open) => { if (!open) setPayPalModalSection(null); }}>
-                <DialogContent className="sm:max-w-2xl">
-                  <DialogHeader>
-                    <DialogTitle>
-                      Edit PayPal Link {payPalModalSection ? `(${payPalModalSection})` : ''}
-                    </DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-3">
-                    <input
-                      value={payPalModalValue}
-                      onChange={(e) => setPayPalModalValue(e.target.value)}
-                      className="w-full rounded border border-gray-300 px-3 py-2"
-                      placeholder="https://www.paypal.com/..."
-                    />
-                    <div className="flex justify-end gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setPayPalModalSection(null)}
-                        className="rounded border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        type="button"
-                        onClick={savePayPalModal}
-                        className="rounded bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-                      >
-                        Save Link
-                      </button>
-                    </div>
-                  </div>
-                </DialogContent>
-              </Dialog>
-
               <div className="mt-4 flex justify-end">
                 <button
                   type="button"
                   onClick={handleSavePage}
-                  disabled={savingPage || saveSectionKeys.length === 0}
+                  disabled={savingPage || pageSectionKeys.length === 0}
                   className="rounded bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {savingPage ? 'Saving...' : `Save ${saveSectionKeys.length} Sections`}
+                  {savingPage ? 'Saving...' : `Save ${pageSectionKeys.length} Sections`}
                 </button>
               </div>
             </>

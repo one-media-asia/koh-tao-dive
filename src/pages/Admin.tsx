@@ -2,6 +2,7 @@ import AdminBookings from '../components/AdminBookings';
 import AdminPagesManager from '../components/AdminPagesManager';
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 
 
@@ -23,6 +24,77 @@ const Admin = () => {
   const [selectedBookingId, setSelectedBookingId] = useState(null);
   const [commentDraft, setCommentDraft] = useState('');
   const [savingComment, setSavingComment] = useState(false);
+  const [financeModalOpen, setFinanceModalOpen] = useState(false);
+  const [financeLoading, setFinanceLoading] = useState(false);
+  const [financeSaving, setFinanceSaving] = useState(false);
+  const [financeDraft, setFinanceDraft] = useState<Record<string, string>>({
+    paypal_link: 'https://paypal.me/prodivingasia',
+    course_deposit_rate: '0.2',
+    default_deposit_amount: '',
+    default_currency: 'THB',
+    bank_transfer_details: '',
+  });
+
+  const FINANCE_SLUG = 'admin-finance';
+  const FINANCE_LOCALE = 'en';
+  const financeFields: Array<{ key: string; label: string; multiline?: boolean; placeholder?: string }> = [
+    { key: 'paypal_link', label: 'PayPal Link', placeholder: 'https://paypal.me/prodivingasia' },
+    { key: 'course_deposit_rate', label: 'Course Deposit Rate', placeholder: '0.2' },
+    { key: 'default_deposit_amount', label: 'Default Deposit Amount', placeholder: 'e.g. 2500' },
+    { key: 'default_currency', label: 'Default Currency', placeholder: 'THB' },
+    { key: 'bank_transfer_details', label: 'Bank Transfer Details', multiline: true, placeholder: 'Bank name, account number, IBAN/SWIFT...' },
+  ];
+
+  const loadFinanceSettings = async () => {
+    setFinanceLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('page_content')
+        .select('section_key,content_value')
+        .eq('page_slug', FINANCE_SLUG)
+        .eq('locale', FINANCE_LOCALE);
+
+      if (error) throw error;
+
+      if (Array.isArray(data) && data.length > 0) {
+        const next = { ...financeDraft };
+        data.forEach((row: any) => {
+          if (row?.section_key) {
+            next[row.section_key] = row.content_value || '';
+          }
+        });
+        setFinanceDraft(next);
+      }
+    } catch (err) {
+      console.error('Failed to load finance settings:', err);
+    } finally {
+      setFinanceLoading(false);
+    }
+  };
+
+  const saveFinanceSettings = async () => {
+    setFinanceSaving(true);
+    try {
+      const rows = financeFields.map((field) => ({
+        page_slug: FINANCE_SLUG,
+        locale: FINANCE_LOCALE,
+        section_key: field.key,
+        content_type: field.multiline ? 'textarea' : 'text',
+        content_value: financeDraft[field.key] || '',
+      }));
+
+      const { error } = await supabase
+        .from('page_content')
+        .upsert(rows, { onConflict: 'page_slug,section_key,locale' });
+
+      if (error) throw error;
+      setFinanceModalOpen(false);
+    } catch (err) {
+      alert('Error saving finance settings: ' + (err instanceof Error ? err.message : String(err)));
+    } finally {
+      setFinanceSaving(false);
+    }
+  };
 
   useEffect(() => {
     if (activeTab === 'bookings' || activeTab === 'comments') {
@@ -51,6 +123,12 @@ const Admin = () => {
     }
   }, [selectedBookingId, bookings, activeTab]);
 
+  useEffect(() => {
+    if (financeModalOpen) {
+      loadFinanceSettings();
+    }
+  }, [financeModalOpen]);
+
   const handleSaveComment = async () => {
     if (!selectedBookingId) return;
     setSavingComment(true);
@@ -72,17 +150,79 @@ const Admin = () => {
 
   return (
     <div className="p-4">
-      <div className="flex gap-2 mb-6">
-        {tabs.map(tab => (
-          <button
-            key={tab.key}
-            className={`px-4 py-2 rounded-t ${activeTab === tab.key ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
-            onClick={() => setActiveTab(tab.key)}
-          >
-            {tab.label}
-          </button>
-        ))}
+      <div className="mb-6 flex items-center justify-between gap-2">
+        <div className="flex gap-2">
+          {tabs.map(tab => (
+            <button
+              key={tab.key}
+              className={`px-4 py-2 rounded-t ${activeTab === tab.key ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
+              onClick={() => setActiveTab(tab.key)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={() => setFinanceModalOpen(true)}
+          className="rounded bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
+        >
+          Finance Settings
+        </button>
       </div>
+
+      <Dialog open={financeModalOpen} onOpenChange={setFinanceModalOpen}>
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Finance Settings</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            {financeLoading ? (
+              <div className="text-sm text-gray-500">Loading finance settings...</div>
+            ) : (
+              financeFields.map((field) => (
+                <div key={field.key}>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">{field.label}</label>
+                  {field.multiline ? (
+                    <textarea
+                      value={financeDraft[field.key] || ''}
+                      onChange={(e) => setFinanceDraft((prev) => ({ ...prev, [field.key]: e.target.value }))}
+                      rows={4}
+                      placeholder={field.placeholder || ''}
+                      className="w-full rounded border border-gray-300 p-2"
+                    />
+                  ) : (
+                    <input
+                      value={financeDraft[field.key] || ''}
+                      onChange={(e) => setFinanceDraft((prev) => ({ ...prev, [field.key]: e.target.value }))}
+                      placeholder={field.placeholder || ''}
+                      className="w-full rounded border border-gray-300 px-3 py-2"
+                    />
+                  )}
+                </div>
+              ))
+            )}
+            <div className="flex justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setFinanceModalOpen(false)}
+                className="rounded border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={saveFinanceSettings}
+                disabled={financeSaving || financeLoading}
+                className="rounded bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {financeSaving ? 'Saving...' : 'Save Finance Settings'}
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {activeTab === 'bookings' && (
         <div className="bg-white rounded shadow p-2">
           <AdminBookings />
