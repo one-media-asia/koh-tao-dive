@@ -61,6 +61,7 @@ const getEditorGroup = (sectionKey: string) => {
 };
 
 const isPayPalField = (sectionKey: string) => /paypal|pay_pal/.test(String(sectionKey || '').toLowerCase());
+const DEFAULT_PAYPAL_KEY = 'paypal_link';
 
 const getPageGroup = (pageSlug: string) => {
   const slug = String(pageSlug || '').toLowerCase();
@@ -219,6 +220,22 @@ const AdminPagesManager: React.FC = () => {
     });
   }, [data, selectedLocale, selectedPageSlug]);
 
+  const payPalSectionKey = useMemo(
+    () => pageSectionKeys.find((key) => isPayPalField(key)) || DEFAULT_PAYPAL_KEY,
+    [pageSectionKeys]
+  );
+
+  const saveSectionKeys = useMemo(() => {
+    if (!selectedPageSlug) return pageSectionKeys;
+
+    const keys = new Set(pageSectionKeys);
+    if ((pageDraft[payPalSectionKey] || '').trim().length > 0 || pageSectionKeys.some((key) => isPayPalField(key))) {
+      keys.add(payPalSectionKey);
+    }
+
+    return Array.from(keys);
+  }, [pageDraft, pageSectionKeys, payPalSectionKey, selectedPageSlug]);
+
   const groupedPageSectionKeys = useMemo(() => {
     const grouped = new Map<string, string[]>();
 
@@ -252,8 +269,12 @@ const AdminPagesManager: React.FC = () => {
       nextDraft[sectionKey] = localeRow?.content_value || '';
     });
 
+    if (!(payPalSectionKey in nextDraft)) {
+      nextDraft[payPalSectionKey] = '';
+    }
+
     setPageDraft(nextDraft);
-  }, [data, pageSectionKeys, selectedLocale, selectedPageSlug]);
+  }, [data, pageSectionKeys, payPalSectionKey, selectedLocale, selectedPageSlug]);
 
   const handleSavePage = async () => {
     if (!supabase) {
@@ -266,7 +287,7 @@ const AdminPagesManager: React.FC = () => {
       return;
     }
 
-    const rowsToUpsert = pageSectionKeys.map((sectionKey) => {
+    const rowsToUpsert = saveSectionKeys.map((sectionKey) => {
       const existing = data.find(
         (row) =>
           row.page_slug === selectedPageSlug &&
@@ -556,6 +577,41 @@ const AdminPagesManager: React.FC = () => {
                     <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-700">
                       {group} ({keys.length})
                     </h3>
+                    {group === 'Finance' && !keys.some((key) => isPayPalField(key)) && (
+                      <div className="mb-3 rounded border border-dashed border-blue-300 bg-blue-50 p-3">
+                        <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-blue-700">PayPal Link</div>
+                        <input
+                          value={pageDraft[payPalSectionKey] || ''}
+                          onChange={(e) =>
+                            setPageDraft((prev) => ({
+                              ...prev,
+                              [payPalSectionKey]: e.target.value,
+                            }))
+                          }
+                          className="w-full rounded border border-gray-300 px-3 py-2"
+                          placeholder="https://www.paypal.com/..."
+                        />
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={() => openPayPalModal(payPalSectionKey)}
+                            className="rounded border border-gray-300 px-3 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-50"
+                          >
+                            Edit in Modal
+                          </button>
+                          {pageDraft[payPalSectionKey] ? (
+                            <a
+                              href={pageDraft[payPalSectionKey]}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="rounded border border-blue-300 px-3 py-1 text-xs font-semibold text-blue-700 hover:bg-blue-50"
+                            >
+                              Open PayPal Link
+                            </a>
+                          ) : null}
+                        </div>
+                      </div>
+                    )}
                     <div className="space-y-3">
                       {keys.map((sectionKey) => (
                         <div key={sectionKey}>
@@ -655,10 +711,10 @@ const AdminPagesManager: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleSavePage}
-                  disabled={savingPage || pageSectionKeys.length === 0}
+                  disabled={savingPage || saveSectionKeys.length === 0}
                   className="rounded bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {savingPage ? 'Saving...' : `Save ${pageSectionKeys.length} Sections`}
+                  {savingPage ? 'Saving...' : `Save ${saveSectionKeys.length} Sections`}
                 </button>
               </div>
             </>
