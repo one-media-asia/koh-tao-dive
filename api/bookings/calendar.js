@@ -120,6 +120,9 @@ export default async function handler(req, res) {
       'PRODID:-//Pro Diving Asia//Bookings Calendar//EN',
       'CALSCALE:GREGORIAN',
       'METHOD:PUBLISH',
+      'X-WR-CALNAME:Pro Diving Asia Bookings',
+      'X-PUBLISHED-TTL:PT15M',
+      'REFRESH-INTERVAL;VALUE=DURATION:PT15M',
       events,
       'END:VCALENDAR',
       '',
@@ -127,6 +130,9 @@ export default async function handler(req, res) {
 
     res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
     res.setHeader('Content-Disposition', 'inline; filename="bookings.ics"');
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
     return res.status(200).send(calendar);
   } catch (err) {
     console.error('api/bookings/calendar error', err);
