@@ -126,10 +126,10 @@ const AdminBookings: React.FC = () => {
     setNoteSaving(true);
     setNoteResult(null);
     try {
-      const res = await fetch(`/api/booking_inquiries?id=${financeModalBooking.id}`, {
-        method: 'PATCH',
+      const res = await fetch('/api/bookings', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ internal_notes: noteDraft }),
+        body: JSON.stringify({ id: financeModalBooking.id, internal_notes: noteDraft }),
       });
 
       if (!res.ok) {
