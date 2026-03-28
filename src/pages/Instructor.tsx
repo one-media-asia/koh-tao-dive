@@ -1,22 +1,110 @@
 import Contact from '../components/Contact';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { usePageContent } from '@/hooks/usePageContent';
 
 const Instructor: React.FC = () => {
   const navigate = useNavigate();
-  const bookingUrl = '/booking?item=PADI%20Open%20Water%20Scuba%20Instructor&type=course&price=68900&currency=THB';
+  const { i18n } = useTranslation();
+  const isDutch = i18n.language.startsWith('nl');
+  const locale = isDutch ? 'nl' : 'en';
+
+  const toList = (value: string) =>
+    String(value || '')
+      .split('\n')
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+  const fallbackContent = useMemo(
+    () => ({
+      hero_title: isDutch ? 'PADI Open Water Scuba Instructor' : 'PADI Open Water Scuba Instructor',
+      hero_subtitle: isDutch
+        ? 'Train om PADI-instructeur te worden en duikers wereldwijd op te leiden. De Instructor Development Course (IDC) bereidt je voor om cursussen te leiden en cursisten te certificeren.'
+        : 'Train to become a PADI Instructor and teach divers worldwide. The Instructor Development Course (IDC) prepares candidates to lead courses and certify students.',
+      cta_primary: isDutch ? 'Informatie over Instructor' : 'Enquire About Instructor',
+      section_overview_title: isDutch ? 'Programmaoverzicht' : 'Program Overview',
+      section_overview_body: isDutch
+        ? 'Het Instructor-traject leidt ervaren duikers op om nieuwe duikers op te leiden en te certificeren. De IDC omvat lespresentaties, studentbeoordelingen en praktijkervaring in lesgeven, met begeleiding van ervaren stafinstructeurs.'
+        : 'The Instructor pathway trains experienced divers to teach and certify new divers. The IDC includes teaching presentations, student evaluations and practical teaching experience with support from experienced staff instructors.',
+      section_prereq_title: isDutch ? 'Toelatingseisen' : 'Prerequisites',
+      section_prereq_body: isDutch
+        ? 'Vereisten: PADI Divemaster (of gelijkwaardig), geldige EFR en een minimumaantal gelogde duiken volgens PADI-richtlijnen. Kandidaten moeten de Instructor-examens en beoordelingen succesvol afronden.'
+        : 'Prerequisite: PADI Divemaster (or equivalent), current EFR, and a minimum number of logged dives as required by PADI. Candidates must complete Instructor exams and assessments.',
+      section_learn_title: isDutch ? 'Wat je leert' : "What you'll learn",
+      section_learn_items: isDutch
+        ? 'Didactische en presentatievaardigheden\nCursusmanagement en studentbeoordeling\nRisicobeheer en leiderschap\nMarketing en zakelijke ontwikkeling voor instructeurs'
+        : 'Teaching and presentation skills\nCourse management and student evaluation\nRisk management and leadership\nMarketing and business development for instructors',
+      section_inclusions_title: isDutch ? 'Inbegrepen' : 'Inclusions',
+      section_inclusions_items: isDutch
+        ? 'IDC-materialen en PADI-registratie\nPraktijklessen en mentoring\nExamenvoorbereiding en examenkosten (waar van toepassing)'
+        : 'IDC materials and PADI registration\nPractical teaching sessions and mentoring\nExam preparation and exam fees (where applicable)',
+      faq_title: 'FAQ',
+      faq_1_q: isDutch ? 'Hoe schrijf ik me in voor de IDC op Koh Tao?' : 'How do I enrol in the IDC on Koh Tao?',
+      faq_1_a: isDutch
+        ? 'Neem contact met ons op voor cursusdata, planning en het aanmeldproces. We begeleiden je stap voor stap van vereisten tot inschrijving.'
+        : 'Contact us for course dates, schedule options and the application process. We can guide you step-by-step from prerequisites to enrollment.',
+      faq_2_q: isDutch
+        ? 'Kan ik direct na de IDC als PADI-instructeur werken?'
+        : 'Can I work as a PADI Instructor right after completing IDC?',
+      faq_2_a: isDutch
+        ? 'Ja. Na afronding van de IDC en het behalen van het Instructor Examination (IE) ontvang je de PADI Open Water Scuba Instructor-certificering en kun je professioneel lesgeven.'
+        : 'Yes. After completing the IDC and passing the Instructor Examination (IE), you earn the PADI Open Water Scuba Instructor certification and can teach professionally.',
+      faq_3_q: isDutch
+        ? 'Kan ik na de IDC doorgaan met professionele training?'
+        : 'Can I continue professional training after the IDC?',
+      faq_3_a: isDutch
+        ? 'Absoluut. Na je instructeurscertificering kun je verder doorgroeien met pro-level trajecten zoals MSDT en meer, afhankelijk van je ervaring en doelen.'
+        : 'Absolutely. After instructor certification, you can continue with pro-level development such as MSDT and beyond, depending on your experience and goals.',
+      faq_4_q: isDutch ? 'Waarom Koh Tao kiezen voor een IDC?' : 'Why choose Koh Tao for an IDC?',
+      faq_4_a: isDutch
+        ? 'Koh Tao combineert uitstekende duiklocaties, ervaren instructeurs, lagere kosten van levensonderhoud en een sterke duikcommunity. Daardoor is het een van de beste plekken om een duikcarriere op te bouwen.'
+        : 'Koh Tao combines excellent dive sites, experienced instructors, affordable living costs and a strong dive community, making it one of the best places to build a dive career.',
+      sidebar_title: isDutch ? 'Cursusdetails' : 'Course Details',
+      sidebar_badge: isDutch ? 'Pro Niveau' : 'Pro Level',
+      sidebar_subtitle: isDutch
+        ? 'IDC · Instructor Examination · Praktijkles'
+        : 'IDC · Instructor Examination · Practical Teaching',
+      price_thb: '68900',
+      sidebar_note: isDutch
+        ? 'Neem contact op voor een persoonlijk Instructor-traject en examendata.'
+        : 'Contact us for a tailored Instructor pathway and exam dates.',
+      sidebar_cta: isDutch ? 'Informatie / Aanmelden' : 'Enquire / Apply',
+      next_steps_title: isDutch ? 'Volgende stappen' : 'Next steps',
+      next_steps_body: isDutch
+        ? 'Stuur je duik-cv en gewenste startdata. Wij begeleiden je door IDC-vereisten, planning en doorgroeimogelijkheden.'
+        : "Send your diving resume and preferred start dates. We'll guide you through IDC prerequisites, schedules and placement opportunities.",
+      contact_cta: isDutch ? 'Neem contact op voor boeking/informatie' : 'Get in touch to book/enquire',
+      contact_hint: isDutch
+        ? 'Of gebruik onderstaand formulier om direct een boekingsaanvraag te sturen.'
+        : 'Or use the form below to send a booking request directly.',
+      bottom_cta: isDutch ? 'Stuur boekingsaanvraag' : 'Send Booking Request',
+    }),
+    [isDutch]
+  );
+
+  const { content } = usePageContent({
+    pageSlug: 'instructor',
+    locale,
+    fallbackContent,
+  });
+
+  const bookingUrl = `/booking?item=${encodeURIComponent(
+    content.hero_title || 'PADI Open Water Scuba Instructor'
+  )}&type=course&price=${Number(String(content.price_thb || '68900').replace(/[^\d.-]/g, '')) || 68900}&currency=THB`;
+
   return (
     <div className="min-h-screen bg-background">
       <section className="instructor-hero-bg relative h-72 md:h-96 flex items-center">
         <div className="container mx-auto px-4 text-white z-10">
-          <h1 className="text-4xl md:text-5xl font-bold">PADI Open Water Scuba Instructor</h1>
-          <p className="mt-4 max-w-2xl">Train to become a PADI Instructor and teach divers worldwide. The Instructor Development Course (IDC) prepares candidates to lead courses and certify students.</p>
+          <h1 className="text-4xl md:text-5xl font-bold">{content.hero_title}</h1>
+          <p className="mt-4 max-w-2xl">{content.hero_subtitle}</p>
           <div className="mt-6">
-            <Button size="lg" onClick={() => navigate(bookingUrl)}>Enquire About Instructor</Button>
+            <Button size="lg" onClick={() => navigate(bookingUrl)}>{content.cta_primary}</Button>
           </div>
         </div>
       </section>
@@ -24,62 +112,61 @@ const Instructor: React.FC = () => {
       <main className="container mx-auto px-4 py-12">
         <div className="grid md:grid-cols-3 gap-8">
           <div className="md:col-span-2">
-            <h2 className="text-2xl font-bold mb-4">Program Overview</h2>
-            <p className="mb-6">The Instructor pathway trains experienced divers to teach and certify new divers. The IDC includes teaching presentations, student evaluations and practical teaching experience with support from experienced staff instructors.</p>
+            <h2 className="text-2xl font-bold mb-4">{content.section_overview_title}</h2>
+            <p className="mb-6">{content.section_overview_body}</p>
 
-            <h3 className="text-xl font-semibold mb-3">Prerequisites</h3>
-            <p className="mb-6">Prerequisite: PADI Divemaster (or equivalent), current EFR, and a minimum number of logged dives as required by PADI. Candidates must complete Instructor exams and assessments.</p>
+            <h3 className="text-xl font-semibold mb-3">{content.section_prereq_title}</h3>
+            <p className="mb-6">{content.section_prereq_body}</p>
 
-            <h3 className="text-xl font-semibold mb-3">What you'll learn</h3>
+            <h3 className="text-xl font-semibold mb-3">{content.section_learn_title}</h3>
             <ul className="list-disc pl-5 mb-6">
-              <li>Teaching and presentation skills</li>
-              <li>Course management and student evaluation</li>
-              <li>Risk management and leadership</li>
-              <li>Marketing and business development for instructors</li>
+              {toList(content.section_learn_items).map((item) => (
+                <li key={item}>{item}</li>
+              ))}
             </ul>
 
-            <h3 className="text-xl font-semibold mb-3">Inclusions</h3>
+            <h3 className="text-xl font-semibold mb-3">{content.section_inclusions_title}</h3>
             <ul className="list-disc pl-5 mb-6">
-              <li>IDC materials and PADI registration</li>
-              <li>Practical teaching sessions and mentoring</li>
-              <li>Exam preparation and exam fees (where applicable)</li>
+              {toList(content.section_inclusions_items).map((item) => (
+                <li key={item}>{item}</li>
+              ))}
             </ul>
 
-            <h3 className="text-xl font-semibold mb-3">FAQ</h3>
+            <h3 className="text-xl font-semibold mb-3">{content.faq_title}</h3>
             <div className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>How do I enrol in the IDC on Koh Tao?</CardTitle>
+                  <CardTitle>{content.faq_1_q}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  Contact us for course dates, schedule options and the application process. We can guide you step-by-step from prerequisites to enrollment.
+                  {content.faq_1_a}
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Can I work as a PADI Instructor right after completing IDC?</CardTitle>
+                  <CardTitle>{content.faq_2_q}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  Yes. After completing the IDC and passing the Instructor Examination (IE), you earn the PADI Open Water Scuba Instructor certification and can teach professionally.
+                  {content.faq_2_a}
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Can I continue professional training after the IDC?</CardTitle>
+                  <CardTitle>{content.faq_3_q}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  Absolutely. After instructor certification, you can continue with pro-level development such as MSDT and beyond, depending on your experience and goals.
+                  {content.faq_3_a}
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Why choose Koh Tao for an IDC?</CardTitle>
+                  <CardTitle>{content.faq_4_q}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  Koh Tao combines excellent dive sites, experienced instructors, affordable living costs and a strong dive community, making it one of the best places to build a dive career.
+                  {content.faq_4_a}
                 </CardContent>
               </Card>
             </div>
@@ -89,31 +176,31 @@ const Instructor: React.FC = () => {
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle>Course Details</CardTitle>
-                  <Badge>Pro Level</Badge>
+                  <CardTitle>{content.sidebar_title}</CardTitle>
+                  <Badge>{content.sidebar_badge}</Badge>
                 </div>
-                <CardDescription>IDC · Instructor Examination · Practical Teaching</CardDescription>
+                <CardDescription>{content.sidebar_subtitle}</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold text-sky-600 mb-3">฿68,900</p>
-                <p className="text-sm text-muted-foreground mb-4">Contact us for a tailored Instructor pathway and exam dates.</p>
-                <Button onClick={() => navigate(bookingUrl)}>Enquire / Apply</Button>
+                <p className="text-2xl font-bold text-sky-600 mb-3">฿{Number(String(content.price_thb || '68900').replace(/[^\d.-]/g, '')) || 68900}</p>
+                <p className="text-sm text-muted-foreground mb-4">{content.sidebar_note}</p>
+                <Button onClick={() => navigate(bookingUrl)}>{content.sidebar_cta}</Button>
               </CardContent>
             </Card>
           </aside>
         </div>
 
         <section className="mt-12">
-          <h3 className="text-2xl font-semibold mb-4">Next steps</h3>
-          <p className="mb-4">Send your diving resume and preferred start dates. We'll guide you through IDC prerequisites, schedules and placement opportunities.</p>
+          <h3 className="text-2xl font-semibold mb-4">{content.next_steps_title}</h3>
+          <p className="mb-4">{content.next_steps_body}</p>
         </section>
 
         <section className="mt-8">
           <div className="mb-4">
-            <a href="/#contact" target="_blank" rel="noopener noreferrer" className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded font-semibold mb-2">Get in touch to book/enquire</a>
-            <div className="text-muted-foreground text-sm mb-4">Or use the form below to send a booking request directly.</div>
+            <a href="/#contact" target="_blank" rel="noopener noreferrer" className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded font-semibold mb-2">{content.contact_cta}</a>
+            <div className="text-muted-foreground text-sm mb-4">{content.contact_hint}</div>
           </div>
-          <Button onClick={() => navigate(bookingUrl)}>Send Booking Request</Button>
+          <Button onClick={() => navigate(bookingUrl)}>{content.bottom_cta}</Button>
         </section>
       </main>
         <Contact />

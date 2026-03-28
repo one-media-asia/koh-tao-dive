@@ -3,38 +3,54 @@ import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { usePageContent } from '@/hooks/usePageContent';
 
 const ProLevelCourses: React.FC = () => {
   const navigate = useNavigate();
-  const courses = [
-    { title: 'PADI Divemaster Course', path: '/courses/divemaster' },
-    { title: 'PADI Instructor Course', path: '/courses/instructor' },
-    { title: 'EFR Instructor Course' },
-    { title: 'PADI MSDT Program' },
-    { title: 'IDC Staff Instructor' },
-    { title: 'PADI IDC Schedule' },
-    { title: 'Instructor Specialties' },
-    { title: 'AWARE Fish ID' },
-    { title: 'Boat Instructor' },
-    { title: 'Deep Instructor' },
-    { title: 'DPV Instructor' },
-    { title: 'Emergency O2 Provider' },
-    { title: 'Equipment Instructor' },
-    { title: 'Night Diving Instructor' },
-    { title: 'Nitrox Instructor' },
-    { title: 'Search & Recovery' },
-    { title: 'Self Reliant Instructor' },
-    { title: 'Sidemount Instructor' },
-    { title: 'Underwater Naturalist' },
-    { title: 'Underwater Navigator' },
-    { title: 'Wreck Instructor' },
-    { title: 'MSDT Instructor Specialty courses Koh Tao - Sidemount' },
-    {
-      title: 'PADI MSDT Program',
-      path: '/courses/msdt-program',
-      description: 'Become a Master Scuba Diver Trainer (MSDT) and boost your career with the ability to teach a range of PADI specialty courses. Includes hands-on training, team teaching, and guidance to help you reach the required certifications.'
-    },
-  ];
+  const { i18n } = useTranslation();
+  const isDutch = i18n.language.startsWith('nl');
+  const locale = isDutch ? 'nl' : 'en';
+
+  const fallbackContent = {
+    page_title: isDutch
+      ? 'Pro Level Cursussen & Instructor-specialties'
+      : 'Pro Level Courses & Instructor Specialties',
+    page_subtitle: isDutch
+      ? 'Professionele trainingsprogramma\'s en instructor-specialtycursussen op Koh Tao. Klik op een cursus voor details of informatie.'
+      : 'Professional training programs and instructor specialty courses available on Koh Tao. Click a course to view details or enquire.',
+    card_description: isDutch
+      ? 'Professionele ontwikkeling en specialtytraining op instructeursniveau.'
+      : 'Professional development and instructor-level specialty training.',
+    view_button: isDutch ? 'Bekijken' : 'View',
+    enquire_button: isDutch ? 'Informatie' : 'Enquire',
+    footer_title: isDutch ? 'Informatie / Boek een pro-cursus' : 'Enquire / Book a Pro Course',
+    footer_body: isDutch
+      ? 'Vul het formulier in en wij reageren met beschikbaarheid en prijzen.'
+      : "Complete the form below and we'll reply with availability and pricing.",
+    footer_cta: isDutch ? 'Naar boekingspagina' : 'Go to booking page',
+    courses_list: isDutch
+      ? 'PADI Divemaster-cursus|/courses/divemaster\nPADI Instructor-cursus|/courses/instructor\nEFR Instructor-cursus\nPADI MSDT-programma|/courses/msdt-program\nIDC Staff Instructor\nPADI IDC-schema\nInstructor-specialties\nAWARE Fish ID\nBoot Instructor\nDeep Instructor\nDPV Instructor\nEmergency O2 Provider\nEquipment Instructor\nNight Diving Instructor\nNitrox Instructor\nSearch & Recovery\nSelf Reliant Instructor\nSidemount Instructor\nUnderwater Naturalist\nUnderwater Navigator\nWreck Instructor\nMSDT Instructor Specialty-cursussen Koh Tao - Sidemount'
+      : 'PADI Divemaster Course|/courses/divemaster\nPADI Instructor Course|/courses/instructor\nEFR Instructor Course\nPADI MSDT Program|/courses/msdt-program\nIDC Staff Instructor\nPADI IDC Schedule\nInstructor Specialties\nAWARE Fish ID\nBoat Instructor\nDeep Instructor\nDPV Instructor\nEmergency O2 Provider\nEquipment Instructor\nNight Diving Instructor\nNitrox Instructor\nSearch & Recovery\nSelf Reliant Instructor\nSidemount Instructor\nUnderwater Naturalist\nUnderwater Navigator\nWreck Instructor\nMSDT Instructor Specialty courses Koh Tao - Sidemount',
+  };
+
+  const { content } = usePageContent({
+    pageSlug: 'pro-level-courses',
+    locale,
+    fallbackContent,
+  });
+
+  const courses = String(content.courses_list || '')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const [titleRaw, pathRaw] = line.split('|');
+      return {
+        title: String(titleRaw || '').trim(),
+        path: String(pathRaw || '').trim(),
+      };
+    });
 
   // Utility to create URL-friendly slugs from course titles
   function slugify(text: string): string {
@@ -52,8 +68,8 @@ const ProLevelCourses: React.FC = () => {
     <div className="min-h-screen bg-background">
       <section className="py-20">
         <div className="max-w-6xl mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-6">Pro Level Courses & Instructor Specialties</h1>
-          <p className="text-lg text-muted-foreground mb-10">Professional training programs and instructor specialty courses available on Koh Tao. Click a course to view details or enquire.</p>
+          <h1 className="text-4xl font-bold mb-6">{content.page_title}</h1>
+          <p className="text-lg text-muted-foreground mb-10">{content.page_subtitle}</p>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {courses.map((c, idx) => (
@@ -62,19 +78,19 @@ const ProLevelCourses: React.FC = () => {
                   <CardTitle className="text-lg">{c.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="mb-4">Professional development and instructor-level specialty training.</CardDescription>
+                  <CardDescription className="mb-4">{content.card_description}</CardDescription>
                   <div className="flex gap-3">
                     {c.path ? (
                       <Link to={c.path} className="flex-1">
-                        <Button variant="outline" className="w-full">View</Button>
+                        <Button variant="outline" className="w-full">{content.view_button}</Button>
                       </Link>
                     ) : (
                       <Link to={`/courses/specialties/${slugify(c.title)}`} className="flex-1">
-                        <Button variant="outline" className="w-full">View</Button>
+                        <Button variant="outline" className="w-full">{content.view_button}</Button>
                       </Link>
                     )}
 
-                    <Button className="w-full flex-1" onClick={() => navigate('/booking')}>Enquire</Button>
+                    <Button className="w-full flex-1" onClick={() => navigate('/booking')}>{content.enquire_button}</Button>
                   </div>
                 </CardContent>
               </Card>
@@ -82,9 +98,9 @@ const ProLevelCourses: React.FC = () => {
           </div>
 
           <section className="mt-16">
-            <h2 className="text-2xl font-bold mb-4">Enquire / Book a Pro Course</h2>
-            <p className="text-muted-foreground mb-6">Complete the form below and we'll reply with availability and pricing.</p>
-            <Button onClick={() => navigate('/booking')}>Go to booking page</Button>
+            <h2 className="text-2xl font-bold mb-4">{content.footer_title}</h2>
+            <p className="text-muted-foreground mb-6">{content.footer_body}</p>
+            <Button onClick={() => navigate('/booking')}>{content.footer_cta}</Button>
           </section>
         </div>
       </section>

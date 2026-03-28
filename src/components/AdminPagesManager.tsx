@@ -155,7 +155,7 @@ const AdminPagesManager: React.FC = () => {
 
     const keys = new Set(
       data
-        .filter((row) => row.page_slug === selectedPageSlug && row.locale === selectedLocale)
+        .filter((row) => row.page_slug === selectedPageSlug)
         .map((row) => row.section_key)
     );
 
@@ -182,13 +182,21 @@ const AdminPagesManager: React.FC = () => {
 
     const nextDraft: Record<string, string> = {};
     pageSectionKeys.forEach((sectionKey) => {
-      const row = data.find(
+      const localeRow = data.find(
         (item) =>
           item.page_slug === selectedPageSlug &&
           item.locale === selectedLocale &&
           item.section_key === sectionKey
       );
-      nextDraft[sectionKey] = row?.content_value || '';
+      const englishFallbackRow = data.find(
+        (item) =>
+          item.page_slug === selectedPageSlug &&
+          item.locale === 'en' &&
+          item.section_key === sectionKey
+      );
+
+      // When NL rows don't exist yet, seed the editor with EN values so NL can be created quickly.
+      nextDraft[sectionKey] = localeRow?.content_value || englishFallbackRow?.content_value || '';
     });
 
     setPageDraft(nextDraft);
