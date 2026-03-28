@@ -51,6 +51,7 @@ const slugs = [
   'how-to-get-here',
   'medical-services',
   'weather-koh-tao',
+  'koh-tao-dive-sites',
 ];
 
 const endpoint = new URL('/rest/v1/page_content?select=page_slug,locale,section_key', supabaseUrl);
