@@ -89,7 +89,7 @@ const sendConfirmedEmails = async (booking) => {
   const smtpPort = Number(process.env.SMTP_PORT || 587);
   const smtpUser = process.env.SMTP_USER;
   const smtpPass = process.env.SMTP_PASS;
-  const adminEmail = process.env.BOOKING_ADMIN_EMAIL || 'bookings@prodiving.asia';
+  const adminEmail = process.env.BOOKING_ADMIN_EMAIL || 'confirmed@divinginasia.com';
 
   if (!smtpHost || !smtpUser || !smtpPass) {
     console.warn('SMTP not configured, skipping confirmed booking emails');
