@@ -1,6 +1,13 @@
 const fs = require('fs');
 const https = require('https');
 
+const slug = process.argv[2];
+
+if (!slug) {
+  console.error('Usage: node scripts/inspect-page-content-keys.cjs <page-slug>');
+  process.exit(1);
+}
+
 const readEnvFile = () => {
   for (const name of ['.env.local', '.env']) {
     try {
@@ -31,29 +38,8 @@ if (!supabaseUrl || !serviceKey) {
   process.exit(1);
 }
 
-const slugs = [
-  'things-to-do',
-  'koh-tao-info',
-  'sail-rock',
-  'shark-island',
-  'htms-sattakut',
-  'japanese-gardens',
-  'mango-bay',
-  'twins-pinnacle',
-  'chumphon-pinnacle',
-  'south-west-pinnacle',
-  'instructor',
-  'msdt-program',
-  'pro-level-courses',
-  'divemaster',
-  'viewpoints-koh-tao',
-  'food-drink',
-  'how-to-get-here',
-];
-
-const endpoint = new URL('/rest/v1/page_content?select=page_slug,locale,section_key', supabaseUrl);
-endpoint.searchParams.set('page_slug', `in.(${slugs.join(',')})`);
-endpoint.searchParams.set('order', 'page_slug.asc,locale.asc,section_key.asc');
+const endpoint = new URL('/rest/v1/page_content?select=locale,section_key&page_slug=eq.' + encodeURIComponent(slug), supabaseUrl);
+endpoint.searchParams.set('order', 'locale.asc,section_key.asc');
 
 https
   .get(
@@ -70,7 +56,6 @@ https
       res.on('data', (chunk) => {
         data += chunk;
       });
-
       res.on('end', () => {
         if (!res.statusCode || res.statusCode < 200 || res.statusCode >= 300) {
           console.error(`Request failed with status ${res.statusCode}`);
@@ -79,18 +64,19 @@ https
         }
 
         const rows = JSON.parse(data || '[]');
-        const counts = new Map();
+        const byLocale = new Map();
 
         for (const row of rows) {
-          const key = `${row.page_slug}|${row.locale}`;
-          if (!counts.has(key)) counts.set(key, new Set());
-          counts.get(key).add(row.section_key);
+          if (!byLocale.has(row.locale)) byLocale.set(row.locale, []);
+          byLocale.get(row.locale).push(row.section_key);
         }
 
-        for (const slug of slugs) {
-          const en = counts.get(`${slug}|en`)?.size || 0;
-          const nl = counts.get(`${slug}|nl`)?.size || 0;
-          console.log(`${slug}: en=${en}, nl=${nl}`);
+        for (const locale of ['en', 'nl']) {
+          const keys = byLocale.get(locale) || [];
+          console.log(`${locale} (${keys.length})`);
+          for (const key of keys) {
+            console.log(`  - ${key}`);
+          }
         }
       });
     }
