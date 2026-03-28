@@ -106,6 +106,9 @@ const DIVE_SITE_SECTION_ORDER = [
   'images',
 ];
 
+const normalizeDiveSiteSlug = (slug: string) => String(slug || '').replace(/^dive-sites\//, '');
+const isDiveSiteSlug = (slug: string) => DIVE_SITE_SLUGS.includes(normalizeDiveSiteSlug(slug));
+
 const toSectionLabel = (sectionKey: string) =>
   sectionKey
     .replace(/_/g, ' ')
@@ -194,7 +197,7 @@ const getPageGroup = (pageSlug: string) => {
     return 'Specialties';
   }
 
-  if (slug.startsWith('dive-sites/') || DIVE_SITE_SLUGS.includes(slug)) {
+  if (slug.startsWith('dive-sites/') || isDiveSiteSlug(slug)) {
     return 'Dive Sites';
   }
 
@@ -267,7 +270,8 @@ const AdminPagesManager: React.FC = () => {
   }, []);
 
   const availablePageSlugs = useMemo(() => {
-    const unique = Array.from(new Set(data.map((row) => row.page_slug)));
+    const seededDiveSites = DIVE_SITE_SLUGS.flatMap((slug) => [slug, `dive-sites/${slug}`]);
+    const unique = Array.from(new Set([...data.map((row) => row.page_slug), ...seededDiveSites]));
     unique.sort((a, b) => a.localeCompare(b));
     return unique;
   }, [data]);
@@ -288,7 +292,7 @@ const AdminPagesManager: React.FC = () => {
 
   useEffect(() => {
     if (!selectedPageSlug && availablePageSlugs.length > 0) {
-      const preferredDiveSite = availablePageSlugs.find((slug) => DIVE_SITE_SLUGS.includes(slug));
+      const preferredDiveSite = availablePageSlugs.find((slug) => isDiveSiteSlug(slug));
       setSelectedPageSlug(preferredDiveSite || availablePageSlugs[0]);
     }
   }, [availablePageSlugs, selectedPageSlug]);
@@ -302,7 +306,7 @@ const AdminPagesManager: React.FC = () => {
         .map((row) => row.section_key)
     );
 
-    if (DIVE_SITE_SLUGS.includes(selectedPageSlug)) {
+    if (isDiveSiteSlug(selectedPageSlug)) {
       DIVE_SITE_SECTION_ORDER.forEach((key) => keys.add(key));
     }
 
