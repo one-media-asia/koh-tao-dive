@@ -52,6 +52,11 @@ const slugs = [
   'medical-services',
   'weather-koh-tao',
   'koh-tao-dive-sites',
+  'nudibranchs',
+  'green-sea-turtle',
+  'blacktip-reef-shark',
+  'hawksbill-sea-turtle',
+  'marine-life-page',
 ];
 
 const endpoint = new URL('/rest/v1/page_content?select=page_slug,locale,section_key', supabaseUrl);
