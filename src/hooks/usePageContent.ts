@@ -73,9 +73,13 @@ export function usePageContent({ pageSlug, locale, fallbackContent }: UsePageCon
           }
         });
 
+        const stripHtml = (str: string) => str.replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ').trim();
+
         const dbContent: PageContent = {};
         latestBySection.forEach((row) => {
-          dbContent[row.section_key] = row.content_value;
+          const val = row.content_value;
+          if (val == null || val === '') return;
+          dbContent[row.section_key] = val.includes('<') ? stripHtml(val) : val;
         });
 
         setContent({ ...fallbackContent, ...dbContent });
@@ -96,9 +100,13 @@ export function usePageContent({ pageSlug, locale, fallbackContent }: UsePageCon
         return;
       }
 
+      const safeValue = contentValue
+        ? (contentValue.includes('<') ? contentValue.replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ').trim() : contentValue)
+        : null;
+
       setContent((prev) => ({
         ...prev,
-        [sectionKey]: contentValue ?? fallbackContent[sectionKey] ?? '',
+        [sectionKey]: safeValue ?? fallbackContent[sectionKey] ?? '',
       }));
     };
 
