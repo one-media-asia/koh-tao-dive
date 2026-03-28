@@ -33,6 +33,32 @@ const toSectionLabel = (sectionKey: string) =>
     .replace(/_/g, ' ')
     .replace(/\b\w/g, (char) => char.toUpperCase());
 
+const EDITOR_GROUP_ORDER = [
+  'Hero',
+  'Content',
+  'Calls To Action',
+  'Finance',
+  'Schedule',
+  'FAQ',
+  'Media',
+  'SEO',
+  'Other',
+];
+
+const getEditorGroup = (sectionKey: string) => {
+  const key = String(sectionKey || '').toLowerCase();
+
+  if (/hero|headline|subtitle|banner/.test(key)) return 'Hero';
+  if (/cta|button|book|enquire|inquire|contact/.test(key)) return 'Calls To Action';
+  if (/paypal|pay_pal|payment|deposit|amount|price|currency|bank|iban|swift|invoice|fee|cost|thb|usd|eur/.test(key)) return 'Finance';
+  if (/schedule|time|day|duration|trip|program/.test(key)) return 'Schedule';
+  if (/faq|question|answer/.test(key)) return 'FAQ';
+  if (/image|img|photo|gallery|video|alt/.test(key)) return 'Media';
+  if (/seo|meta|slug|keyword|description/.test(key)) return 'SEO';
+  if (/title|overview|body|content|text|description|intro|highlight|tips|requirements/.test(key)) return 'Content';
+  return 'Other';
+};
+
 const getPageGroup = (pageSlug: string) => {
   const slug = String(pageSlug || '').toLowerCase();
 
@@ -173,6 +199,20 @@ const AdminPagesManager: React.FC = () => {
       return a.localeCompare(b);
     });
   }, [data, selectedLocale, selectedPageSlug]);
+
+  const groupedPageSectionKeys = useMemo(() => {
+    const grouped = new Map<string, string[]>();
+
+    pageSectionKeys.forEach((sectionKey) => {
+      const group = getEditorGroup(sectionKey);
+      if (!grouped.has(group)) grouped.set(group, []);
+      grouped.get(group)!.push(sectionKey);
+    });
+
+    return EDITOR_GROUP_ORDER
+      .map((group) => ({ group, keys: grouped.get(group) || [] }))
+      .filter((entry) => entry.keys.length > 0);
+  }, [pageSectionKeys]);
 
   useEffect(() => {
     if (!selectedPageSlug) {
@@ -491,25 +531,34 @@ const AdminPagesManager: React.FC = () => {
                 Editing <span className="font-semibold text-gray-700">{selectedPageSlug}</span> in <span className="font-semibold text-gray-700">{selectedLocale}</span>.
               </div>
 
-              <div className="mt-3 space-y-3">
-                {pageSectionKeys.map((sectionKey) => (
-                  <div key={sectionKey}>
-                    <label className="mb-1 block text-sm font-medium text-gray-700">
-                      {toSectionLabel(sectionKey)}
-                      <span className="ml-2 text-xs text-gray-400">({sectionKey})</span>
-                    </label>
-                    <textarea
-                      value={pageDraft[sectionKey] || ''}
-                      onChange={(e) =>
-                        setPageDraft((prev) => ({
-                          ...prev,
-                          [sectionKey]: e.target.value,
-                        }))
-                      }
-                      rows={sectionKey === 'overview' ? 5 : 3}
-                      className="w-full rounded border border-gray-300 p-2"
-                      placeholder={`Edit ${sectionKey}`}
-                    />
+              <div className="mt-3 space-y-4">
+                {groupedPageSectionKeys.map(({ group, keys }) => (
+                  <div key={group} className="rounded border border-gray-200 p-3">
+                    <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-700">
+                      {group} ({keys.length})
+                    </h3>
+                    <div className="space-y-3">
+                      {keys.map((sectionKey) => (
+                        <div key={sectionKey}>
+                          <label className="mb-1 block text-sm font-medium text-gray-700">
+                            {toSectionLabel(sectionKey)}
+                            <span className="ml-2 text-xs text-gray-400">({sectionKey})</span>
+                          </label>
+                          <textarea
+                            value={pageDraft[sectionKey] || ''}
+                            onChange={(e) =>
+                              setPageDraft((prev) => ({
+                                ...prev,
+                                [sectionKey]: e.target.value,
+                              }))
+                            }
+                            rows={sectionKey === 'overview' ? 5 : 3}
+                            className="w-full rounded border border-gray-300 p-2"
+                            placeholder={`Edit ${sectionKey}`}
+                          />
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 ))}
               </div>
