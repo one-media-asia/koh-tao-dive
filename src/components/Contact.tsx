@@ -226,7 +226,7 @@ const Contact = () => {
             <div className="mt-8">
               <h4 className="font-semibold text-lg mb-4">{content.follow_title}</h4>
               <div className="flex space-x-4">
-                <a href="https://www.facebook.com/profile.php?id=61553713498498" target="_blank" rel="noopener noreferrer" title="Facebook" aria-label="Facebook" className="text-blue-400 hover:text-blue-300 transition-colors">
+                <a href="https://www.facebook.com/divegoprobybas/" target="_blank" rel="noopener noreferrer" title="Facebook" aria-label="Facebook" className="text-blue-400 hover:text-blue-300 transition-colors">
                   <Facebook className="h-6 w-6" />
                 </a>
                 <a href="https://www.instagram.com/pro_diving_asia/" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Instagram" className="text-blue-400 hover:text-blue-300 transition-colors">

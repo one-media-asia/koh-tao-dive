@@ -9,6 +9,12 @@ interface FacebookPhoto {
   created_time?: string;
 }
 
+declare global {
+  interface Window {
+    FB?: any;
+  }
+}
+
 const FacebookFeed = () => {
   const { i18n } = useTranslation();
   const isDutch = i18n.language.startsWith('nl');
@@ -41,6 +47,16 @@ const FacebookFeed = () => {
     // Comment out the API call for now - we'll use the embedded approach below
     // fetchPhotos();
     setLoading(false);
+    
+    // Load Facebook SDK
+    if (!window.FB) {
+      const script = document.createElement('script');
+      script.async = true;
+      script.defer = true;
+      script.crossOrigin = 'anonymous';
+      script.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v18.0';
+      document.body.appendChild(script);
+    }
   }, []);
 
   const content = isDutch ? {
@@ -110,9 +126,6 @@ const FacebookFeed = () => {
           </div>
         </div>
       </div>
-
-      {/* Initialize Facebook SDK */}
-      <script async defer crossOrigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v18.0" />
     </section>
   );
 };

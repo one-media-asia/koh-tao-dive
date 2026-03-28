@@ -12,7 +12,7 @@ import CookieConsent from './CookieConsent';
 const TRIP_ALLIANCE_ID = import.meta.env.VITE_TRIP_ALLIANCE_ID as string | undefined;
 const TRIP_SITE_ID = import.meta.env.VITE_TRIP_SITE_ID as string | undefined;
 const WHATSAPP_LINK = 'https://wa.me/66612345678';
-const FACEBOOK_LINK = 'https://www.facebook.com/profile.php?id=61553713498498';
+const FACEBOOK_LINK = 'https://www.facebook.com/divegoprobybas/';
 const INSTAGRAM_LINK = 'https://www.instagram.com/pro_diving_asia/';
 
 const trackBookingWidgetClick = (source: 'left-widget' | 'mobile-sticky') => {
