@@ -38,14 +38,14 @@ const normalizeText = (input: string) => input.replace(/\r\n/g, '\n').trimEnd();
 
 const htmlToPlainText = (input: string) =>
   String(input || '')
-    .replace(/<br\s*\/?\s*>/gi, '\n')
-    .replace(/<\/(p|div|li|h[1-6])>/gi, '\n')
-    .replace(/<li[^>]*>/gi, '- ')
-    .replace(/<[^>]*>/g, ' ')
     .replace(/&nbsp;/g, ' ')
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
+    .replace(/<br\s*\/?\s*>/gi, '\n')
+    .replace(/<\/(p|div|li|h[1-6])>/gi, '\n')
+    .replace(/<li[^>]*>/gi, '- ')
+    .replace(/<[^>]*>/g, ' ')
     .replace(/\n\s*\n+/g, '\n')
     .trim();
 
