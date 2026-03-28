@@ -223,8 +223,7 @@ const       BookingPage: React.FC = () => {
 
       // Prepare Web3Forms payload
       const payload = {
-        access_key: '4ca93aa5-cd42-4902-af87-a08e1ae7c832',
-        to: 'petergreaney@proton.me',
+        access_key: '7a970f0f-1200-4750-8a87-f19895d13fe3',
         subject: `Booking Inquiry: ${bookingItemTitle}`,
         name: data.name,
         email: data.email,
@@ -247,8 +246,6 @@ const       BookingPage: React.FC = () => {
         message: messageWithSource,
       };
 
-      console.log('Sending booking payload to Web3Forms', payload);
-
       const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -256,7 +253,6 @@ const       BookingPage: React.FC = () => {
       });
 
       const responseData = await res.json().catch(() => ({}));
-      console.log('Web3Forms response:', res.status, responseData);
 
       // Notify user based on Web3Forms result, but booking is already persisted
       if (res.ok && responseData.success) {
@@ -267,7 +263,7 @@ const       BookingPage: React.FC = () => {
         }
       } else {
         const errMsg = responseData?.message || responseData?.error || `HTTP ${res.status}`;
-        console.error('Web3Forms error:', errMsg, responseData);
+        console.error('Booking notification error:', errMsg, responseData);
         if (persisted) {
           toast.error(`Inquiry saved, but email notification failed: ${errMsg}`);
           if (data.paymentChoice === 'now' && amountMajor > 0) {
