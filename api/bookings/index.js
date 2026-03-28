@@ -2,6 +2,7 @@
 import { handleOptions, applyCors } from '../_lib/cors.js';
 
 import { createClient } from '@supabase/supabase-js';
+import nodemailer from 'nodemailer';
 
 const BOOKING_TABLE = 'bookings';
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
@@ -83,6 +84,64 @@ const parseBody = (req) => {
   return req.body;
 };
 
+const sendConfirmedEmails = async (booking) => {
+  const smtpHost = process.env.SMTP_HOST;
+  const smtpPort = Number(process.env.SMTP_PORT || 587);
+  const smtpUser = process.env.SMTP_USER;
+  const smtpPass = process.env.SMTP_PASS;
+  const adminEmail = process.env.BOOKING_ADMIN_EMAIL || 'bookings@prodiving.asia';
+
+  if (!smtpHost || !smtpUser || !smtpPass) {
+    console.warn('SMTP not configured, skipping confirmed booking emails');
+    return;
+  }
+
+  const transporter = nodemailer.createTransport({
+    host: smtpHost,
+    port: smtpPort,
+    secure: smtpPort === 465,
+    auth: { user: smtpUser, pass: smtpPass },
+  });
+
+  const subject = `Booking Confirmed: ${booking.course_title || 'Booking Inquiry'}`;
+  const customerText = [
+    `Hi ${booking.name || 'Customer'},`,
+    '',
+    'Your booking has been confirmed.',
+    '',
+    `Course: ${booking.course_title || 'N/A'}`,
+    `Preferred Date: ${booking.preferred_date || 'N/A'}`,
+    '',
+    'If you have questions, just reply to this email.',
+  ].join('\n');
+
+  const adminText = [
+    'A booking has been confirmed in admin.',
+    '',
+    `Booking ID: ${booking.id || 'N/A'}`,
+    `Name: ${booking.name || 'N/A'}`,
+    `Email: ${booking.email || 'N/A'}`,
+    `Course: ${booking.course_title || 'N/A'}`,
+    `Preferred Date: ${booking.preferred_date || 'N/A'}`,
+  ].join('\n');
+
+  await transporter.sendMail({
+    from: smtpUser,
+    to: adminEmail,
+    subject,
+    text: adminText,
+  });
+
+  if (booking.email) {
+    await transporter.sendMail({
+      from: smtpUser,
+      to: booking.email,
+      subject,
+      text: customerText,
+    });
+  }
+};
+
 export default async function handler(req, res) {
   if (handleOptions(req, res)) return;
   applyCors(res);
@@ -116,6 +175,13 @@ export default async function handler(req, res) {
         body.paid_amount !== undefined ||
         body.bank_transfer_details !== undefined
       )) {
+        const { data: existingRows } = await supabase
+          .from(BOOKING_TABLE)
+          .select('status')
+          .eq('id', body.id)
+          .limit(1);
+        const previousStatus = existingRows?.[0]?.status || null;
+
         const updateFields = {};
         if (body.internal_notes !== undefined) updateFields.internal_notes = body.internal_notes;
         if (body.status !== undefined) updateFields.status = body.status;
@@ -131,7 +197,17 @@ export default async function handler(req, res) {
           .eq('id', body.id)
           .select();
         if (error) return res.status(500).json({ error: error.message });
-        return res.status(200).json(normalizeBooking((data || [])[0] || null));
+        const updated = normalizeBooking((data || [])[0] || null);
+
+        if (previousStatus !== 'confirmed' && updated?.status === 'confirmed') {
+          try {
+            await sendConfirmedEmails(updated);
+          } catch (mailErr) {
+            console.error('Failed to send confirmed booking emails', mailErr);
+          }
+        }
+
+        return res.status(200).json(updated);
       }
       // Otherwise, create new booking
       if (!payload.name || !payload.email) {

@@ -380,9 +380,6 @@ const AdminBookings: React.FC = () => {
                 </div>
               </td>
               <td className="border px-2 py-1">
-                <div><strong>Total:</strong> {typeof b.total_amount === 'number' ? b.total_amount : '-'}</div>
-                <div><strong>Deposit:</strong> {typeof b.deposit_amount === 'number' ? b.deposit_amount : '-'}</div>
-                <div><strong>To Be Paid:</strong> {typeof b.due_amount === 'number' ? b.due_amount : (typeof b.total_amount === 'number' && typeof b.deposit_amount === 'number' ? b.total_amount - b.deposit_amount : '-')}</div>
                 <button
                   type="button"
                   onClick={() => setFinanceModalBooking(b)}
