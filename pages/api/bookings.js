@@ -14,6 +14,14 @@ const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
 
 
 export default async function handler(req, res) {
+  // CORS support for www.divinginasia.com
+  res.setHeader('Access-Control-Allow-Origin', 'https://www.divinginasia.com');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
   if (req.method === 'GET') {
     if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
       return res.status(500).json({ message: 'Supabase not configured' });
