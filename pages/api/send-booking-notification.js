@@ -48,7 +48,7 @@ export default async function handler(req, res) {
 			message: message || 'No message',
 		};
 
-		let response, data;
+		let response, data, text;
 		try {
 			response = await fetch('https://api.web3forms.com/submit', {
 				method: 'POST',
@@ -57,7 +57,14 @@ export default async function handler(req, res) {
 				},
 				body: JSON.stringify(formData),
 			});
-			data = await response.json();
+			text = await response.text();
+			try {
+				data = JSON.parse(text);
+			} catch (parseErr) {
+				console.error('Web3Forms API non-JSON response:', text);
+				res.status(500).json({ success: false, error: 'Web3Forms API non-JSON response', details: text });
+				return;
+			}
 		} catch (apiErr) {
 			console.error('Web3Forms API error:', apiErr);
 			res.status(500).json({ success: false, error: 'Web3Forms API request failed', details: String(apiErr) });
@@ -67,8 +74,8 @@ export default async function handler(req, res) {
 		if (data.success) {
 			res.status(200).json({ success: true });
 		} else {
-			console.error('Web3Forms submission failed:', data);
-			res.status(500).json({ success: false, error: data.message || 'Failed to send booking', details: data });
+			console.error('Web3Forms submission failed:', data, 'Raw response:', text);
+			res.status(500).json({ success: false, error: data.message || 'Failed to send booking', details: {data, text} });
 		}
 	} catch (err) {
 		console.error('send-booking-notification error', err);
