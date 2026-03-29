@@ -19,9 +19,10 @@
 		       paypal_link,
 	       } = req.body || {};
 
-			       const formData = {
-				       access_key: process.env.BOOKING_WEB3FORMS_KEY,
-		       subject: `New Booking Inquiry: ${item_title}`,
+				       const formData = {
+					       access_key: 'a237fd7a-99eb-4905-89f4-c25ede3abf8c',
+					   subject: `New Booking Inquiry: ${item_title}`,
+					   to: 'contact@prodiving.asia',
 		       name,
 		       email,
 		       phone,

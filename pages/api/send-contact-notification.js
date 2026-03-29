@@ -8,7 +8,7 @@ export default async function handler(req, res) {
         const { name, email, message } = req.body || {};
 
         const formData = {
-            access_key: process.env.CONTACT_WEB3FORMS_KEY,
+            access_key: 'a237fd7a-99eb-4905-89f4-c25ede3abf8c',
             subject: 'New Contact Form Submission',
             name,
             email,
