@@ -1,7 +1,9 @@
 // API route: GET /api/bookings
 // Returns all bookings from Supabase
 
+
 import { createClient } from '@supabase/supabase-js';
+import nodemailer from 'nodemailer';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SERVICE_ROLE_KEY;
@@ -30,8 +32,11 @@ export default async function handler(req, res) {
   if (req.method === 'POST') {
     // Handle new booking or status update
     const { id, status, ...bookingFields } = req.body || {};
-    // SMTP removed: Only Web3Forms notification will be sent
-    const WEB3FORMS_KEY = process.env.WEB3FORMS_KEY;
+    // Use SMTP for notifications
+    const smtpHost = process.env.SMTP_HOST;
+    const smtpPort = Number(process.env.SMTP_PORT || 587);
+    const smtpUser = process.env.SMTP_USER;
+    const smtpPass = process.env.SMTP_PASS;
 
     // If id and status, it's a status update
     if (id && status) {
@@ -60,24 +65,22 @@ export default async function handler(req, res) {
       if (error) throw new Error(error.message);
       const booking = (data && data[0]) || {};
       const body = `New booking received\n\nName: ${booking.name || ''}\nEmail: ${booking.email || ''}\nCourse: ${booking.course_title || ''}\nPreferred Date: ${booking.preferred_date || ''}`;
-      // SMTP removed: Only Web3Forms notification will be sent
-      // Send notification via Web3Forms
-      if (WEB3FORMS_KEY) {
-        await fetch('https://api.web3forms.com/submit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            access_key: WEB3FORMS_KEY,
-            subject: `New Booking: ${booking.course_title || ''}`,
-            from_name: booking.name || '',
-            email: booking.email || '',
-            message: body,
-            preferred_date: booking.preferred_date || '',
-            course_title: booking.course_title || '',
-            admin_email: 'contact@prodiving.asia',
-            // Add any other fields as needed
-          }),
+      // Send notification via SMTP
+      if (smtpHost && smtpUser && smtpPass) {
+        const transporter = nodemailer.createTransport({
+          host: smtpHost,
+          port: smtpPort,
+          secure: smtpPort === 465,
+          auth: { user: smtpUser, pass: smtpPass },
         });
+        const mailOptions = {
+          from: smtpUser,
+          to: 'contact@prodiving.asia',
+          subject: `New Booking: ${booking.course_title || ''}`,
+          replyTo: booking.email || '',
+          text: body,
+        };
+        await transporter.sendMail(mailOptions);
       }
       res.status(200).json({ status: 'ok', created: data[0] });
     } catch (err) {
