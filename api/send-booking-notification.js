@@ -43,10 +43,9 @@
 
     const formData = {
       access_key: web3formsAccessKey,
-      subject: `New Booking Inquiry: ${item_title}`,
-      from_name: name,
+      name: name,
       email: email,
-      message: `Course/Dive: ${item_title}\nName: ${name}\nEmail: ${email}\nPhone: ${phone || 'N/A'}\nPreferred Date: ${preferred_date || 'N/A'}\nExperience Level: ${experience_level || 'N/A'}\nDeposit Amount: ${deposit_amount || 'N/A'}\nPayment Choice: ${payment_choice || 'N/A'}\n${paypal_link ? `PayPal Link: ${paypal_link}` : ''}\n\nMessage:\n${message || 'No message'}`,
+      message: message || 'No message',
     };
 
     let response, data;
