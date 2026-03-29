@@ -477,16 +477,24 @@ const       BookingPage: React.FC = () => {
         )}
 
         {isDiveBooking && (
-          <div className="grid md:grid-cols-2 gap-6 mb-6">
-            {availableAddons.map((a) => (
-              <label key={a.id} className="flex items-center gap-3 p-4 border rounded">
-                <input type="checkbox" checked={!!selectedAddons[a.id]} onChange={() => setSelectedAddons(s => ({ ...s, [a.id]: !s[a.id] }))} />
-                <div>
-                  <div className="font-medium">{a.label}</div>
-                  <div className="text-sm text-muted-foreground">฿{a.amount}</div>
+          <div className="mb-6 p-4 border rounded-lg bg-muted/20">
+            <h3 className="font-semibold mb-3">Optional Extras</h3>
+            <div className="flex flex-col gap-4">
+              {availableAddons.map((a) => (
+                <div key={a.id} className="flex items-center gap-4">
+                  <span className="w-40 font-medium">{a.label}</span>
+                  <span className="text-sm text-muted-foreground flex-1">฿{a.amount}</span>
+                  <select
+                    className="border rounded px-2 py-1 text-sm"
+                    value={selectedAddons[a.id] ? '1' : '0'}
+                    onChange={e => setSelectedAddons(s => ({ ...s, [a.id]: e.target.value === '1' }))}
+                  >
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                  </select>
                 </div>
-              </label>
-            ))}
+              ))}
+            </div>
           </div>
         )}
 

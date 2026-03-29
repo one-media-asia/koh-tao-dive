@@ -4,6 +4,7 @@
 // To add more columns or features, edit below. For comments or notes, add a new column and input logic as needed.
 
 import React, { useEffect, useState } from 'react';
+import FinanceSection from './FinanceSection';
 import BookingsCalendar from './BookingsCalendar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
@@ -415,6 +416,15 @@ const AdminBookings: React.FC = () => {
 
           {financeModalBooking && (
             <div className="space-y-3 text-sm">
+              {/* Finance Section Heading and Status */}
+              <FinanceSection
+                initialStatus={financeModalBooking.status}
+                onSave={(status) => {
+                  // Optionally update status in backend here
+                  setBookings((prev) => prev.map((b) => b.id === financeModalBooking.id ? { ...b, status } : b));
+                  setFinanceModalBooking((prev) => prev ? { ...prev, status } : prev);
+                }}
+              />
               <div><strong>Booking ID:</strong> {financeModalBooking.id}</div>
               <div><strong>Course:</strong> {financeModalBooking.course_title}</div>
               <div><strong>Date:</strong> {financeModalBooking.preferred_date || '-'}</div>
