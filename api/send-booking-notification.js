@@ -45,7 +45,7 @@ export default async function handler(req, res) {
     const resendApiKey = process.env.RESEND_API_KEY;
     const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
     // Admins can be a comma-separated list in env
-    const adminEmails = (process.env.RESEND_BOOKING_TO_EMAIL || 'admin@prodiving.asia').split(',');
+    const adminEmails = (process.env.RESEND_BOOKING_TO_EMAIL || 'admin@prodiving.asia').split(',').map(e => e.trim());
 
     if (!resendApiKey) {
       res.status(500).json({ success: false, error: 'Resend not configured' });
