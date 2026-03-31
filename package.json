@@ -4,17 +4,17 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"node server.cjs\" \"vite --host --port 3002 --strictPort\"",
+    "dev": "next dev",
     "dev:web": "vite --host --port 3002 --strictPort",
     "dev:full": "concurrently \"node server.cjs\" \"vite --host --port 3002 --strictPort\"",
     "dev:single": "concurrently \"node server.cjs\" \"vite --host --port 3002\"",
     "deploy:vercel": "vercel --prod",
-    "build": "vite build",
+    "build": "next build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
     "prestart": "npm run build",
-    "start": "node server.cjs"
+    "start": "next start"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
