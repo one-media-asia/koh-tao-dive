@@ -1,4 +1,4 @@
-mport React, {useMemo, useState, Suspense } from 'react';
+import React, {useMemo, useState, Suspense } from 'react';
 const FunDiveBooking = React.lazy(() => import('@/components/FunDiveBooking'));
 import DiveSiteDetail from '@/components/DiveSiteDetail';
 import { useTranslation } from 'react-i18next';
