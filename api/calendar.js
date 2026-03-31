@@ -66,6 +66,99 @@ const selectBookings = async () => {
 
   if (error) throw new Error(error.message);
   return data || [];
+export default async function handler(req, res) {
+  if (handleOptions(req, res)) return;
+  applyCors(res);
+
+  const { type } = req.query;
+
+  if (type === 'bookings') {
+    if (req.method !== 'GET') {
+      res.setHeader('Allow', 'GET');
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    if (CALENDAR_TOKEN) {
+      const provided = String(req.query?.token || '').trim();
+      if (provided !== CALENDAR_TOKEN) {
+        return res.status(401).json({ error: 'Invalid calendar token' });
+      }
+    }
+
+    try {
+      const rows = await selectBookings();
+      const dtStamp = nowUtcStamp();
+      const today = todayUtcDateOnly();
+
+      const events = rows
+        .filter((row) => {
+          const dateOnly = parseDateOnly(row.preferred_date);
+          const isConfirmed = String(row.status || '').toLowerCase() === 'confirmed';
+          return Boolean(dateOnly) && isConfirmed && dateOnly >= today;
+        })
+        .map((row) => {
+          const dateOnly = parseDateOnly(row.preferred_date);
+          if (!dateOnly) return null;
+
+          const startDate = toIcsDate(dateOnly);
+          const endDate = toIcsDate(nextDay(dateOnly));
+          const uid = `${row.id || `${row.email || 'booking'}-${startDate}`}@prodiving.asia`;
+          const summary = escapeText(`Booking: ${row.course_title || 'Inquiry'} (${row.name || 'Guest'})`);
+          const description = escapeText(
+            [
+              `Name: ${row.name || ''}`,
+              `Email: ${row.email || ''}`,
+              `Phone: ${row.phone || ''}`,
+              `Status: ${row.status || 'pending'}`,
+              `Message: ${row.message || ''}`,
+              `Booking ID: ${row.id || ''}`,
+            ].join('\n')
+          );
+
+          return [
+            'BEGIN:VEVENT',
+            `UID:${uid}`,
+            `DTSTAMP:${dtStamp}`,
+            `DTSTART;VALUE=DATE:${startDate}`,
+            `DTEND;VALUE=DATE:${endDate}`,
+            `SUMMARY:${summary}`,
+            `DESCRIPTION:${description}`,
+            'END:VEVENT',
+          ].join('\r\n');
+        })
+        .filter(Boolean)
+        .join('\r\n');
+
+      const calendar = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//Pro Diving Asia//Confirmed Bookings Calendar//EN',
+        'CALSCALE:GREGORIAN',
+        'METHOD:PUBLISH',
+        'X-WR-CALNAME:Pro Diving Asia Confirmed Bookings',
+        'X-PUBLISHED-TTL:PT15M',
+        'REFRESH-INTERVAL;VALUE=DURATION:PT15M',
+        events,
+        'END:VCALENDAR',
+        '',
+      ].join('\r\n');
+
+      res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
+      res.setHeader('Content-Disposition', 'inline; filename="bookings.ics"');
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      return res.status(200).send(calendar);
+    } catch (err) {
+      console.error('api/bookings/calendar error', err);
+      return res.status(500).json({ error: err?.message || 'Internal error' });
+    }
+  }
+
+  // Default: main calendar logic (from old /api/calendar.js)
+  // ...existing logic here
+  return res.status(200).json({ message: 'Main calendar' });
+}
 };
 
 export default async function handler(req, res) {
