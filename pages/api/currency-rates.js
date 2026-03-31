@@ -25,11 +25,16 @@ export default async function handler(req, res) {
     lastFetch = now;
     res.status(200).json({ rates, date: data.date, cached: false });
   } catch (err) {
+    // Always serve stale cache if available, or fallback to hardcoded rates
     if (cachedRates) {
-      // Serve stale cache if available
       res.status(200).json({ rates: cachedRates, date: cachedDate, cached: 'stale' });
     } else {
-      res.status(500).json({ error: 'Could not fetch live exchange rates.' });
+      // Fallback to hardcoded rates if nothing cached
+      res.status(200).json({
+        rates: { THB: 1, USD: 0.027, EUR: 0.025 },
+        date: null,
+        cached: 'fallback'
+      });
     }
   }
 }
