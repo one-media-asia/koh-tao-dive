@@ -4,6 +4,7 @@
 // To add more columns or features, edit below. For comments or notes, add a new column and input logic as needed.
 
 import React, { useEffect, useState } from 'react';
+import FunDiveBooking from './FunDiveBooking';
 import FinanceSection from './FinanceSection';
 import BookingsCalendar from './BookingsCalendar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -40,6 +41,7 @@ const AdminBookings: React.FC = () => {
   const [statusSavingId, setStatusSavingId] = useState<string | null>(null);
   const [statusResult, setStatusResult] = useState<string | null>(null);
   const [view, setView] = useState<'table' | 'calendar'>('table');
+  const [showFunDiveBooking, setShowFunDiveBooking] = useState(false);
   const [financeModalBooking, setFinanceModalBooking] = useState<Booking | null>(null);
   const [financeSettings, setFinanceSettings] = useState<FinanceSettings>({
     paypal_link: 'https://paypal.me/prodivingasia',
@@ -250,7 +252,26 @@ const AdminBookings: React.FC = () => {
   return (
     <div className="overflow-x-auto">
       <h2 className="text-xl font-bold mb-4">Bookings</h2>
-      
+      <button
+        className="mb-4 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded mr-4"
+        onClick={() => setShowFunDiveBooking(true)}
+      >
+        Book a Fun Dive
+      </button>
+      {showFunDiveBooking && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+          <div className="relative z-50">
+            <FunDiveBooking />
+            <button
+              className="absolute top-2 right-2 bg-white rounded-full shadow p-2 text-gray-700 hover:bg-gray-100"
+              onClick={() => setShowFunDiveBooking(false)}
+              aria-label="Close Fun Dive Booking"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
       {/* View Toggle */}
       <div className="mb-4 flex gap-2">
         <button
