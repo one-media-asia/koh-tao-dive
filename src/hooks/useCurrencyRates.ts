@@ -13,7 +13,7 @@ export function useCurrencyRates() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/functions/v1/currency-rates")
+    fetch("/api/currency-rates")
       .then((res) => res.json())
       .then((data) => {
         setRates(data.rates);

@@ -70,7 +70,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ open, onClose, onSubmit }) 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md text-gray-900">
+      <div className="bg-white rounded-lg shadow-lg p-4 w-full max-w-xs sm:max-w-sm md:max-w-md text-gray-900 max-h-[90vh] overflow-auto">
         <h2 className="text-xl font-bold mb-4">New Booking</h2>
         <form onSubmit={handleSubmit} className="space-y-3">
           <input name="name" value={form.name} onChange={handleChange} placeholder="Name" className="w-full border p-2 rounded text-gray-900" required />
