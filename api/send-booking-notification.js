@@ -92,7 +92,7 @@ export default async function handler(req, res) {
             </tbody>
           </table>
           <div style="margin-top: 32px; text-align: center;">
-            <a href="https://your-project-manager-url.com" style="display: inline-block; background: #2563eb; color: #fff; padding: 12px 28px; border-radius: 6px; font-weight: bold; text-decoration: none; font-size: 16px;">Open Project Manager</a>
+            <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com'}/admin" style="display: inline-block; background: #2563eb; color: #fff; padding: 12px 28px; border-radius: 6px; font-weight: bold; text-decoration: none; font-size: 16px;">Open Project Manager</a>
           </div>
         </div>
       </div>

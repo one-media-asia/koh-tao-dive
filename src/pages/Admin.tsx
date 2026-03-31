@@ -18,6 +18,7 @@ const Admin = () => {
       { key: 'analytics', label: 'Analytics' },
       { key: 'pages', label: 'Pages Manager' },
       { key: 'users', label: 'Users' },
+      { key: 'project-manager', label: 'Project Manager' },
     ];
   const [activeTab, setActiveTab] = useState('bookings');
   const [bookings, setBookings] = useState([]);
@@ -244,7 +245,13 @@ const Admin = () => {
           <AdminUsersManager />
         </div>
       )}
-    </div>
+    {activeTab === 'project-manager' && (
+      <div className="bg-white rounded shadow p-4">
+        <h2 className="text-xl font-semibold mb-4">Project Manager</h2>
+        <p>This section will contain project management tools and links.</p>
+      </div>
+    )}
+  </div>
   );
 };
 
