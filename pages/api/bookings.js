@@ -51,10 +51,6 @@ export default async function handler(req, res) {
       try {
         // Update status in Supabase
         const { data, error } = await supabase
-          .from(BOOKING_TABLE)
-          .update({ status })
-          .eq('id', id)
-          .select();
         if (error) throw new Error(error.message);
         const booking = data && data[0];
         // Send status update email to user and admin using Resend
@@ -62,24 +58,36 @@ export default async function handler(req, res) {
           const resendApiKey = process.env.RESEND_API_KEY;
           const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
           const adminEmails = (process.env.RESEND_BOOKING_TO_EMAIL || 'admin@prodiving.asia').split(',').map(e => e.trim());
+          console.log('[DEBUG] Status change email: booking', booking);
+          console.log('[DEBUG] Resend API Key present:', !!resendApiKey);
           if (resendApiKey) {
             const resend = new Resend(resendApiKey);
             const subject = `Booking Status Update: ${booking.course_title || booking.item_title || ''}`;
             const body = `Hello ${booking.name || ''},\n\nYour booking status has been updated to: ${status}.\n\nBooking Details:\nName: ${booking.name || ''}\nEmail: ${booking.email || ''}\nCourse: ${booking.course_title || booking.item_title || ''}\nPreferred Date: ${booking.preferred_date || ''}\nStatus: ${status}\n\nIf you have questions, reply to this email.`;
-            // Email to user
-            await resend.emails.send({
-              from: fromEmail,
-              to: [booking.email],
-              subject,
-              text: body,
-            });
-            // Email to admin
-            await resend.emails.send({
-              from: fromEmail,
-              to: adminEmails,
-              subject: `Admin Notice: ${subject}`,
-              text: `Booking for ${booking.name || ''} (${booking.email || ''}) status changed to: ${status}.\n\n${body}`,
-            });
+            try {
+              const userResult = await resend.emails.send({
+            const fromEmail = 'confirmed@prodiving.asia';
+                to: [booking.email],
+                subject,
+                text: body,
+              });
+              console.log('[DEBUG] Sent status email to user:', userResult);
+            } catch (e) {
+              console.error('[DEBUG] Error sending status email to user:', e);
+            }
+            try {
+              const adminResult = await resend.emails.send({
+                from: fromEmail,
+                to: adminEmails,
+                subject: `Admin Notice: ${subject}`,
+                text: `Booking for ${booking.name || ''} (${booking.email || ''}) status changed to: ${status}.\n\n${body}`,
+              });
+              console.log('[DEBUG] Sent status email to admin:', adminResult);
+            } catch (e) {
+              console.error('[DEBUG] Error sending status email to admin:', e);
+            }
+          } else {
+            console.error('[DEBUG] No RESEND_API_KEY set, cannot send status change email');
           }
         }
         res.status(200).json({ status: 'ok', updated: booking });
@@ -109,19 +117,4 @@ export default async function handler(req, res) {
         });
         const mailOptions = {
           from: smtpUser,
-          to: 'contact@prodiving.asia',
-          subject: `New Booking: ${booking.course_title || ''}`,
-          replyTo: booking.email || '',
-          text: body,
-        };
-        await transporter.sendMail(mailOptions);
-      }
-      res.status(200).json({ status: 'ok', created: data[0] });
-    } catch (err) {
-      res.status(500).json({ error: err.message || 'Internal error' });
-    }
-    return;
-  }
-
-  return res.status(405).json({ message: 'Method not allowed' });
-}
+          auth: { user: smtpUser, pass: smtpPass },
