@@ -3,7 +3,7 @@
 
 
 import { createClient } from '@supabase/supabase-js';
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SERVICE_ROLE_KEY;
@@ -56,7 +56,33 @@ export default async function handler(req, res) {
           .eq('id', id)
           .select();
         if (error) throw new Error(error.message);
-        res.status(200).json({ status: 'ok', updated: data[0] });
+        const booking = data && data[0];
+        // Send status update email to user and admin using Resend
+        if (booking && booking.email) {
+          const resendApiKey = process.env.RESEND_API_KEY;
+          const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
+          const adminEmails = (process.env.RESEND_BOOKING_TO_EMAIL || 'admin@prodiving.asia').split(',').map(e => e.trim());
+          if (resendApiKey) {
+            const resend = new Resend(resendApiKey);
+            const subject = `Booking Status Update: ${booking.course_title || booking.item_title || ''}`;
+            const body = `Hello ${booking.name || ''},\n\nYour booking status has been updated to: ${status}.\n\nBooking Details:\nName: ${booking.name || ''}\nEmail: ${booking.email || ''}\nCourse: ${booking.course_title || booking.item_title || ''}\nPreferred Date: ${booking.preferred_date || ''}\nStatus: ${status}\n\nIf you have questions, reply to this email.`;
+            // Email to user
+            await resend.emails.send({
+              from: fromEmail,
+              to: [booking.email],
+              subject,
+              text: body,
+            });
+            // Email to admin
+            await resend.emails.send({
+              from: fromEmail,
+              to: adminEmails,
+              subject: `Admin Notice: ${subject}`,
+              text: `Booking for ${booking.name || ''} (${booking.email || ''}) status changed to: ${status}.\n\n${body}`,
+            });
+          }
+        }
+        res.status(200).json({ status: 'ok', updated: booking });
       } catch (err) {
         res.status(500).json({ error: err.message || 'Internal error' });
       }
