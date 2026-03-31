@@ -35,13 +35,13 @@ const FunDiveBooking: React.FC = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Book a Fun Dive</h1>
-      <ul className="mb-6 space-y-2">
+    <div className="max-w-md mx-auto p-6 bg-white rounded-xl shadow-lg border border-gray-200">
+      <h1 className="text-3xl font-extrabold mb-6 text-center text-blue-900">Book a Fun Dive</h1>
+      <ul className="mb-8 flex flex-col gap-4">
         {DIVE_SITES.map(site => (
           <li key={site}>
             <button
-              className={`w-full text-left px-4 py-2 rounded border ${selectedSite === site ? 'bg-blue-100 border-blue-400' : 'bg-white border-gray-300'} hover:bg-blue-50`}
+              className={`w-full px-6 py-3 rounded-lg border font-semibold text-lg transition-all duration-150 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 ${selectedSite === site ? 'bg-blue-100 border-blue-500 text-blue-900' : 'bg-pink-100 border-pink-300 text-pink-800 hover:bg-pink-200'}`}
               onClick={() => handleSiteSelect(site)}
             >
               {site}
@@ -50,10 +50,10 @@ const FunDiveBooking: React.FC = () => {
         ))}
       </ul>
       {showNotice && (
-        <div className="mb-4 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 rounded">
-          <p><strong>Notice:</strong> Due to weather and unforeseeable conditions, schedules may change. We will confirm your booking and keep you updated.</p>
+        <div className="mb-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-900 rounded-lg shadow">
+          <p className="mb-2"><strong>Notice:</strong> Due to weather and unforeseeable conditions, schedules may change. We will confirm your booking and keep you updated.</p>
           <button
-            className="mt-3 px-4 py-2 bg-blue-600 text-white rounded"
+            className="mt-2 px-5 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
             onClick={handleProceed}
           >
             Proceed to Booking
@@ -102,7 +102,7 @@ const FunDiveBooking: React.FC = () => {
         }}
       />
       {showConfirmation && (
-        <div className="mt-6 p-4 bg-green-100 border-l-4 border-green-500 text-green-800 rounded text-center">
+        <div className="mt-8 p-5 bg-green-50 border-l-4 border-green-400 text-green-900 rounded-lg shadow text-center">
           <strong>Thank you!</strong> Your booking request has been submitted. We will contact you soon to confirm your dive.
         </div>
       )}
