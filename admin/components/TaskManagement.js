@@ -1,14 +1,12 @@
 
-
 import { useEffect, useState } from 'react';
 import TeamMembers from './TeamMembers';
 
-
+export default function TaskManagement() {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState('');
   const [assignedUser, setAssignedUser] = useState(null);
   const [users, setUsers] = useState([]);
-
 
   // Load users and tasks on mount
   useEffect(() => {
@@ -27,8 +25,6 @@ import TeamMembers from './TeamMembers';
     fetchTasks();
   }, []);
 
-
-
   async function addTask(e) {
     e.preventDefault();
     if (!newTask.trim() || !assignedUser) return;
@@ -41,8 +37,6 @@ import TeamMembers from './TeamMembers';
     if (res.ok) setTasks([...tasks, data]);
     setNewTask('');
   }
-
-
 
   async function changeStatus(id, status) {
     const task = tasks.find(t => t.id === id);
@@ -67,7 +61,6 @@ import TeamMembers from './TeamMembers';
     const data = await res.json();
     if (res.ok) setTasks(tasks.map(t => t.id === id ? data : t));
   }
-
 
   async function deleteTask(id) {
     const res = await fetch('/api/project-tasks', {
@@ -128,5 +121,7 @@ import TeamMembers from './TeamMembers';
         </tbody>
       </table>
     </div>
+  );
+}
   );
 }
