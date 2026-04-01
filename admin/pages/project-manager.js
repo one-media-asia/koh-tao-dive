@@ -5,7 +5,8 @@ const TaskManagement = dynamic(() => import('../components/TaskManagement'), { s
 export default function ProjectManager() {
   return (
     <div className="p-6 space-y-8">
-      <h1 className="text-3xl font-bold mb-4">Project Manager</h1>
+      <h1 className="text-3xl font-bold mb-2">Project Manager</h1>
+      <p className="mb-6 text-gray-600">This section will contain project management tools and links.</p>
       {/* Overview Section */}
       <section className="bg-white rounded shadow p-4">
         <h2 className="text-xl font-semibold mb-2">Overview</h2>
