@@ -1,4 +1,3 @@
-import { handleOptions, applyCors } from '../_lib/cors.js';
 import { createClient } from '@supabase/supabase-js';
 
 const BOOKING_TABLE = 'bookings';
@@ -69,8 +68,14 @@ const selectBookings = async () => {
 };
 
 export default async function handler(req, res) {
-  if (handleOptions(req, res)) return;
-  applyCors(res);
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.status(204).end();
+    return;
+  }
+  res.setHeader('Access-Control-Allow-Origin', '*');
 
   if (req.method !== 'GET') {
     res.setHeader('Allow', 'GET');
