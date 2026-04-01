@@ -224,6 +224,10 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
                     <div className="text-xs text-muted-foreground mt-1">
                       <div>1 THB = {(exchangeRates.USD / exchangeRates.THB).toFixed(3)} USD</div>
                       <div>1 THB = {(exchangeRates.EUR / exchangeRates.THB).toFixed(3)} EUR</div>
+                      <div className="mt-1 italic">
+                        You will be charged in THB. The amount in your selected currency is approximate and for reference only.<br />
+                        The exchange rate is calculated at the time of payment by your payment provider.
+                      </div>
                     </div>
                   </div>
                 </div>

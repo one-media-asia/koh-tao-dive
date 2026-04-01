@@ -1,4 +1,5 @@
-import { handleOptions, applyCors } from '../_lib/cors.js';
+imn o paypal\
+port { handleOptions, applyCors } from '../_lib/cors.js';
 
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
