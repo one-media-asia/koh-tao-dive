@@ -65,6 +65,27 @@ const HTMSSattakut = () => {
       />
       <h2 className="text-2xl font-bold mt-8 mb-4">Gallery</h2>
       <DropboxGallery folder="htms-sattakut" />
+        {/* Show images at the bottom for all users, with captions for Dutch users */}
+        <div className="mt-8 flex flex-col gap-6 items-center">
+          <figure>
+            <img src="/images/htms-sattakut.jpg" alt="HTMS Sattakut" className="rounded shadow max-w-full h-auto" />
+            {isDutch && (
+              <figcaption className="text-center text-sm mt-2 text-gray-500">HTMS Sattakut - Overzicht</figcaption>
+            )}
+          </figure>
+          <figure>
+            <img src="/images/htms-sattakut-wreck.jpg" alt="HTMS Sattakut Wreck" className="rounded shadow max-w-full h-auto" />
+            {isDutch && (
+              <figcaption className="text-center text-sm mt-2 text-gray-500">HTMS Sattakut - Wrak</figcaption>
+            )}
+          </figure>
+          {isDutch && (
+            <figure>
+              <img src="https://www.divinginasia.com/images/wreck.jpeg" alt="Extern wrakafbeelding" className="rounded shadow max-w-full h-auto" />
+              <figcaption className="text-center text-sm mt-2 text-gray-500">Externe afbeelding: divinginasia.com</figcaption>
+            </figure>
+          )}
+        </div>
     </div>
   );
 };
