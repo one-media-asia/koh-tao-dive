@@ -150,9 +150,9 @@ const Admin = () => {
 
   return (
 
-    <div className="p-4 min-h-[70vh]">
+    <div className="min-h-[70vh]">
       {/* Horizontal tab row */}
-      <div className="flex flex-row items-center gap-4 mb-8">
+      <div className="flex flex-row items-center gap-4 mb-8" style={{marginLeft: 0, paddingLeft: 0}}>
         <nav className="flex flex-row gap-2">
           {tabs.map(tab => (
             <button

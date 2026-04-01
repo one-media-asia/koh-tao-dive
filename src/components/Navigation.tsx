@@ -212,7 +212,9 @@ const Navigation = ({ user, isAdmin, isAdminRoute }: { user?: any, isAdmin?: boo
             <Link to="/" className="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
               {t('nav.home')}
             </Link>
-
+            <Link to="/courses/advanced" className="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+              {t('courses.advanced.title')}
+            </Link>
             {/* Courses mega dropdown */}
             <div className="relative group">
               <Link
@@ -231,27 +233,29 @@ const Navigation = ({ user, isAdmin, isAdminRoute }: { user?: any, isAdmin?: boo
                         {cat.label}
                       </h4>
                       <ul className="space-y-1">
-                        {cat.items.map((item) => (
-                          <li key={item.to}>
-                            {item.to && item.to.startsWith('http') ? (
-                              <a
-                                href={item.to}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="block py-1.5 text-sm text-gray-300 hover:text-white hover:pl-1 transition-all duration-150 uppercase tracking-wide"
-                              >
-                                {item.name}
-                              </a>
-                            ) : (
-                              <Link
-                                to={item.to}
-                                className="block py-1.5 text-sm text-gray-300 hover:text-white hover:pl-1 transition-all duration-150 uppercase tracking-wide"
-                              >
-                                {item.name}
-                              </Link>
-                            )}
-                          </li>
-                        ))}
+                        {cat.items
+                          .filter((item) => !(cat.label === labels.advancedCourses && item.to === '/courses/advanced'))
+                          .map((item) => (
+                            <li key={item.to}>
+                              {item.to && item.to.startsWith('http') ? (
+                                <a
+                                  href={item.to}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="block py-1.5 text-sm text-gray-300 hover:text-white hover:pl-1 transition-all duration-150 uppercase tracking-wide"
+                                >
+                                  {item.name}
+                                </a>
+                              ) : (
+                                <Link
+                                  to={item.to}
+                                  className="block py-1.5 text-sm text-gray-300 hover:text-white hover:pl-1 transition-all duration-150 uppercase tracking-wide"
+                                >
+                                  {item.name}
+                                </Link>
+                              )}
+                            </li>
+                          ))}
                       </ul>
                     </div>
                   ))}
