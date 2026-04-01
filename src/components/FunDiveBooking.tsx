@@ -19,6 +19,7 @@ const FunDiveBooking: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [showNotice, setShowNotice] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [processing, setProcessing] = useState(false);
 
 
   const handleSiteSelect = (site: string) => {
@@ -33,6 +34,18 @@ const FunDiveBooking: React.FC = () => {
     setModalOpen(true);
     setShowConfirmation(false);
   };
+
+  // Handle Escape key to close modal
+  React.useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setModalOpen(false);
+        setShowNotice(false);
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, []);
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-xl shadow-lg border border-gray-200">
@@ -64,6 +77,7 @@ const FunDiveBooking: React.FC = () => {
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         onSubmit={async data => {
+          setProcessing(true);
           // Compose booking payload
           const payload = {
             name: data.name,
@@ -96,12 +110,20 @@ const FunDiveBooking: React.FC = () => {
             // Optionally handle error
           }
           setModalOpen(false);
-          setShowConfirmation(true);
-          setSelectedSite(null);
-          setShowNotice(false);
+          setTimeout(() => {
+            setProcessing(false);
+            setShowConfirmation(true);
+            setSelectedSite(null);
+            setShowNotice(false);
+          }, 1200);
         }}
       />
-      {showConfirmation && (
+      {processing && (
+        <div className="mt-8 p-5 bg-blue-50 border-l-4 border-blue-400 text-blue-900 rounded-lg shadow text-center animate-pulse">
+          <strong>Processing...</strong> Please wait while we submit your booking.
+        </div>
+      )}
+      {showConfirmation && !processing && (
         <div className="mt-8 p-5 bg-green-50 border-l-4 border-green-400 text-green-900 rounded-lg shadow text-center">
           <strong>Thank you!</strong> Your booking request has been submitted. We will contact you soon to confirm your dive.
         </div>
