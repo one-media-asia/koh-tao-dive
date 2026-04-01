@@ -150,6 +150,7 @@ const Admin = () => {
 
   return (
 
+
     <div className="min-h-[70vh]">
       {/* Horizontal tab row */}
       <div className="flex flex-row items-center gap-4 mb-8" style={{marginLeft: 0, paddingLeft: 0}}>
@@ -174,86 +175,86 @@ const Admin = () => {
       </div>
       {/* Main Content */}
       <div>
-
-      <Dialog open={financeModalOpen} onOpenChange={setFinanceModalOpen}>
-        <DialogContent className="sm:max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Global Finance Defaults</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3">
-            {financeLoading ? (
-              <div className="text-sm text-gray-500">Loading finance settings...</div>
-            ) : (
-              financeFields.map((field) => (
-                <div key={field.key}>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">{field.label}</label>
-                  {field.multiline ? (
-                    <textarea
-                      value={financeDraft[field.key] || ''}
-                      onChange={(e) => setFinanceDraft((prev) => ({ ...prev, [field.key]: e.target.value }))}
-                      rows={4}
-                      placeholder={field.placeholder || ''}
-                      className="w-full rounded border border-gray-300 p-2"
-                    />
-                  ) : (
-                    <input
-                      value={financeDraft[field.key] || ''}
-                      onChange={(e) => setFinanceDraft((prev) => ({ ...prev, [field.key]: e.target.value }))}
-                      placeholder={field.placeholder || ''}
-                      className="w-full rounded border border-gray-300 px-3 py-2"
-                    />
-                  )}
-                </div>
-              ))
-            )}
-            <div className="flex justify-end gap-2 pt-2">
-              <button
-                type="button"
-                onClick={() => setFinanceModalOpen(false)}
-                className="rounded border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={saveFinanceSettings}
-                disabled={financeSaving || financeLoading}
-                className="rounded bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {financeSaving ? 'Saving...' : 'Save Finance Settings'}
-              </button>
+        <Dialog open={financeModalOpen} onOpenChange={setFinanceModalOpen}>
+          <DialogContent className="sm:max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Global Finance Defaults</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-3">
+              {financeLoading ? (
+                <div className="text-sm text-gray-500">Loading finance settings...</div>
+              ) : (
+                financeFields.map((field) => (
+                  <div key={field.key}>
+                    <label className="mb-1 block text-sm font-medium text-gray-700">{field.label}</label>
+                    {field.multiline ? (
+                      <textarea
+                        value={financeDraft[field.key] || ''}
+                        onChange={(e) => setFinanceDraft((prev) => ({ ...prev, [field.key]: e.target.value }))}
+                        rows={4}
+                        placeholder={field.placeholder || ''}
+                        className="w-full rounded border border-gray-300 p-2"
+                      />
+                    ) : (
+                      <input
+                        value={financeDraft[field.key] || ''}
+                        onChange={(e) => setFinanceDraft((prev) => ({ ...prev, [field.key]: e.target.value }))}
+                        placeholder={field.placeholder || ''}
+                        className="w-full rounded border border-gray-300 px-3 py-2"
+                      />
+                    )}
+                  </div>
+                ))
+              )}
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setFinanceModalOpen(false)}
+                  className="rounded border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={saveFinanceSettings}
+                  disabled={financeSaving || financeLoading}
+                  className="rounded bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {financeSaving ? 'Saving...' : 'Save Finance Settings'}
+                </button>
+              </div>
             </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        </Dialog>
 
-      {activeTab === 'bookings' && (
-        <div className="bg-white rounded shadow p-2">
-          <AdminBookings />
-        </div>
-      )}
-      {activeTab === 'analytics' && (
-        <div className="bg-white rounded shadow p-4">Analytics dashboard coming soon...</div>
-      )}
-      {activeTab === 'pages' && (
-        <div className="bg-white rounded shadow p-4">
-          <React.Suspense fallback={<div>Loading Pages Manager...</div>}>
-            <AdminPagesManager />
-          </React.Suspense>
-        </div>
-      )}
-      {activeTab === 'users' && (
-        <div className="bg-white rounded shadow p-4">
-          <AdminUsersManager />
-        </div>
-      )}
-    {activeTab === 'project-manager' && (
-      <div className="bg-white rounded shadow p-4">
-        <h2 className="text-xl font-semibold mb-4">Project Manager</h2>
-        <p>This section will contain project management tools and links.</p>
+        {activeTab === 'bookings' && (
+          <div className="bg-white rounded shadow p-2">
+            <AdminBookings />
+          </div>
+        )}
+        {activeTab === 'analytics' && (
+          <div className="bg-white rounded shadow p-4">Analytics dashboard coming soon...</div>
+        )}
+        {activeTab === 'pages' && (
+          <div className="bg-white rounded shadow p-4">
+            <React.Suspense fallback={<div>Loading Pages Manager...</div>}>
+              <AdminPagesManager />
+            </React.Suspense>
+          </div>
+        )}
+        {activeTab === 'users' && (
+          <div className="bg-white rounded shadow p-4">
+            <AdminUsersManager />
+          </div>
+        )}
+        {activeTab === 'project-manager' && (
+          <div className="bg-white rounded shadow p-4">
+            <h2 className="text-xl font-semibold mb-4">Project Manager</h2>
+            <p>This section will contain project management tools and links.</p>
+          </div>
+        )}
       </div>
-    )}
-  </div>
+    </div>
   );
 };
 
