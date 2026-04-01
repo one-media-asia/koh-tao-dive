@@ -70,7 +70,7 @@ const Navigation = ({ user, isAdmin, isAdminRoute }: { user?: any, isAdmin?: boo
     blacktipReefShark: isDutch ? 'Zwartpuntrifhaai' : 'Blacktip reef shark',
     bandedSeaKrait: isDutch ? 'Gestreepte zeekrait' : 'Banded sea krait',
     beardedScorpionfish: isDutch ? 'Baardschorpioenvis' : 'Bearded scorpionfish',
-    diveSitesTitle: isDutch ? 'Duiklocaties' : 'Dive Sites',
+    diveSitesTitle: isDutch ? 'Locaties' : 'Sites',
     diveSitesOverview: isDutch ? 'Overzicht alle duiklocaties' : 'All dive sites overview',
     funDiveTrips: isDutch ? 'Fun Duiktrips' : 'Fun Dive Trips',
     boatSchedule: isDutch ? 'Bootschema' : 'Boat schedule',
@@ -86,6 +86,24 @@ const Navigation = ({ user, isAdmin, isAdminRoute }: { user?: any, isAdmin?: boo
     medicalServices: isDutch ? 'Medische zorg' : 'Medical services',
     viewpoints: isDutch ? 'Uitzichtpunten' : 'Viewpoints',
     weatherKohTao: isDutch ? 'Weer op Koh Tao' : 'Koh Tao weather',
+    beginnerCourses: isDutch ? 'BEGINNERS' : 'BEGINNER',
+    advancedCourses: isDutch ? 'GEVORDERD' : 'ADVANCED',
+    specialtyCourses: isDutch ? 'SPECIALTY' : 'SPECIALTY',
+    professionalCourses: isDutch ? 'PROFESSIONEEL' : 'PROFESSIONAL',
+    marineLifeTitle: isDutch ? 'Marien' : 'Marine',
+    diveSitesTitle: isDutch ? 'Locaties' : 'Sites',
+    funDiveTrips: isDutch ? 'Fun Duik' : 'Fun Dive',
+    pricingPackages: isDutch ? 'Prijzen' : 'Pricing',
+    chooseDiveCenter: isDutch ? 'Duikcentrum' : 'Dive center',
+    accommodation: isDutch ? 'Accommodatie' : 'Stay',
+    thingsToDo: isDutch ? 'Te Doen' : 'To Do',
+    banksKohTao: isDutch ? 'Banken' : 'Banks',
+    beachesKohTao: isDutch ? 'Stranden' : 'Beaches',
+    foodDrink: isDutch ? 'Eten' : 'Food',
+    howToGetHere: isDutch ? 'Route' : 'Route',
+    medicalServices: isDutch ? 'Zorg' : 'Medical',
+    viewpoints: isDutch ? 'Uitzicht' : 'Views',
+    weatherKohTao: isDutch ? 'Weer' : 'Weather',
     login: isDutch ? 'Inloggen' : 'Login',
     signup: isDutch ? 'Registreren' : 'Sign up',
     info: isDutch ? 'Info' : 'Info',
@@ -189,7 +207,7 @@ const Navigation = ({ user, isAdmin, isAdminRoute }: { user?: any, isAdmin?: boo
             <img src="/images/logo.png" alt="Pro Diving Asia Logo" className="h-14 w-auto" style={{ display: 'block', marginRight: 12, marginLeft: 0 }} />
           </div>
           {/* Desktop nav */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-5 text-[0.95rem]">
             <Link to="/" className="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
               {t('nav.home')}
             </Link>
