@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import styles from "./CurrencyExchange.module.css";
 
-// You can replace this with your preferred currency API
+
+// Use environment variable for API key if needed
 const API_URL = "https://api.exchangerate.host/latest";
+const API_KEY = import.meta.env.VITE_MY_CUSTOM_API_KEY || import.meta.env.MY_CUSTOM_API_KEY;
 
 const CURRENCIES = ["USD", "EUR", "THB", "GBP", "AUD", "SGD", "MYR", "IDR", "PHP", "INR", "CNY", "JPY"];
 
@@ -18,7 +20,12 @@ export const CurrencyExchange: React.FC = () => {
     if (from && to && amount > 0) {
       setLoading(true);
       setError("");
-      fetch(`${API_URL}?base=${from}&symbols=${to}`)
+      const url = `${API_URL}?base=${from}&symbols=${to}`;
+      const headers: Record<string, string> = {};
+      if (API_KEY) {
+        headers["Authorization"] = `Bearer ${API_KEY}`;
+      }
+      fetch(url, { headers })
         .then((res) => res.json())
         .then((data) => {
           if (data && data.rates && data.rates[to]) {
