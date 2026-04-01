@@ -13,7 +13,7 @@ const JIRA_PROJECT_KEY = 'pro';
 const JIRA_API_TOKEN = process.env.JIRA_API_TOKEN;
 const JIRA_USER_EMAIL = process.env.JIRA_USER_EMAIL || 'your-email@domain.com';
 
-const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
+const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, { realtime: { enabled: false } });
 
 async function createJiraIssue(page) {
   const summary = page.title || '[Page]';

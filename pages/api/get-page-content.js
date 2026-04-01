@@ -11,7 +11,7 @@ const SUPABASE_API_KEY = cleanEnv(
 );
 
 const supabase = SUPABASE_URL && SUPABASE_API_KEY
-  ? createClient(SUPABASE_URL, SUPABASE_API_KEY)
+  ? createClient(SUPABASE_URL, SUPABASE_API_KEY, { realtime: { enabled: false } })
   : null;
 
 export default async function handler(req, res) {
