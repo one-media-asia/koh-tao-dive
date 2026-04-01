@@ -150,25 +150,29 @@ const Admin = () => {
 
   return (
     <div className="p-4">
-      <div className="mb-6 flex items-center justify-between gap-2">
-        <div className="flex gap-2">
-          {tabs.map(tab => (
-            <button
-              key={tab.key}
-              className={`px-4 py-2 rounded-t ${activeTab === tab.key ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
-              onClick={() => setActiveTab(tab.key)}
-            >
-              {tab.label}
-            </button>
-          ))}
+      <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="w-full flex justify-center">
+          <div className="inline-flex rounded-lg bg-gray-100 p-1 shadow-sm">
+            {tabs.map(tab => (
+              <button
+                key={tab.key}
+                className={`px-5 py-2 text-sm font-semibold rounded-lg transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:z-10 ${activeTab === tab.key ? 'bg-blue-600 text-white shadow' : 'bg-transparent text-gray-700 hover:bg-blue-100'}`}
+                onClick={() => setActiveTab(tab.key)}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
-        <button
-          type="button"
-          onClick={() => setFinanceModalOpen(true)}
-          className="rounded bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
-        >
-          Global Finance Defaults
-        </button>
+        <div className="flex justify-center md:justify-end w-full md:w-auto">
+          <button
+            type="button"
+            onClick={() => setFinanceModalOpen(true)}
+            className="rounded bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 shadow"
+          >
+            Global Finance Defaults
+          </button>
+        </div>
       </div>
 
       <Dialog open={financeModalOpen} onOpenChange={setFinanceModalOpen}>
