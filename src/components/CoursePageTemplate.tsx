@@ -56,6 +56,8 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
   level = 'Recreational',
   bookingItemName,
   bookingType = 'course',
+  selectedCurrency,
+  priceConverted,
 }) => {
 
 
