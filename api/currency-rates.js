@@ -14,9 +14,13 @@ export default async function handler(req, res) {
     return res.status(200).json({ rates: cachedRates, date: cachedDate, cached: true });
   }
   try {
+    // Use exchangerate.host (no API key required)
     const response = await fetch('https://api.exchangerate.host/latest?base=THB&symbols=THB,USD,EUR');
     if (!response.ok) throw new Error('Failed to fetch exchange rates');
     const data = await response.json();
+    if (!data.rates || typeof data.rates.USD !== 'number' || typeof data.rates.EUR !== 'number') {
+      throw new Error('exchangerate.host API response missing USD or EUR rates');
+    }
     const rates = {
       THB: 1,
       USD: data.rates.USD,
@@ -27,6 +31,7 @@ export default async function handler(req, res) {
     lastFetch = now;
     res.status(200).json({ rates, date: data.date, cached: false });
   } catch (err) {
+    console.error('Exchange rate fetch error:', err);
     if (cachedRates) {
       res.status(200).json({ rates: cachedRates, date: cachedDate, cached: 'stale' });
     } else {
