@@ -63,8 +63,7 @@ const HTMSSattakut = () => {
         divingTips={toList(content.diving_tips)}
         images={toList(content.images)}
       />
-      <h2 className="text-2xl font-bold mt-8 mb-4">Gallery</h2>
-      <DropboxGallery folder="diving_in_asia/htms-sattakut" />
+      {/* Gallery removed as requested */}
         {/* Show images at the bottom for all users, with captions for Dutch users */}
         <div className="mt-8 flex flex-col gap-6 items-center">
           <figure>
