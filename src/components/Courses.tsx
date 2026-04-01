@@ -330,17 +330,7 @@ const Courses = () => {
                 </div>
                 <div className="text-right">
                   <div className="text-3xl font-bold text-blue-600">{formatCurrency(getThbPrice(course.price), 'THB')}</div>
-                  {ratesError && <div className="text-xs text-red-500">{ratesError}</div>}
-                  {rates ? (
-                    <>
-                      <div className="text-sm text-gray-500">
-                        {formatCurrency(getThbPrice(course.price) * rates.USD, 'USD')} / {formatCurrency(getThbPrice(course.price) * rates.EUR, 'EUR')}
-                      </div>
-                      <div className="text-xs text-gray-500 mt-1">Conversions are correct at the time of booking.</div>
-                    </>
-                  ) : (
-                    <div className="text-sm text-gray-400">Loading rates...</div>
-                  )}
+                  {/* Currency conversion removed */}
                   <div className="text-sm text-gray-500">{t('courses.perPerson')}</div>
                 </div>
               </div>
