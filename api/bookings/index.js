@@ -234,6 +234,7 @@ export default async function handler(req, res) {
 
     if (req.method === 'DELETE') {
       // WARNING: This will delete all bookings! Protect this in production.
+      // No API key required for now
       const { error } = await supabase.from(BOOKING_TABLE).delete().neq('id', '');
       if (error) {
         return res.status(500).json({ error: error.message });
