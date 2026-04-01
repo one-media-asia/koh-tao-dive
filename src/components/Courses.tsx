@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { getExchangeRates, ExchangeRates } from '@/lib/exchangeRates';
+
 import { Clock, Star, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import CourseRecommender from './CourseRecommender';
@@ -16,17 +16,7 @@ import { usePageContent } from '@/hooks/usePageContent';
 
 const Courses = () => {
 
-  // Exchange rates state (must be inside component)
-  const [rates, setRates] = useState<ExchangeRates | null>(null);
-  const [ratesError, setRatesError] = useState<string | null>(null);
-  useEffect(() => {
-    getExchangeRates()
-      .then(setRates)
-      .catch((err) => {
-        console.error('Exchange rate fetch error:', err);
-        setRatesError('Could not fetch live exchange rates.');
-      });
-  }, []);
+
 
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -42,8 +32,7 @@ const Courses = () => {
     course_open_water_duration: t('courses.openWater.duration'),
     course_open_water_max_depth: t('courses.openWater.maxDepth'),
     course_open_water_price: t('courses.openWater.price'),
-    course_open_water_price_usd: '320',
-    course_open_water_price_eur: '290',
+    // Removed USD/EUR fallback prices
     course_open_water_description: t('courses.openWater.description'),
 
     course_advanced_title: t('courses.advanced.title'),
@@ -51,8 +40,7 @@ const Courses = () => {
     course_advanced_duration: t('courses.advanced.duration'),
     course_advanced_max_depth: t('courses.advanced.maxDepth'),
     course_advanced_price: t('courses.advanced.price'),
-    course_advanced_price_usd: '275',
-    course_advanced_price_eur: '250',
+    // Removed USD/EUR fallback prices
     course_advanced_description: t('courses.advanced.description'),
 
     course_efr_title: t('courses.efr.title'),
