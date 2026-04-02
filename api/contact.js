@@ -21,29 +21,7 @@ export default async function handler(req, res) {
       return;
     }
 
-    // Save to Supabase bookings table (optional, can be removed if not needed)
-    if (supabase) {
-      try {
-        const { error } = await supabase.from(BOOKING_TABLE).insert([
-          {
-            name: name || '',
-            email: email || '',
-            course_title: course || '',
-            preferred_date: preferred_date || '',
-            phone: phone || '',
-            experience_level: experience_level || '',
-            message: message || '',
-            status: 'pending',
-            created_at: new Date().toISOString(),
-          }
-        ]);
-        if (error) {
-          console.error('Supabase insert error:', error);
-        }
-      } catch (err) {
-        console.error('Supabase insert exception:', err);
-      }
-    }
+    // Removed Supabase DB insert. Contact form will only send email, not save to DB.
 
     // Use Resend to send the email
     const resendApiKey = process.env.RESEND_API_KEY;

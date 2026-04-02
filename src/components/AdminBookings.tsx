@@ -1,3 +1,39 @@
+    // Copy booking details to clipboard
+    const [copyStatus, setCopyStatus] = useState<Record<string, string>>({});
+    const copyBookingDetails = async (booking: Booking) => {
+      const details = `Name: ${booking.name}\nEmail: ${booking.email}\nPhone: ${booking.phone || '-'}\nCourse: ${booking.course_title}\nDate: ${booking.preferred_date || '-'}\nStatus: ${booking.status}\nNotes: ${booking.internal_notes || ''}`;
+      try {
+        await navigator.clipboard.writeText(details);
+        setCopyStatus((prev) => ({ ...prev, [booking.id]: 'Copied!' }));
+      } catch {
+        setCopyStatus((prev) => ({ ...prev, [booking.id]: 'Copy failed!' }));
+      }
+      setTimeout(() => setCopyStatus((prev) => ({ ...prev, [booking.id]: '' })), 2000);
+    };
+  // Escalate booking to Jira
+  const [jiraStatus, setJiraStatus] = useState<Record<string, string>>({});
+  const escalateToJira = async (booking: Booking) => {
+    setJiraStatus((prev) => ({ ...prev, [booking.id]: 'Sending...' }));
+    try {
+      const res = await fetch('/api/create-jira-booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: booking.name,
+          email: booking.email,
+          bookingDetails: `Course: ${booking.course_title}\nDate: ${booking.preferred_date || '-'}\nPhone: ${booking.phone || '-'}\nStatus: ${booking.status}\nNotes: ${booking.internal_notes || ''}`,
+        }),
+      });
+      if (res.ok) {
+        setJiraStatus((prev) => ({ ...prev, [booking.id]: 'Escalated!' }));
+      } else {
+        setJiraStatus((prev) => ({ ...prev, [booking.id]: 'Failed!' }));
+      }
+    } catch {
+      setJiraStatus((prev) => ({ ...prev, [booking.id]: 'Error!' }));
+    }
+    setTimeout(() => setJiraStatus((prev) => ({ ...prev, [booking.id]: '' })), 3000);
+  };
 
 // AdminBookings.tsx
 // Clean admin bookings table: shows Name, Email, Phone, Course, Date, Total, Deposit, To Be Paid, PayPal link.
@@ -444,6 +480,27 @@ const AdminBookings: React.FC = () => {
                   >
                     PayPal
                   </a>
+                )}
+                <button
+                  className="ml-2 px-2 py-1 text-xs bg-blue-700 text-white rounded"
+                  onClick={() => escalateToJira(b)}
+                  disabled={jiraStatus[b.id] === 'Sending...'}
+                  title="Escalate this booking to Jira"
+                >
+                  {jiraStatus[b.id] === 'Sending...' ? 'Escalating...' : 'Escalate to Jira'}
+                </button>
+                {jiraStatus[b.id] && jiraStatus[b.id] !== 'Sending...' && (
+                  <span className="ml-2 text-xs text-emerald-700">{jiraStatus[b.id]}</span>
+                )}
+                <button
+                  className="ml-2 px-2 py-1 text-xs bg-slate-600 text-white rounded"
+                  onClick={() => copyBookingDetails(b)}
+                  title="Copy booking details to clipboard"
+                >
+                  Copy Details
+                </button>
+                {copyStatus[b.id] && (
+                  <span className="ml-2 text-xs text-emerald-700">{copyStatus[b.id]}</span>
                 )}
               </td>
             </tr>

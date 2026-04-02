@@ -278,6 +278,7 @@ const App = () => (
               <Route path="/VisasKohTao" element={<VisasKohTao />} />
               <Route path="/WeatherKohTao" element={<WeatherKohTao />} />
               <Route path="/facebook" element={<FacebookFeedPage />} />
+              <Route path="/booking-to-jira" element={<BookingToJiraForm />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>
