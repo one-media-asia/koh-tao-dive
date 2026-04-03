@@ -1,9 +1,8 @@
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SUPABASE_API_KEY =
   process.env.SUPABASE_SERVICE_ROLE_KEY ||
-  process.env.SUPABASE_ANON_KEY ||
-  process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || ',.,.,.,.';
+  process.env.SUPABASE_ANON_KEY;
+const ADMIN_PASSWORD = String(process.env.ADMIN_PASSWORD || '').trim();
 
 const normalizeEmail = (value = '') => String(value).trim().toLowerCase();
 
@@ -46,6 +45,7 @@ const base64UrlToBase64 = (value = '') =>
   value.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - (value.length % 4 || 4)) % 4);
 
 const verifyAdminLoginToken = async (token) => {
+  if (!ADMIN_PASSWORD) return null;
   if (!token || !token.includes('.')) return null;
 
   const [payloadB64, sig] = token.split('.');

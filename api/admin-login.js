@@ -3,7 +3,7 @@ import { createHmac } from 'crypto';
 // Vercel Serverless Function: Basic Admin Login
 
 const ADMIN_EMAILS_RAW = process.env.ADMIN_EMAILS || 'peter@p.com';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || ',.,.,.,.';
+const ADMIN_PASSWORD = String(process.env.ADMIN_PASSWORD || '').trim();
 
 const ADMIN_EMAILS = ADMIN_EMAILS_RAW
   .split(',')
@@ -42,6 +42,11 @@ const createAdminToken = (email) => {
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
+    return;
+  }
+
+  if (!ADMIN_PASSWORD) {
+    res.status(500).json({ success: false, error: 'Admin login is not configured' });
     return;
   }
 
