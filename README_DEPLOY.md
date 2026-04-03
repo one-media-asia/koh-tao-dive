@@ -28,6 +28,7 @@ dist
 - VITE_SUPABASE_ANON_KEY
 - VITE_API_BASE_URL (optional; leave empty to use same-origin)
 - VITE_ADMIN_EMAILS (optional)
+- DROPBOX_ACCESS_TOKEN (required for Dropbox-backed gallery sections)
 - BOOKING_CALENDAR_TOKEN (optional; protects /api/bookings/calendar when set)
 
 Security note: do NOT expose `SUPABASE_SERVICE_ROLE_KEY` in client builds — only set it in Vercel's server-side env configuration.

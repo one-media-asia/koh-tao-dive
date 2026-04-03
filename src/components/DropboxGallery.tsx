@@ -7,7 +7,13 @@ const toFriendlyGalleryError = (value: unknown) => {
 
   const normalized = value.toLowerCase();
 
-  if (normalized.includes('missing_scope') || normalized.includes('path/not_found')) {
+  if (
+    normalized.includes('missing_scope') ||
+    normalized.includes('path/not_found') ||
+    normalized.includes('expired_access_token') ||
+    normalized.includes('missing dropbox access token') ||
+    normalized.includes('dropbox is not configured')
+  ) {
     return 'Gallery unavailable right now.';
   }
 
