@@ -121,10 +121,7 @@ const AdminBookings: React.FC = () => {
     setTimeout(() => setJiraStatus((prev) => ({ ...prev, [booking.id]: '' })), 3000);
   };
 
-  const calendarFeedUrl = (() => {
-    const origin = typeof window !== 'undefined' ? window.location.origin : '';
-    return `${origin}/api/bookings/calendar`;
-  })();
+  const calendarFeedUrl = 'https://koh-tao-dive-dreams.vercel.app/api/bookings/calendar';
 
   useEffect(() => {
     fetch('/api/bookings')
@@ -405,6 +402,9 @@ const AdminBookings: React.FC = () => {
       {exportResult && <div className="mb-4 text-green-700">{exportResult}</div>}
       {copyResult && <div className="mb-4 text-slate-700">{copyResult}</div>}
       {statusResult && <div className="mb-4 text-emerald-700">{statusResult}</div>}
+      {view === 'calendar' ? (
+        <BookingsCalendar bookings={bookings} />
+      ) : (
       <table className="min-w-full border">
         <thead>
           <tr>
@@ -508,6 +508,7 @@ const AdminBookings: React.FC = () => {
           ))}
         </tbody>
       </table>
+      )}
 
       <Dialog open={Boolean(financeModalBooking)} onOpenChange={(open) => { if (!open) setFinanceModalBooking(null); }}>
         <DialogContent className="sm:max-w-2xl">

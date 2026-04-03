@@ -2,15 +2,12 @@ import React, { useState } from 'react';
 import { Calendar, Copy, Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
+const CALENDAR_FEED_URL = 'https://koh-tao-dive-dreams.vercel.app/api/bookings/calendar';
+
 const CalendarSubscribe: React.FC = () => {
   const { i18n } = useTranslation();
   const isDutch = i18n.language.startsWith('nl');
   const [copied, setCopied] = useState(false);
-
-  const calendarFeedUrl = (() => {
-    const origin = typeof window !== 'undefined' ? window.location.origin : '';
-    return `${origin}/api/bookings/calendar`;
-  })();
 
   const content = isDutch ? {
     title: 'Abonneer op onze duikkalender',
@@ -66,7 +63,7 @@ const CalendarSubscribe: React.FC = () => {
 
   const handleCopyUrl = async () => {
     try {
-      await navigator.clipboard.writeText(calendarFeedUrl);
+      await navigator.clipboard.writeText(CALENDAR_FEED_URL);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -89,9 +86,11 @@ const CalendarSubscribe: React.FC = () => {
         <div className="mb-12 bg-gray-750 rounded-lg p-6 border border-gray-600">
           <h3 className="text-xl font-semibold mb-4">{content.google.step1}</h3>
           <div className="flex items-center gap-3">
+            <label htmlFor="calendar-feed-url" className="sr-only">Calendar feed URL</label>
             <input
+              id="calendar-feed-url"
               type="text"
-              value={calendarFeedUrl}
+              value={CALENDAR_FEED_URL}
               readOnly
               className="flex-1 px-4 py-3 bg-gray-700 text-gray-200 rounded border border-gray-600 text-sm font-mono overflow-x-auto"
             />

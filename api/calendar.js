@@ -1,11 +1,17 @@
-const { createClient } = require('@supabase/supabase-js');
+import { createClient } from '@supabase/supabase-js';
 
 const BOOKING_TABLE = 'bookings';
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const CALENDAR_TOKEN = (process.env.BOOKING_CALENDAR_TOKEN || '').trim();
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { realtime: { enabled: false } });
+function getSupabaseClient() {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    throw new Error('Calendar feed is not configured');
+  }
+
+  return createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { realtime: { enabled: false } });
+}
 
 function parseDateOnly(value) {
   if (!value) return null;
@@ -50,6 +56,7 @@ function escapeText(value) {
 }
 
 async function selectBookings() {
+  const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from(BOOKING_TABLE)
     .select('id,name,email,phone,course_title,preferred_date,status,message,created_at')
@@ -59,7 +66,7 @@ async function selectBookings() {
   return data || [];
 }
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
@@ -149,5 +156,5 @@ module.exports = async (req, res) => {
     console.error('api/calendar error', err);
     res.status(500).json({ error: err?.message || 'Internal error' });
   }
-};
+}
 
