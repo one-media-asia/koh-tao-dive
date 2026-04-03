@@ -1,9 +1,14 @@
 import React, {useMemo, useState, Suspense } from 'react';
-import DropboxGallery from '@/components/DropboxGallery';
 const FunDiveBooking = React.lazy(() => import('@/components/FunDiveBooking'));
 import DiveSiteDetail from '@/components/DiveSiteDetail';
 import { useTranslation } from 'react-i18next';
 import { usePageContent } from '@/hooks/usePageContent';
+
+const PAGE_GALLERY_IMAGES = [
+  '/images/japanandwins.jpg',
+  '/images/green-sea-turtle.png',
+  '/images/hawksbill-sea-turtle.jpg',
+];
 
 const JapaneseGardens = () => {
   const { i18n } = useTranslation();
@@ -37,6 +42,7 @@ const JapaneseGardens = () => {
   }), [isDutch]);
 
   const { content } = usePageContent({ pageSlug: 'japanese-gardens', locale, fallbackContent });
+  const galleryImages = Array.from(new Set([...toList(content.images), ...PAGE_GALLERY_IMAGES]));
 
   const [showBooking, setShowBooking] = useState(false);
 
@@ -55,7 +61,7 @@ const JapaneseGardens = () => {
           whatYouCanSee={toList(content.what_you_can_see)}
           marineLifeHighlights={toList(content.marine_life_highlights)}
           divingTips={toList(content.diving_tips)}
-          images={toList(content.images)}
+          images={galleryImages}
         />
       </div>
       <div className="flex justify-center my-8">
@@ -82,8 +88,6 @@ const JapaneseGardens = () => {
           </div>
         </Suspense>
       )}
-      <h2 className="text-2xl font-bold mt-8 mb-4">Gallery</h2>
-      <DropboxGallery folder="japanese-gardens" />
     </>
   );
 };

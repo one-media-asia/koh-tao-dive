@@ -1,6 +1,7 @@
 import Contact from '../components/Contact';
 
 import React, { useMemo, useState, useEffect } from 'react';
+import DropboxGallery from '@/components/DropboxGallery';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -10,6 +11,7 @@ import { usePageContent } from '@/hooks/usePageContent';
 
 const SUPPORTED_CURRENCIES = ['THB', 'USD', 'EUR'] as const;
 type Currency = typeof SUPPORTED_CURRENCIES[number];
+const IDC_DROPBOX_FOLDER = 'instructor';
 
 const Instructor: React.FC = () => {
   // Currency state
@@ -241,6 +243,11 @@ const Instructor: React.FC = () => {
             </Card>
           </aside>
         </div>
+
+        <section className="mt-12">
+          <h3 className="text-2xl font-semibold mb-4">Gallery</h3>
+          <DropboxGallery folder={IDC_DROPBOX_FOLDER} />
+        </section>
 
         <section className="mt-12">
           <h3 className="text-2xl font-semibold mb-4">{content.next_steps_title}</h3>
