@@ -10,8 +10,8 @@ const BookingInfoModal: React.FC<BookingInfoModalProps> = ({ open, onClose, what
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black bg-opacity-50 p-4">
+      <div className="w-full max-w-md max-h-[calc(100vh-4rem)] overflow-y-auto rounded-lg bg-white p-6 shadow-lg">
         <h2 className="text-xl font-bold mb-4">Booking Information</h2>
         <div className="space-y-3 mb-4 text-left">
           <p><strong>How and When to Pay:</strong> We’ll send you payment instructions by email. You can pay your deposit now or later—just let us know your preference!</p>

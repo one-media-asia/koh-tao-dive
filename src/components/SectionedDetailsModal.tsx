@@ -21,8 +21,8 @@ const SectionedDetailsModal: React.FC<SectionedDetailsModalProps> = ({ open, onC
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black bg-opacity-50 p-4">
+      <div className="w-full max-w-md max-h-[calc(100vh-4rem)] overflow-y-auto rounded-lg bg-white p-6 shadow-lg">
         <h2 className="text-xl font-bold mb-4">Details</h2>
         <div className="space-y-6 mb-4 text-left">
           {Object.entries(data).map(([section, fields]) => (
@@ -30,9 +30,9 @@ const SectionedDetailsModal: React.FC<SectionedDetailsModalProps> = ({ open, onC
               <h3 className="text-lg font-semibold mb-2 border-b pb-1">{sectionTitles[section] || section}</h3>
               <div className="space-y-1">
                 {Object.entries(fields).map(([key, value]) => (
-                  <div key={key} className="flex justify-between">
+                  <div key={key} className="flex justify-between gap-4">
                     <span className="font-medium capitalize">{key.replace(/_/g, ' ')}:</span>
-                    <span>{String(value)}</span>
+                    <span className="text-right break-words">{String(value)}</span>
                   </div>
                 ))}
               </div>

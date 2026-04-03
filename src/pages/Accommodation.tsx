@@ -487,7 +487,7 @@ const Accommodation = () => {
       </AlertDialog>
 
       <Dialog open={galleryOpen} onOpenChange={setGalleryOpen}>
-        <DialogContent className="max-w-4xl">
+        <DialogContent className="max-w-4xl max-h-[calc(100vh-4rem)] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{selectedRoomName}</DialogTitle>
           </DialogHeader>
