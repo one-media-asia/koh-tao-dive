@@ -385,8 +385,8 @@ const AdminBookings: React.FC = () => {
       </div>
 
       {showFunDiveBooking && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
-          <div className="relative z-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black bg-opacity-60 p-4">
+          <div className="relative z-50 w-full max-w-md">
             <FunDiveBooking />
             <button
               className="absolute top-2 right-2 bg-white rounded-full shadow p-2 text-gray-700 hover:bg-gray-100"

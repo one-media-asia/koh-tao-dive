@@ -25,10 +25,10 @@ const DiveSiteBookingCTA: React.FC<DiveSiteBookingCTAProps> = ({
       </div>
       {showBooking && (
         <Suspense fallback={<div className="text-center py-8">Loading booking form…</div>}>
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-            <div className="bg-white rounded-lg shadow-xl max-w-lg w-full p-4 relative">
+          <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/60 p-4">
+            <div className="relative w-full max-w-md">
               <button
-                className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-2xl font-bold"
+                className="absolute top-2 right-2 z-10 text-2xl font-bold text-gray-500 hover:text-gray-800"
                 onClick={() => setShowBooking(false)}
                 aria-label="Close"
               >

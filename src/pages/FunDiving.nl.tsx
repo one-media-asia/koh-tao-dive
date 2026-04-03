@@ -288,7 +288,6 @@ const FunDiving = () => {
               <h2 className="text-4xl font-bold text-center mb-8">{content.fun_diving_trips_title}</h2>
               <div className="grid md:grid-cols-3 gap-6">
                 <Card className="overflow-hidden">
-                  <img src="/images/fun.png" alt="Fun duik" className="w-full h-40 object-cover" />
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle>Fun duik</CardTitle>
@@ -308,7 +307,6 @@ const FunDiving = () => {
                 </Card>
 
                 <Card className="overflow-hidden">
-                  <img src="/images/discover.png" alt="Discover Scuba - zwembadtraining" className="w-full h-40 object-cover" />
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle>Discover Scuba (proefduik)</CardTitle>
@@ -333,7 +331,6 @@ const FunDiving = () => {
                 </Card>
 
                 <Card className="overflow-hidden">
-                  <img src="/images/sailrock.webp" alt="Sail Rock-special" className="w-full h-40 object-cover" onError={(e)=>{(e.target as HTMLImageElement).src='/images/photo-1618865181016-a80ad83a06d3.avif'}} />
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle>Sail Rock-special</CardTitle>

@@ -74,7 +74,7 @@ const FunDiveBooking: React.FC<FunDiveBookingProps> = ({ initialSite }) => {
   }, []);
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-xl shadow-lg border border-gray-200">
+    <div className="mx-auto w-full max-w-md max-h-[calc(100vh-4rem)] overflow-y-auto rounded-xl border border-gray-200 bg-white p-4 shadow-lg sm:p-6">
       <h1 className="text-3xl font-extrabold mb-6 text-center text-blue-900">
         {selectedSite ? `Book ${selectedSite}` : 'Book a Fun Dive'}
       </h1>

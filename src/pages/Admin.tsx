@@ -151,7 +151,7 @@ const Admin = () => {
   return (
 
 
-    <div className="min-h-[70vh]">
+  <div className="min-h-[70vh] pt-[10px]">
       {/* Centered horizontal tab row with more spacing */}
       <div className="flex flex-col items-center mb-8">
         <nav className="flex flex-row gap-6 justify-center">
