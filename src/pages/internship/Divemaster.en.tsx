@@ -3,14 +3,29 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import Contact from '@/components/Contact';
-import CurrencyExchange from '@/components/CurrencyExchange';
+import { CurrencySelector, useCurrency } from '@/hooks/useCurrency';
+
+const PACKAGE_PRICES = [
+  { label: 'Non-diver (all courses)', amount: 89500 },
+  { label: 'Already Open Water Diver', amount: 81500 },
+  { label: 'Already Advanced Open Water', amount: 73500 },
+  { label: 'Already Rescue Diver', amount: 59500 },
+];
 
 export default function DivemasterInternship() {
   const navigate = useNavigate();
+  const { currency, convertCurrency, exchangeRates } = useCurrency();
+
+  const formatThb = (amount: number) => `฿${amount.toLocaleString('en-US')}`;
+  const ratePerThb = currency !== 'THB' && exchangeRates.THB && exchangeRates[currency]
+    ? (exchangeRates[currency] / exchangeRates.THB).toFixed(3)
+    : null;
 
   return (
     <main className="min-h-screen pt-24 pb-16">
       <div className="max-w-4xl mx-auto px-4">
+        <CurrencySelector />
+
         <div className="mb-12">
           <h1 className="text-4xl font-bold mb-4">PADI Divemaster Internship</h1>
           <p className="text-xl text-gray-600">
@@ -29,9 +44,6 @@ export default function DivemasterInternship() {
           <p className="text-gray-700">
             Many of our professional level candidates have successfully gone on to senior roles within the scuba diving industry.
           </p>
-          <div className="mt-6">
-            <CurrencyExchange />
-          </div>
         </Card>
 
         <Card className="mb-8 p-6">
@@ -134,23 +146,26 @@ export default function DivemasterInternship() {
         <Card className="mb-8 p-6 bg-blue-50">
           <h2 className="text-2xl font-bold mb-4">Internship Package Pricing</h2>
           <div className="space-y-3">
-            <div className="flex justify-between items-center pb-3 border-b">
-              <span className="text-gray-700">Non-diver (all courses)</span>
-              <span className="text-2xl font-bold text-blue-600">฿89,500</span>
-            </div>
-            <div className="flex justify-between items-center pb-3 border-b">
-              <span className="text-gray-700">Already Open Water Diver</span>
-              <span className="text-2xl font-bold text-blue-600">฿81,500</span>
-            </div>
-            <div className="flex justify-between items-center pb-3 border-b">
-              <span className="text-gray-700">Already Advanced Open Water</span>
-              <span className="text-2xl font-bold text-blue-600">฿73,500</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-700">Already Rescue Diver</span>
-              <span className="text-2xl font-bold text-blue-600">฿59,500</span>
-            </div>
+            {PACKAGE_PRICES.map((pkg, index) => (
+              <div
+                key={pkg.label}
+                className={`flex justify-between items-start ${index < PACKAGE_PRICES.length - 1 ? 'pb-3 border-b' : ''}`}
+              >
+                <span className="text-gray-700">{pkg.label}</span>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-blue-600">{formatThb(pkg.amount)}</div>
+                  {currency !== 'THB' ? (
+                    <div className="text-sm text-gray-600">{convertCurrency(pkg.amount, 'THB')}</div>
+                  ) : null}
+                </div>
+              </div>
+            ))}
           </div>
+          {currency !== 'THB' ? (
+            <p className="mt-4 text-sm text-gray-600">
+              Approximate rate: 1 THB = {ratePerThb} {currency}. Final card or bank conversion may vary.
+            </p>
+          ) : null}
         </Card>
 
         <Card className="mb-8 p-6">
@@ -177,7 +192,10 @@ export default function DivemasterInternship() {
           </p>
           <div className="bg-muted p-4 rounded">
             <p className="text-gray-700 font-semibold">Estimated Monthly Budget:</p>
-            <p className="text-gray-700 text-lg">฿25,000 per month (comfortable living)</p>
+            <p className="text-gray-700 text-lg">
+              {formatThb(25000)} per month (comfortable living)
+              {currency !== 'THB' ? ` · ${convertCurrency(25000, 'THB')}` : ''}
+            </p>
             <p className="text-sm text-gray-600 mt-2">
               This covers food, accommodation, scooter rental, and social activities.
             </p>
