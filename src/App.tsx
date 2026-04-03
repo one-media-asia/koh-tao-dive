@@ -98,6 +98,7 @@ import UnderwaterNaturalist from './pages/specialty/UnderwaterNaturalist';
 import DivemasterInternship from './pages/internship/Divemaster';
 import InstructorInternship from './pages/internship/Instructor';
 import FacebookFeedPage from './pages/FacebookFeedPage';
+import BookingToJiraForm from './components/BookingToJiraForm';
 
 import './i18n';
 

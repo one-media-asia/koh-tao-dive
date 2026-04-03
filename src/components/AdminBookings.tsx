@@ -1,40 +1,3 @@
-    // Copy booking details to clipboard
-    const [copyStatus, setCopyStatus] = useState<Record<string, string>>({});
-    const copyBookingDetails = async (booking: Booking) => {
-      const details = `Name: ${booking.name}\nEmail: ${booking.email}\nPhone: ${booking.phone || '-'}\nCourse: ${booking.course_title}\nDate: ${booking.preferred_date || '-'}\nStatus: ${booking.status}\nNotes: ${booking.internal_notes || ''}`;
-      try {
-        await navigator.clipboard.writeText(details);
-        setCopyStatus((prev) => ({ ...prev, [booking.id]: 'Copied!' }));
-      } catch {
-        setCopyStatus((prev) => ({ ...prev, [booking.id]: 'Copy failed!' }));
-      }
-      setTimeout(() => setCopyStatus((prev) => ({ ...prev, [booking.id]: '' })), 2000);
-    };
-  // Escalate booking to Jira
-  const [jiraStatus, setJiraStatus] = useState<Record<string, string>>({});
-  const escalateToJira = async (booking: Booking) => {
-    setJiraStatus((prev) => ({ ...prev, [booking.id]: 'Sending...' }));
-    try {
-      const res = await fetch('/api/create-jira-booking', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: booking.name,
-          email: booking.email,
-          bookingDetails: `Course: ${booking.course_title}\nDate: ${booking.preferred_date || '-'}\nPhone: ${booking.phone || '-'}\nStatus: ${booking.status}\nNotes: ${booking.internal_notes || ''}`,
-        }),
-      });
-      if (res.ok) {
-        setJiraStatus((prev) => ({ ...prev, [booking.id]: 'Escalated!' }));
-      } else {
-        setJiraStatus((prev) => ({ ...prev, [booking.id]: 'Failed!' }));
-      }
-    } catch {
-      setJiraStatus((prev) => ({ ...prev, [booking.id]: 'Error!' }));
-    }
-    setTimeout(() => setJiraStatus((prev) => ({ ...prev, [booking.id]: '' })), 3000);
-  };
-
 // AdminBookings.tsx
 // Clean admin bookings table: shows Name, Email, Phone, Course, Date, Total, Deposit, To Be Paid, PayPal link.
 // To add more columns or features, edit below. For comments or notes, add a new column and input logic as needed.
@@ -87,6 +50,8 @@ const AdminBookings: React.FC = () => {
   const [exporting, setExporting] = useState(false);
   const [exportResult, setExportResult] = useState<string | null>(null);
   const [copyResult, setCopyResult] = useState<string | null>(null);
+  const [copyStatus, setCopyStatus] = useState<Record<string, string>>({});
+  const [jiraStatus, setJiraStatus] = useState<Record<string, string>>({});
 
   // Currency state
   const [currency, setCurrency] = useState<'THB' | 'USD' | 'EUR'>('THB');
@@ -96,7 +61,8 @@ const AdminBookings: React.FC = () => {
   useEffect(() => {
     const fetchRates = async () => {
       try {
-        const res = await fetch(`https://openexchangerates.org/api/latest.json?app_id=${process.env.OPENEXCHANGERATES_API_KEY}&symbols=THB,USD,EUR`);
+        const apiKey = import.meta.env.VITE_OPENEXCHANGERATES_API_KEY || '';
+        const res = await fetch(`https://openexchangerates.org/api/latest.json?app_id=${apiKey}&symbols=THB,USD,EUR`);
         const data = await res.json();
         if (data && data.rates) {
           setExchangeRates({
@@ -119,6 +85,40 @@ const AdminBookings: React.FC = () => {
     const thbAmount = from === 'THB' ? amount : (amount / exchangeRates[from]) * exchangeRates['THB'];
     const converted = (thbAmount / exchangeRates['THB']) * exchangeRates[currency];
     return `${converted.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`;
+  };
+
+  const copyBookingDetails = async (booking: Booking) => {
+    const details = `Name: ${booking.name}\nEmail: ${booking.email}\nPhone: ${booking.phone || '-'}\nCourse: ${booking.course_title}\nDate: ${booking.preferred_date || '-'}\nStatus: ${booking.status}\nNotes: ${booking.internal_notes || ''}`;
+    try {
+      await navigator.clipboard.writeText(details);
+      setCopyStatus((prev) => ({ ...prev, [booking.id]: 'Copied!' }));
+    } catch {
+      setCopyStatus((prev) => ({ ...prev, [booking.id]: 'Copy failed!' }));
+    }
+    setTimeout(() => setCopyStatus((prev) => ({ ...prev, [booking.id]: '' })), 2000);
+  };
+
+  const escalateToJira = async (booking: Booking) => {
+    setJiraStatus((prev) => ({ ...prev, [booking.id]: 'Sending...' }));
+    try {
+      const res = await fetch('/api/create-jira-booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: booking.name,
+          email: booking.email,
+          bookingDetails: `Course: ${booking.course_title}\nDate: ${booking.preferred_date || '-'}\nPhone: ${booking.phone || '-'}\nStatus: ${booking.status}\nNotes: ${booking.internal_notes || ''}`,
+        }),
+      });
+      if (res.ok) {
+        setJiraStatus((prev) => ({ ...prev, [booking.id]: 'Escalated!' }));
+      } else {
+        setJiraStatus((prev) => ({ ...prev, [booking.id]: 'Failed!' }));
+      }
+    } catch {
+      setJiraStatus((prev) => ({ ...prev, [booking.id]: 'Error!' }));
+    }
+    setTimeout(() => setJiraStatus((prev) => ({ ...prev, [booking.id]: '' })), 3000);
   };
 
   const calendarFeedUrl = (() => {
@@ -310,8 +310,9 @@ const AdminBookings: React.FC = () => {
       <h2 className="text-xl font-bold mb-4">Bookings</h2>
       {/* Unified horizontal control bar */}
       <div className="flex flex-wrap items-center gap-3 mb-6">
-        <label className="font-medium mr-2">Currency:</label>
+        <label htmlFor="admin-bookings-currency" className="font-medium mr-2">Currency:</label>
         <select
+          id="admin-bookings-currency"
           className="px-2 py-1 rounded border border-gray-300 mr-4"
           value={currency}
           onChange={e => setCurrency(e.target.value as 'THB' | 'USD' | 'EUR')}
