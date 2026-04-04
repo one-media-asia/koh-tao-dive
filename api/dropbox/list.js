@@ -28,9 +28,16 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Dropbox is not configured' });
   }
 
-  const folderPath = typeof req.query.folder === 'string' && req.query.folder.trim()
+  let folderPath = typeof req.query.folder === 'string' && req.query.folder.trim()
     ? req.query.folder.trim()
     : DEFAULT_FOLDER_PATH;
+  // If the folderPath does not start with the default base, prepend it
+  if (!folderPath.startsWith(DEFAULT_FOLDER_PATH)) {
+    // Remove any leading slash from folderPath to avoid double slashes
+    const subPath = folderPath.replace(/^\/+/, '');
+    folderPath = `${DEFAULT_FOLDER_PATH}/${subPath}`;
+  }
+  // Ensure it starts with a single slash
   const normalizedPath = folderPath.startsWith('/') ? folderPath : `/${folderPath}`;
   // Debug: log the folder path being sent to Dropbox
   console.log('[Dropbox API] Listing folder:', normalizedPath);
