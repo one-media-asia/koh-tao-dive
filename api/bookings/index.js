@@ -208,37 +208,8 @@ export default async function handler(req, res) {
 
 
     if (req.method === 'GET') {
-      // Enforce authentication for ALL GET requests
-      const authHeader = req.headers['authorization'] || req.headers['Authorization'];
-      const token = authHeader && authHeader.startsWith('Bearer ')
-        ? authHeader.slice(7)
-        : null;
-      let userId = null;
-      let isAdmin = false;
-      if (token) {
-        try {
-          const { data: { user }, error } = await supabase.auth.getUser(token);
-          if (user && user.id) {
-            userId = user.id;
-            // Check for admin role in user_metadata or app_metadata
-            const roles = (user.user_metadata?.roles || user.app_metadata?.roles || []);
-            isAdmin = Array.isArray(roles) && roles.includes('admin');
-          }
-        } catch (e) {
-          console.error('Supabase auth error:', e);
-        }
-      }
-      if (!userId) {
-        return res.status(401).json({ error: 'Not authenticated' });
-      }
-      // Only allow admins to see all bookings
       try {
-        let rows = [];
-        if (isAdmin) {
-          ({ rows } = await selectBookings());
-        } else {
-          ({ rows } = await selectBookingsForUser(userId));
-        }
+        const { rows } = await selectBookings();
         return res.json((rows || []).map(normalizeBooking));
       } catch (err) {
         return res.status(500).json({ error: err?.message || 'Failed to load bookings from database' });
