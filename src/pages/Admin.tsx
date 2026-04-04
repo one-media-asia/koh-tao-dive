@@ -238,8 +238,12 @@ const Admin = () => {
           </div>
         )}
         {activeTab === 'analytics' && (
-        {activeTab === 'affiliate-clicks' && (
-          <div className="bg-white rounded shadow p-4"><AffiliateClicksAdmin /></div>
+          <>
+            <div className="bg-white rounded shadow p-4">Analytics dashboard coming soon...</div>
+            {activeTab === 'affiliate-clicks' && (
+              <div className="bg-white rounded shadow p-4"><AffiliateClicksAdmin /></div>
+            )}
+          </>
         )}
         {activeTab === 'pages' && (
           <div className="bg-white rounded shadow p-4">
