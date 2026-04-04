@@ -122,26 +122,7 @@ const sendWithSmtp = async ({ adminEmails, booking }) => {
     auth: { user: smtpUser, pass: smtpPass },
   });
 
-  const adminText = [
-    'New Booking (Pending)',
-    `Name: ${booking.name}`,
-    `Email: ${booking.email}`,
-    `Phone: ${booking.phone}`,
-    `Preferred Date: ${booking.preferred_date}`,
-    `Experience Level: ${booking.experience_level}`,
-    `Message: ${booking.message}`,
-    `Item: ${booking.item_title}`,
-    `Deposit: ${booking.deposit_amount}`,
-    `Payment Choice: ${booking.payment_choice}`,
-    `Paypal Link: ${booking.paypal_link}`,
-    `Internal Notes: ${booking.body.internal_notes || '-'}`,
-    `Bank Transfer: ${booking.body.bank_transfer_details || '-'}`,
-    `Subtotal: ${booking.body.subtotal_amount || '-'}`,
-    `Total: ${booking.body.total_amount || '-'}`,
-    `Due: ${booking.body.due_amount || '-'}`,
-    `Addons: ${booking.body.addons || '-'}`,
-    `Addons Total: ${booking.body.addons_total || '-'}`,
-  ].join('\n');
+  const adminHtml = buildAdminHtml({ ...booking, body: booking.body });
 
   const clientText = `Thank you for your booking! We have received your request and will confirm your booking soon.\n\nBooking Details:\nName: ${booking.name}\nEmail: ${booking.email}\nPhone: ${booking.phone}\nPreferred Date: ${booking.preferred_date}\nExperience Level: ${booking.experience_level}\nMessage: ${booking.message}\nItem: ${booking.item_title}\nDeposit: ${booking.deposit_amount}\nPayment Choice: ${booking.payment_choice}`;
 
@@ -150,7 +131,8 @@ const sendWithSmtp = async ({ adminEmails, booking }) => {
     to: adminEmails.join(', '),
     subject: `New Booking (Pending): ${booking.item_title}`,
     replyTo: booking.email,
-    text: adminText,
+    text: undefined,
+    html: adminHtml,
   });
 
   await transporter.sendMail({

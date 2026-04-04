@@ -518,15 +518,7 @@ const AdminBookings: React.FC = () => {
                     PayPal
                   </a>
                 )}
-                <span style={{ marginLeft: 8 }} />
-                <a
-                  href={`https://www.trip.com/hotels/list?city=19957&display=Koh%20Tao&optionId=19957&optionType=City&optionName=Koh%20Tao&Allianceid=7864578&SID=295439656&trip_sub1=${b.trip_sub1 || 'tao1'}&trip_sub3=${b.trip_sub3 || 'D15055497'}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 underline"
-                >
-                  Trip.com
-                </a>
+                {/* Trip.com link removed as requested */}
                 <button
                   className="ml-2 px-2 py-1 text-xs bg-blue-700 text-white rounded"
                   onClick={() => escalateToJira(b)}
