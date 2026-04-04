@@ -245,7 +245,7 @@ const Admin = () => {
           </DialogContent>
         </Dialog>
 
-        <div className="max-w-3xl mx-auto" style={{ width: '70%' }}>
+        <div style={{ width: '100%' }}>
           {activeTab === 'bookings' && (
             <div className="bg-white rounded-2xl shadow-xl p-6 mb-6 border border-gray-100">
               <AdminBookings />
