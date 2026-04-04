@@ -20,6 +20,8 @@ const Admin = () => {
       { key: 'users', label: 'Users' },
       { key: 'project-manager', label: 'Project Manager' },
     ];
+        { key: 'affiliate-clicks', label: 'Affiliate Clicks' },
+  import AffiliateClicksAdmin from '../components/AffiliateClicksAdmin';
   const jiraEmbedUrl = import.meta.env.VITE_JIRA_EMBED_URL || '';
   const jiraProjectUrl = import.meta.env.VITE_JIRA_PROJECT_URL || jiraEmbedUrl || 'https://divinginasia.atlassian.net';
   const [activeTab, setActiveTab] = useState('bookings');
@@ -236,7 +238,8 @@ const Admin = () => {
           </div>
         )}
         {activeTab === 'analytics' && (
-          <div className="bg-white rounded shadow p-4">Analytics dashboard coming soon...</div>
+        {activeTab === 'affiliate-clicks' && (
+          <div className="bg-white rounded shadow p-4"><AffiliateClicksAdmin /></div>
         )}
         {activeTab === 'pages' && (
           <div className="bg-white rounded shadow p-4">
