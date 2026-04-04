@@ -1,3 +1,6 @@
+ |                                          ^
+26 |    import AffiliateClicksAdmin from '../components/AffiliateClicksAdmin';
+27 |    const jiraEmbedUrl = import.meta.env.VITE_JIRA_EMBED_URL || '';
 const affiliateClicksStore = [];
 const MAX_AFFILIATE_CLICK_EVENTS = 2000;
 
