@@ -16,11 +16,11 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { trackAffiliateClick } from '@/lib/affiliateTracking';
+import { trackTripComAnalyticsEvent } from '@/lib/trackTripComAnalyticsEvent';
 import { usePageContent } from '@/hooks/usePageContent';
 
 const TRIP_ALLIANCE_ID = import.meta.env.VITE_TRIP_ALLIANCE_ID as string | undefined;
 const TRIP_SITE_ID = import.meta.env.VITE_TRIP_SITE_ID as string | undefined;
-const AGODA_PARTNER_ID = import.meta.env.VITE_AGODA_PARTNER_ID as string | undefined;
 
 type RoomCard = {
   name: string;
@@ -232,36 +232,21 @@ const Accommodation = () => {
     return query ? `${baseUrl}?${query}` : baseUrl;
   };
 
-  const buildAgodaUrl = () => {
-    const baseUrl = 'https://www.agoda.com/search';
-    const params = new URLSearchParams();
-    params.set('city', '13170'); // Koh Tao city ID
-    params.set('checkIn', '');
-    params.set('checkOut', '');
-    params.set('rooms', '1');
-    params.set('adults', '2');
-    params.set('children', '0');
-    
-    if (AGODA_PARTNER_ID) params.set('cid', AGODA_PARTNER_ID);
-
-    return `${baseUrl}?${params.toString()}`;
-  };
 
   const handleExternalBooking = () => {
-    const url = bookingSource === 'trip' ? buildTripUrl() : buildAgodaUrl();
-    
+    const url = buildTripUrl();
     // Track affiliate click
     trackAffiliateClick({
-      provider: bookingSource === 'trip' ? 'trip' : 'agoda',
+      provider: 'trip',
       destinationUrl: url,
       placement: 'accommodation-page',
-      hotelName: `${bookingSource === 'trip' ? 'Trip.com' : 'Agoda'} - Accommodation Page`,
-      affiliateId: bookingSource === 'trip' ? (TRIP_ALLIANCE_ID || TRIP_SITE_ID || null) : (AGODA_PARTNER_ID || null),
+      hotelName: 'Trip.com - Accommodation Page',
+      affiliateId: TRIP_ALLIANCE_ID || TRIP_SITE_ID || null,
     });
-    
+    // Google Analytics event
+    trackTripComAnalyticsEvent(url);
     // Open in new tab
     window.open(url, '_blank', 'noopener,noreferrer');
-    
     // Close the popup
     setShowAltAccommodationPopup(false);
   };
@@ -319,9 +304,6 @@ const Accommodation = () => {
               </Button>
               <Button type="button" variant="outline" onClick={() => openAlternativeAccommodationPopup('trip')}>
                 Trip.com
-              </Button>
-              <Button type="button" variant="outline" onClick={() => openAlternativeAccommodationPopup('agoda')}>
-                Agoda
               </Button>
             </div>
 
@@ -480,7 +462,7 @@ const Accommodation = () => {
               No thanks, I'll stay with your resort
             </AlertDialogCancel>
             <AlertDialogAction onClick={handleExternalBooking}>
-              OK - Take me to {bookingSource === 'trip' ? 'Trip.com' : 'Agoda'}
+              OK - Take me to Trip.com
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
