@@ -333,7 +333,7 @@ const AdminBookings: React.FC = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="overflow-x-auto">
+    <div>
       <h2 className="text-xl font-bold mb-4">Bookings</h2>
       {/* Unified horizontal control bar */}
       <div className="flex flex-wrap items-center gap-3 mb-6">
