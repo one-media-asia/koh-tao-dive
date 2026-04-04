@@ -1,5 +1,5 @@
 const DROPBOX_API_URL = 'https://api.dropboxapi.com/2/files/list_folder';
-const DEFAULT_FOLDER_PATH = '';
+const DEFAULT_FOLDER_PATH = '/Diveasianew';
 
 const readDropboxPayload = async (response) => {
   const text = await response.text();
