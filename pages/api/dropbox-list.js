@@ -2,7 +2,7 @@
 // Next.js API route for Dropbox folder listing
 
 const DROPBOX_API_URL = 'https://api.dropboxapi.com/2/files/list_folder';
-const DEFAULT_FOLDER_PATH = '/Apps/Diveasianew';
+const DEFAULT_FOLDER_PATH = '';
 
 const readDropboxPayload = async (response) => {
   const text = await response.text();
