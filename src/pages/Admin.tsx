@@ -16,10 +16,8 @@ const Admin = () => {
     // Add more admin tabs here
     const tabs = [
       { key: 'bookings', label: 'Bookings' },
-      { key: 'analytics', label: 'Analytics' },
       { key: 'affiliate-clicks', label: 'Affiliate Clicks' },
       { key: 'pages', label: 'Pages Manager' },
-      { key: 'users', label: 'Users' },
       { key: 'project-manager', label: 'Project Manager' },
     ];
   const jiraEmbedUrl = import.meta.env.VITE_JIRA_EMBED_URL || '';
@@ -103,19 +101,24 @@ const Admin = () => {
   useEffect(() => {
     if (activeTab === 'bookings' || activeTab === 'comments') {
       setLoading(true);
-      fetch('/api/bookings')
-        .then((res) => {
+      async function fetchBookings() {
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          const token = session?.access_token;
+          if (!token) throw new Error('Not authenticated');
+          const res = await fetch('/api/bookings', {
+            headers: { Authorization: `Bearer ${token}` },
+          });
           if (!res.ok) throw new Error('Failed to fetch bookings');
-          return res.json();
-        })
-        .then((data) => {
+          const data = await res.json();
           setBookings(data);
-          setLoading(false);
-        })
-        .catch((err) => {
+        } catch (err) {
           setBookings([]);
+        } finally {
           setLoading(false);
-        });
+        }
+      }
+      fetchBookings();
     }
   }, [activeTab]);
 
@@ -155,7 +158,11 @@ const Admin = () => {
   return (
 
 
-  <div className="min-h-[70vh] pt-[10px]">
+  <div className="min-h-[80vh] pt-[10px] bg-gradient-to-br from-blue-50 to-emerald-50">
+    <header className="w-full py-8 mb-8 bg-gradient-to-r from-blue-700 to-emerald-600 shadow-lg text-white rounded-b-3xl flex flex-col items-center">
+      <h1 className="text-3xl font-bold tracking-wide mb-2">Admin Dashboard</h1>
+      <p className="text-lg opacity-80">Manage bookings, pages, and more</p>
+    </header>
       {/* Centered horizontal tab row with more spacing */}
       <div className="flex flex-col items-center mb-8">
         <nav className="flex flex-row gap-6 justify-center">
@@ -177,6 +184,12 @@ const Admin = () => {
         >
           Global Finance Defaults
         </button>
+        <a
+          href="/"
+          className="mt-4 inline-block rounded bg-gray-500 px-5 py-2 text-base font-semibold text-white hover:bg-gray-700 shadow"
+        >
+          Back to Main Page
+        </a>
       </div>
       {/* Main Content */}
       <div>
@@ -232,54 +245,48 @@ const Admin = () => {
           </DialogContent>
         </Dialog>
 
-        {activeTab === 'bookings' && (
-          <div className="bg-white rounded shadow p-2">
-            <AdminBookings />
-          </div>
-        )}
-        {activeTab === 'analytics' && (
-          <>
-            <div className="bg-white rounded shadow p-4">Analytics dashboard coming soon...</div>
-            {activeTab === 'affiliate-clicks' && (
-              <div className="bg-white rounded shadow p-4"><AffiliateClicksAdmin /></div>
-            )}
-          </>
-        )}
-        {activeTab === 'pages' && (
-          <div className="bg-white rounded shadow p-4">
-            <React.Suspense fallback={<div>Loading Pages Manager...</div>}>
-              <AdminPagesManager />
-            </React.Suspense>
-          </div>
-        )}
-        {activeTab === 'users' && (
-          <div className="bg-white rounded shadow p-4">
-            <AdminUsersManager />
-          </div>
-        )}
-        {activeTab === 'project-manager' && (
-          <div className="bg-white rounded shadow p-4 space-y-4">
-            <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-              <div>
-                <h2 className="text-xl font-semibold">Project Manager</h2>
-                <p className="text-sm text-gray-600">
-                  Jira cannot be embedded due to Atlassian restrictions. Please use the button below to open the Jira project board in a new tab.
-                </p>
+        <div className="max-w-3xl mx-auto">
+          {activeTab === 'bookings' && (
+            <div className="bg-white rounded-2xl shadow-xl p-6 mb-6 border border-gray-100">
+              <AdminBookings />
+            </div>
+          )}
+          {activeTab === 'affiliate-clicks' && (
+            <div className="bg-white rounded-2xl shadow-xl p-6 mb-6 border border-gray-100">
+              <AffiliateClicksAdmin />
+            </div>
+          )}
+          {activeTab === 'pages' && (
+            <div className="bg-white rounded-2xl shadow-xl p-6 mb-6 border border-gray-100">
+              <React.Suspense fallback={<div>Loading Pages Manager...</div>}>
+                <AdminPagesManager />
+              </React.Suspense>
+            </div>
+          )}
+          {activeTab === 'project-manager' && (
+            <div className="bg-white rounded-2xl shadow-xl p-6 mb-6 border border-gray-100 space-y-4">
+              <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                <div>
+                  <h2 className="text-xl font-semibold">Project Manager</h2>
+                  <p className="text-sm text-gray-600">
+                    Jira cannot be embedded due to Atlassian restrictions. Please use the button below to open the Jira project board in a new tab.
+                  </p>
+                </div>
+                <a
+                  href={jiraProjectUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-center rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                >
+                  Open Jira
+                </a>
               </div>
-              <a
-                href={jiraProjectUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center justify-center rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-              >
-                Open Jira
-              </a>
+              <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-6 text-sm text-gray-600">
+                (Direct embedding is not supported by Jira. Use the button above to access your board.)
+              </div>
             </div>
-            <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-6 text-sm text-gray-600">
-              (Direct embedding is not supported by Jira. Use the button above to access your board.)
-            </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import FunDiveBooking from './FunDiveBooking';
 import FinanceSection from './FinanceSection';
 import BookingsCalendar from './BookingsCalendar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Booking {
   total_payable_now?: number | null;
@@ -146,24 +147,31 @@ const AdminBookings: React.FC = () => {
   const calendarFeedUrl = 'https://koh-tao-dive-dreams.vercel.app/api/bookings/calendar';
 
   useEffect(() => {
-    fetch('/api/bookings')
-      .then((res) => {
+    async function fetchBookings() {
+      setLoading(true);
+      setError(null);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const token = session?.access_token;
+        if (!token) throw new Error('Not authenticated');
+        const res = await fetch('/api/bookings', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         if (!res.ok) throw new Error('Failed to fetch bookings');
-        return res.json();
-      })
-      .then((data) => {
+        const data = await res.json();
         setBookings(data);
         const initialDrafts: Record<string, string> = {};
         data.forEach((booking: Booking) => {
           initialDrafts[booking.id] = booking.status || 'pending';
         });
         setStatusDrafts(initialDrafts);
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch bookings');
+      } finally {
         setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
-      });
+      }
+    }
+    fetchBookings();
   }, []);
 
   useEffect(() => {

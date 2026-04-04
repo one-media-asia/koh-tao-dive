@@ -55,11 +55,12 @@ function escapeText(value) {
 		.replace(/\r?\n/g, '\\n');
 }
 
-async function selectBookings() {
+async function selectBookingsForUser(userId) {
 	const supabase = getSupabaseClient();
 	const { data, error } = await supabase
 		.from(BOOKING_TABLE)
 		.select('id,name,email,phone,course_title,preferred_date,status,message,created_at')
+		.eq('user_id', userId)
 		.order('created_at', { ascending: false })
 		.limit(1500);
 	if (error) throw new Error(error.message);
@@ -70,7 +71,7 @@ export default async function handler(req, res) {
 	if (req.method === 'OPTIONS') {
 		res.setHeader('Access-Control-Allow-Origin', '*');
 		res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
-		res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+		res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
 		res.status(204).end();
 		return;
 	}
@@ -82,16 +83,29 @@ export default async function handler(req, res) {
 		return;
 	}
 
-	if (CALENDAR_TOKEN) {
-		const provided = String(req.query?.token || '').trim();
-		if (provided !== CALENDAR_TOKEN) {
-			res.status(401).json({ error: 'Invalid calendar token' });
-			return;
+	// --- NEW: Require auth and filter by user_id ---
+	const authHeader = req.headers['authorization'] || req.headers['Authorization'];
+	const token = authHeader && authHeader.startsWith('Bearer ')
+		? authHeader.slice(7)
+		: null;
+	let userId = null;
+	if (token) {
+		try {
+			const supabase = getSupabaseClient();
+			const { data: { user }, error } = await supabase.auth.getUser(token);
+			if (user && user.id) userId = user.id;
+		} catch (e) {
+			console.error('Supabase auth error:', e);
 		}
 	}
+	if (!userId) {
+		res.status(401).json({ error: 'Not authenticated' });
+		return;
+	}
+	// --- END NEW ---
 
 	try {
-		const rows = await selectBookings();
+		const rows = await selectBookingsForUser(userId);
 		const dtStamp = nowUtcStamp();
 		const today = todayUtcDateOnly();
 

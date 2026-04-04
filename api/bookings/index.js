@@ -66,6 +66,20 @@ const sanitizePayload = (body = {}) => {
   };
 };
 
+
+// Select bookings for a specific user (non-admin)
+const selectBookingsForUser = async (userId) => {
+  const { data, error } = await supabase
+    .from(BOOKING_TABLE)
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(1000);
+  if (error) throw new Error(error.message);
+  return { table: BOOKING_TABLE, rows: data || [] };
+};
+
+// Select all bookings (admin only)
 const selectBookings = async () => {
   const { data, error } = await supabase
     .from(BOOKING_TABLE)
@@ -192,12 +206,41 @@ export default async function handler(req, res) {
 
   try {
 
+
     if (req.method === 'GET') {
+      // Require authentication
+      const authHeader = req.headers['authorization'] || req.headers['Authorization'];
+      const token = authHeader && authHeader.startsWith('Bearer ')
+        ? authHeader.slice(7)
+        : null;
+      let userId = null;
+      let isAdmin = false;
+      if (token) {
+        try {
+          const { data: { user }, error } = await supabase.auth.getUser(token);
+          if (user && user.id) {
+            userId = user.id;
+            // Check for admin role in user_metadata or app_metadata
+            const roles = (user.user_metadata?.roles || user.app_metadata?.roles || []);
+            isAdmin = Array.isArray(roles) && roles.includes('admin');
+          }
+        } catch (e) {
+          console.error('Supabase auth error:', e);
+        }
+      }
+      if (!userId) {
+        return res.status(401).json({ error: 'Not authenticated' });
+      }
       try {
-        const { rows } = await selectBookings();
+        let rows = [];
+        if (isAdmin) {
+          ({ rows } = await selectBookings());
+        } else {
+          ({ rows } = await selectBookingsForUser(userId));
+        }
         return res.json((rows || []).map(normalizeBooking));
       } catch (err) {
-        return res.status(500).json({ error: err?.message || 'Failed to load bookings from SQLite' });
+        return res.status(500).json({ error: err?.message || 'Failed to load bookings from database' });
       }
     }
 
@@ -253,6 +296,22 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Missing required fields: name and email' });
       }
       if (!supabase) return res.status(500).json({ error: 'Supabase not configured' });
+
+      // --- NEW: Invite user and store user_id ---
+      let userId = null;
+      try {
+        const { data: inviteData, error: inviteError } = await supabase.auth.admin.inviteUserByEmail(payload.email);
+        if (inviteError) {
+          console.error('Supabase invite error:', inviteError);
+        } else if (inviteData && inviteData.user && inviteData.user.id) {
+          userId = inviteData.user.id;
+        }
+      } catch (e) {
+        console.error('Supabase invite exception:', e);
+      }
+      if (userId) payload.user_id = userId;
+      // --- END NEW ---
+
       const primaryInsert = await supabase.from(BOOKING_TABLE).insert([payload]).select();
       if (!primaryInsert.error) {
         return res.status(201).json(normalizeBooking((primaryInsert.data || [])[0] || null));
