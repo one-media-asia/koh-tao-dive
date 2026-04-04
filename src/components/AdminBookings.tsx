@@ -201,7 +201,10 @@ const AdminBookings: React.FC = () => {
   const buildPayPalUrl = (booking: Booking) => {
     const amount = getPayableNow(booking);
     if (amount === null) return null;
-    return `${paypalLink}/${amount}`;
+    // Add account_id and site_id as query parameters for commission tracking
+    const accountId = '7864578';
+    const siteId = '295439656';
+    return `${paypalLink}/${amount}?account_id=${accountId}&site_id=${siteId}`;
   };
 
   useEffect(() => {
@@ -515,6 +518,15 @@ const AdminBookings: React.FC = () => {
                     PayPal
                   </a>
                 )}
+                <span style={{ marginLeft: 8 }} />
+                <a
+                  href={`https://www.trip.com/?allianceid=7864578&sid=295439656`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 underline"
+                >
+                  Trip.com
+                </a>
                 <button
                   className="ml-2 px-2 py-1 text-xs bg-blue-700 text-white rounded"
                   onClick={() => escalateToJira(b)}
