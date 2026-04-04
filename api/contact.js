@@ -30,7 +30,7 @@ const sendWithResend = async ({ name, email, subject, message, course, preferred
     <div style="font-family: Arial, sans-serif; background: #f8fafc; padding: 32px 0;">
       <div style="max-width: 520px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px #0001; padding: 32px 24px;">
         <div style="text-align: center; margin-bottom: 24px;">
-          <img src=\"https://www.divinginasia.com/images/logo.png\" alt=\"Koh Tao Dive Dreams\" style=\"max-width: 180px; margin-bottom: 8px;\" />
+          <img src=\"https://www.divinginasia.com/images/logo.png\" alt=\"Diving In Asia\" style=\"max-width: 180px; margin-bottom: 8px;\" />
         </div>
         <h2 style=\"color: #0e7490; font-size: 1.5rem; margin-bottom: 16px;\">New Contact/Booking Form Submission</h2>
         <table style=\"width: 100%; border-collapse: collapse; margin-bottom: 24px;\">
@@ -45,7 +45,7 @@ const sendWithResend = async ({ name, email, subject, message, course, preferred
         <div style=\"margin-bottom: 12px;\"><strong>Message:</strong></div>
         <div style=\"background: #f1f5f9; border-radius: 6px; padding: 16px; color: #334155;\">${message.replace(/\n/g, '<br>')}</div>
         <div style=\"margin-top: 32px; text-align: center; color: #64748b; font-size: 0.95em;\">
-          <em>Koh Tao Dive Dreams &middot; www.divinginasia.com</em>
+          <em>Diving In Asia &middot; www.divinginasia.com</em>
         </div>
       </div>
     </div>
