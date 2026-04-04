@@ -1,4 +1,6 @@
-// API route: /api/dropbox-gallery?folder=folder-name
+
+// API route: /api/dropbox-gallery?folder=Apps/Diveasianew/fun-diving
+// Pass the full Dropbox folder path in the 'folder' query parameter (e.g., Apps/Diveasianew/fun-diving)
 // Returns an array of image URLs from the specified Dropbox folder
 
 export default async function handler(req, res) {
@@ -10,6 +12,8 @@ export default async function handler(req, res) {
 	if (!folder) {
 		return res.status(400).json({ error: 'Missing folder parameter' });
 	}
+	// Ensure leading slash for Dropbox API path
+	const dropboxPath = folder.startsWith('/') ? folder : `/${folder}`;
 
 	try {
 		// List files in the folder
@@ -19,7 +23,7 @@ export default async function handler(req, res) {
 				'Authorization': `Bearer ${DROPBOX_ACCESS_TOKEN}`,
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify({ path: `/${folder}` }),
+			body: JSON.stringify({ path: dropboxPath }),
 		});
 		const listText = await listRes.text();
 		let listData;
