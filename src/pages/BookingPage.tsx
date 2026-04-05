@@ -176,8 +176,7 @@ const       BookingPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onSubmit = async (data: BookingFormData) => {
-    console.log('Form submitted with data:', data);
-    console.log('Form validation errors:', form.formState.errors);
+    // Customer submits booking, admin gets email, status is always 'pending' until admin acts
     setIsSubmitting(true);
     try {
       const amountMajor = (isStayBooking ? 0 : depositMajor) + totalAddons;
@@ -198,6 +197,7 @@ const       BookingPage: React.FC = () => {
         : 'N/A (course booking)';
       const messageWithSource = `${data.message || 'No additional message'}\n\nBooking Source: ${bookingSource}`;
 
+      // Always set status to 'pending' (admin must confirm)
       const apiBookingPayload = {
         name: data.name,
         email: data.email,
@@ -220,17 +220,18 @@ const       BookingPage: React.FC = () => {
 
       let persisted = false;
       try {
-        const dbRes = await fetch(`${import.meta.env.VITE_API_URL}/api/bookings`, {
+        const dbRes = await fetch(apiUrl('/api/bookings'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(apiBookingPayload),
         });
         persisted = dbRes.ok;
       } catch (dbErr) {
+        // If DB fails, still try to notify admin
         console.warn('Booking persistence failed; continuing with email flow.', dbErr);
       }
 
-      // Send booking notification via backend API
+      // Always notify admin (email to admin)
       const payload = {
         name: data.name,
         email: data.email,
@@ -261,7 +262,7 @@ const       BookingPage: React.FC = () => {
 
       const responseData = await res.json().catch(() => ({}));
 
-      // Notify user based on email API result, but booking is already persisted
+      // User always gets confirmation/inquiry sent, but admin must act
       if (res.ok && responseData.success) {
         if (responseData.warning) {
           toast.warning(`Booking saved, but email notification needs attention: ${responseData.warning}`);
@@ -273,7 +274,6 @@ const       BookingPage: React.FC = () => {
         }
       } else {
         const errMsg = responseData?.message || responseData?.error || `HTTP ${res.status}`;
-        console.error('Booking notification error:', errMsg, responseData);
         if (persisted) {
           toast.error(`Inquiry saved, but email notification failed: ${errMsg}`);
           if (data.paymentChoice === 'now' && amountMajor > 0) {
@@ -286,7 +286,6 @@ const       BookingPage: React.FC = () => {
         }
       }
     } catch (err) {
-      console.error('Form submission error:', err);
       toast.error('Submission failed. Please try again.');
     } finally {
       setIsSubmitting(false);
@@ -297,6 +296,25 @@ const       BookingPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background py-16">
+      {/* Horizontal Calendar View */}
+      <div className="w-full overflow-x-auto mb-8">
+        <div className="flex gap-2 whitespace-nowrap px-2 py-3 border-b border-muted-foreground/20" style={{ minWidth: 600 }}>
+          {/* Mock: Show 14 days from today */}
+          {Array.from({ length: 14 }, (_, i) => {
+            const d = new Date();
+            d.setDate(d.getDate() + i);
+            const label = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+            return (
+              <div
+                key={i}
+                className="rounded bg-blue-100 text-blue-900 px-4 py-2 text-sm font-medium border border-blue-200 min-w-[80px] text-center shadow-sm hover:bg-blue-200 cursor-pointer"
+              >
+                {label}
+              </div>
+            );
+          })}
+        </div>
+      </div>
       <div className="max-w-4xl mx-auto bg-background rounded-xl shadow-xl shadow-blue-900/20 p-8">
         <div className="flex items-start justify-between gap-4">
           <h1 className="text-2xl font-bold mb-2">Book: {itemTitle}</h1>
@@ -311,7 +329,11 @@ const       BookingPage: React.FC = () => {
                 type="button"
                 variant={isCourseBooking ? 'default' : 'outline'}
                 className={isCourseBooking ? 'bg-blue-900 hover:bg-blue-950 text-white border-blue-900' : 'bg-white/10 hover:bg-white/20 text-white border-white/40'}
-                onClick={() => navigate(`/booking?source=${encodeURIComponent(bookingSource)}&bookingKind=course`)}
+                onClick={() => {
+                  // Remove redirect: update state in-place
+                  window.history.replaceState(null, '', `?source=${encodeURIComponent(bookingSource)}&bookingKind=course`);
+                  window.location.reload();
+                }}
               >
                 Course
               </Button>
@@ -319,7 +341,10 @@ const       BookingPage: React.FC = () => {
                 type="button"
                 variant={isDiveBooking ? 'default' : 'outline'}
                 className={isDiveBooking ? 'bg-blue-500 hover:bg-blue-400 text-white border-blue-500' : 'bg-white/10 hover:bg-white/20 text-white border-white/40'}
-                onClick={() => navigate(`/booking?source=${encodeURIComponent(bookingSource)}&bookingKind=dive`)}
+                onClick={() => {
+                  window.history.replaceState(null, '', `?source=${encodeURIComponent(bookingSource)}&bookingKind=dive`);
+                  window.location.reload();
+                }}
               >
                 Fun Dives
               </Button>

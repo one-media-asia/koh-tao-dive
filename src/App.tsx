@@ -203,7 +203,7 @@ const App = () => (
               <Route path="/accommodation-booking" element={<BookingAffiliate />} />
               <Route path="/agoda-hotels" element={<AgodaHotels />} />
               <Route path="/clicks-dashboard" element={<ClicksDashboard />} />
-              <Route path="/booking" element={<BookingPage />} />
+              <Route path="/booking" element={<RequireAdmin><BookingPage /></RequireAdmin>} />
               <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} />
               <Route path="/login" element={<Login />} />
               <Route path="/admin/login" element={<Login />} />
