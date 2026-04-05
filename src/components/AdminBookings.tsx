@@ -519,17 +519,7 @@ const AdminBookings: React.FC = () => {
                   </a>
                 )}
                 {/* Trip.com link removed as requested */}
-                <button
-                  className="ml-2 px-2 py-1 text-xs bg-blue-700 text-white rounded"
-                  onClick={() => escalateToJira(b)}
-                  disabled={jiraStatus[b.id] === 'Sending...'}
-                  title="Escalate this booking to Jira"
-                >
-                  {jiraStatus[b.id] === 'Sending...' ? 'Escalating...' : 'Escalate to Jira'}
-                </button>
-                {jiraStatus[b.id] && jiraStatus[b.id] !== 'Sending...' && (
-                  <span className="ml-2 text-xs text-emerald-700">{jiraStatus[b.id]}</span>
-                )}
+                {/* Escalate to Jira button removed as export to Jira now works */}
                 <button
                   className="ml-2 px-2 py-1 text-xs bg-slate-600 text-white rounded"
                   onClick={() => copyBookingDetails(b)}
