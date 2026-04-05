@@ -248,28 +248,15 @@ const BookingPage: React.FC = () => {
                 {isSubmitting ? 'Sending...' : 'Submit Inquiry'}
               </Button>
             </div>
-          </form>
-        </Form>
-
-        {showPaymentLinks && (
-          <div className="mt-8 p-6 border rounded-xl bg-muted/50 text-center space-y-4">
-            <h2 className="text-xl font-bold">Pay Your Deposit</h2>
-            <p className="text-muted-foreground">Your inquiry has been sent! To secure your booking, pay the deposit of <strong>฿{depositMajor + totalAddons}</strong> via PayPal:</p>
-            <div className="space-y-3">
-              <a
-                href={`${PAYPAL_LINK}/${depositMajor + totalAddons}THB`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                  <Button className="bg-[#0070ba] hover:bg-[#005ea6] text-white px-8 py-3 text-lg w-full">
-                    Pay ฿{depositMajor + totalAddons} (THB) with PayPal
-                  </Button>
-                  <p className="text-xs text-muted-foreground mt-1">Amount will be charged in Thai Baht (THB).</p>
-              </a>
-              <p className="text-sm text-muted-foreground">or</p>
-              <a
-                href={PAYPAL_LINK}
-                target="_blank"
+          try {
+            const amountMajor = (isStayBooking ? 0 : depositMajor) + totalAddons;
+            const selectedAddonsList = isDiveBooking
+              ? availableAddons.filter((addon) => selectedAddons[addon.id]).map((addon) => ({
+                  id: addon.id,
+                  label: addon.label,
+                  amount: addon.amount,
+                }))
+              : [];
                 rel="noopener noreferrer"
               >
                 <Button variant="outline" className="px-8 py-3 text-lg w-full">
