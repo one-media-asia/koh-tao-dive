@@ -1,11 +1,11 @@
-// PATCH method is supported locally and on platforms that allow all HTTP methods for API routes.
+ts // PATCH method is supported locally and on platforms that allow all HTTP methods for API routes.
 // If deploying to Vercel and PATCH is not allowed, consider using POST with an action parameter instead.
 // import { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SERVICE_ROLE_KEY;
-const BOOKING_TABLE = 'booking_inquiries';
+const BOOKING_TABLE = 'bookings';
 
 const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, { realtime: { enabled: false } });
 
