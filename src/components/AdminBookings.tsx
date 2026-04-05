@@ -1,49 +1,3 @@
-import Papa from 'papaparse';
-  // Filter state
-  const [filterStatus, setFilterStatus] = useState<string>('');
-  const [filterText, setFilterText] = useState<string>('');
-  const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [deleting, setDeleting] = useState(false);
-  const [deleteResult, setDeleteResult] = useState<string | null>(null);
-  // Filtered bookings
-  const filteredBookings = bookings.filter((b) => {
-    const statusMatch = filterStatus ? (b.status === filterStatus) : true;
-    const text = filterText.toLowerCase();
-    const textMatch =
-      !text ||
-      b.name.toLowerCase().includes(text) ||
-      b.email.toLowerCase().includes(text) ||
-      (b.course_title && b.course_title.toLowerCase().includes(text)) ||
-      (b.phone && b.phone.toLowerCase().includes(text));
-    return statusMatch && textMatch;
-  });
-  // Delete booking
-  const handleDelete = async (id: string) => {
-    setDeleting(true);
-    setDeleteResult(null);
-    try {
-      const { error } = await supabase.from('bookings').delete().eq('id', id);
-      if (error) throw error;
-      setBookings((prev) => prev.filter((b) => b.id !== id));
-      setDeleteResult('Booking deleted.');
-    } catch (err: any) {
-      setDeleteResult(err.message || 'Delete failed.');
-    } finally {
-      setDeleting(false);
-      setDeleteId(null);
-    }
-  };
-  // Export CSV
-  const handleExportCSV = () => {
-    const csv = Papa.unparse(filteredBookings.map(({ id, ...b }) => b));
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'bookings.csv';
-    a.click();
-    URL.revokeObjectURL(url);
-  };
 // AdminBookings.tsx
 // Clean admin bookings table: shows Name, Email, Phone, Course, Date, Total, Deposit, To Be Paid, PayPal link.
 // To add more columns or features, edit below. For comments or notes, add a new column and input logic as needed.
@@ -76,6 +30,54 @@ interface Booking {
 
 
 const AdminBookings: React.FC = () => {
+    // Filter state
+    const [filterStatus, setFilterStatus] = useState<string>('');
+    const [filterText, setFilterText] = useState<string>('');
+    const [deleteId, setDeleteId] = useState<string | null>(null);
+    const [deleting, setDeleting] = useState(false);
+    const [deleteResult, setDeleteResult] = useState<string | null>(null);
+
+    // Filtered bookings
+    const filteredBookings = bookings.filter((b) => {
+      const statusMatch = filterStatus ? (b.status === filterStatus) : true;
+      const text = filterText.toLowerCase();
+      const textMatch =
+        !text ||
+        b.name.toLowerCase().includes(text) ||
+        b.email.toLowerCase().includes(text) ||
+        (b.course_title && b.course_title.toLowerCase().includes(text)) ||
+        (b.phone && b.phone.toLowerCase().includes(text));
+      return statusMatch && textMatch;
+    });
+
+    // Delete booking
+    const handleDelete = async (id: string) => {
+      setDeleting(true);
+      setDeleteResult(null);
+      try {
+        const { error } = await supabase.from('bookings').delete().eq('id', id);
+        if (error) throw error;
+        setBookings((prev) => prev.filter((b) => b.id !== id));
+        setDeleteResult('Booking deleted.');
+      } catch (err: any) {
+        setDeleteResult(err.message || 'Delete failed.');
+      } finally {
+        setDeleting(false);
+        setDeleteId(null);
+      }
+    };
+
+    // Export CSV
+    const handleExportCSV = () => {
+      const csv = Papa.unparse(filteredBookings.map(({ id, ...b }) => b));
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'bookings.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    };
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -565,91 +567,89 @@ const AdminBookings: React.FC = () => {
                   )}
                 </div>
               </td>
-              <td className="border px-2 py-1">
-                <button
-                  type="button"
-                  onClick={() => setFinanceModalBooking(b)}
-                  className="mt-2 rounded bg-slate-700 px-2 py-1 text-xs font-semibold text-white hover:bg-slate-800"
-                >
-                  Finance
-                </button>
-              </td>
-              <td className="border px-2 py-1">
-                {buildPayPalUrl(b) && (
-                  <a
-                    href={buildPayPalUrl(b) || '#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 underline"
-                  >
-                    PayPal
-                  </a>
-                )}
-                {/* Trip.com link removed as requested */}
-                {/* Escalate to Jira button removed as export to Jira now works */}
-                <button
-                  className="ml-2 px-2 py-1 text-xs bg-slate-600 text-white rounded"
-                  onClick={() => copyBookingDetails(b)}
-                  title="Copy booking details to clipboard"
-                >
-                  Copy Details
-                </button>
-                {copyStatus[b.id] && (
-                  <span className="ml-2 text-xs text-emerald-700">{copyStatus[b.id]}</span>
-                )}
-              </td>
-              <td className="border px-2 py-1">
-                <button
-                  className="px-2 py-1 text-xs bg-red-600 text-white rounded"
-                  onClick={() => setDeleteId(b.id)}
-                  disabled={deleting && deleteId === b.id}
-                  title="Delete booking"
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      )}
-
-      {/* Delete confirmation dialog */}
-      <Dialog open={Boolean(deleteId)} onOpenChange={(open) => { if (!open) setDeleteId(null); }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Booking</DialogTitle>
-          </DialogHeader>
-          <div>Are you sure you want to delete this booking?</div>
-          <div className="flex gap-3 mt-4">
-            <button
-              className="px-4 py-2 bg-red-600 text-white rounded"
-              onClick={() => deleteId && handleDelete(deleteId)}
-              disabled={deleting}
-            >
-              {deleting ? 'Deleting...' : 'Delete'}
-            </button>
-            <button
-              className="px-4 py-2 bg-slate-300 text-slate-800 rounded"
-              onClick={() => setDeleteId(null)}
-              disabled={deleting}
-            >
-              Cancel
-            </button>
-          </div>
-          {deleteResult && <div className="mt-2 text-red-700">{deleteResult}</div>}
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={Boolean(financeModalBooking)} onOpenChange={(open) => { if (!open) setFinanceModalBooking(null); }}>
-        <DialogContent className="sm:max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>
-              Individual Finance Details{financeModalBooking ? ` - ${financeModalBooking.name}` : ''}
-            </DialogTitle>
-          </DialogHeader>
-
+                  <tr key={b.id}>
+                    <td className="border px-1 py-1 whitespace-nowrap">{b.name}</td>
+                    <td className="border px-1 py-1 whitespace-nowrap">{b.email}</td>
+                    <td className="border px-1 py-1 whitespace-nowrap">{b.phone || '-'}</td>
+                    <td className="border px-1 py-1 whitespace-nowrap">{b.course_title}</td>
+                    <td className="border px-1 py-1 whitespace-nowrap">{b.preferred_date || '-'}</td>
+                    <td className="border px-1 py-1 whitespace-nowrap">
+                      <div className="flex items-center gap-2">
+                        <select
+                          className="border rounded px-2 py-1"
+                          title="Booking status"
+                          value={statusDrafts[b.id] || b.status || 'pending'}
+                          onChange={(e) => {
+                            const nextStatus = e.target.value;
+                            setStatusDrafts((prev) => ({ ...prev, [b.id]: nextStatus }));
+                          }}
+                        >
+                          <option value="pending">pending</option>
+                          <option value="confirmed">confirmed</option>
+                          <option value="cancelled">cancelled</option>
+                        </select>
+                        <button
+                          className="px-2 py-1 text-xs bg-emerald-600 text-white rounded disabled:opacity-60"
+                          disabled={statusSavingId === b.id || (statusDrafts[b.id] || b.status) === b.status}
+                          onClick={() => saveStatus(b.id)}
+                        >
+                          {statusSavingId === b.id ? 'Saving...' : 'Save'}
+                        </button>
+                        {b.status !== 'confirmed' && (
+                          <button
+                            className="px-2 py-1 text-xs bg-blue-600 text-white rounded disabled:opacity-60"
+                            disabled={statusSavingId === b.id}
+                            onClick={() => {
+                              setStatusDrafts((prev) => ({ ...prev, [b.id]: 'confirmed' }));
+                              saveStatus(b.id, 'confirmed');
+                            }}
+                          >
+                            Confirm
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                    <td className="border px-2 py-1">
+                      <button
+                        type="button"
+                        onClick={() => setFinanceModalBooking(b)}
+                        className="mt-2 rounded bg-slate-700 px-2 py-1 text-xs font-semibold text-white hover:bg-slate-800"
+                      >
+                        Finance
+                      </button>
+                    </td>
+                    <td className="border px-2 py-1">
+                      {buildPayPalUrl(b) && (
+                        <a
+                          href={buildPayPalUrl(b) || '#'}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 underline"
+                        >
+                          PayPal
+                        </a>
+                      )}
+                      <button
+                        className="ml-2 px-2 py-1 text-xs bg-slate-600 text-white rounded"
+                        onClick={() => copyBookingDetails(b)}
+                        title="Copy booking details to clipboard"
+                      >
+                        Copy Details
+                      </button>
+                      {copyStatus[b.id] && (
+                        <span className="ml-2 text-xs text-emerald-700">{copyStatus[b.id]}</span>
+                      )}
+                    </td>
+                    <td className="border px-2 py-1">
+                      <button
+                        className="px-2 py-1 text-xs bg-red-600 text-white rounded"
+                        onClick={() => setDeleteId(b.id)}
+                        disabled={deleting && deleteId === b.id}
+                        title="Delete booking"
+                      >
+                        Delete
+                      </button>
+                    </td>
           {financeModalBooking && (
             <div className="space-y-3 text-sm">
               {/* Finance Section Heading and Status */}
