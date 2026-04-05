@@ -102,6 +102,26 @@ const sendWithSmtp = async ({ name, email, subject, message, course, preferred_d
 };
 
 export default async function handler(req, res) {
+  // --- CORS headers ---
+  const allowedOrigins = [
+    'https://www.divinginasia.com',
+    'https://divinginasia.com',
+    'http://localhost:3000',
+    'http://localhost:5173',
+  ];
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+  } else {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') {
+    res.status(204).end();
+    return;
+  }
   try {
     if (req.method !== 'POST') {
       res.status(405).json({ error: 'Method not allowed' });
