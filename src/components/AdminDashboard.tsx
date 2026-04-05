@@ -13,14 +13,14 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <div className="flex flex-wrap items-center gap-4 mb-4 text-sm text-slate-700">
-        <a href="#" className="hover:underline" onClick={e => { e.preventDefault(); setActiveTab('pages'); }}>Pages Manager</a>
-        <span>|</span>
-        <a href="#" className="hover:underline" onClick={e => { e.preventDefault(); setActiveTab('project'); }}>Project Manager</a>
-        <span>|</span>
-        <a href="#" className="hover:underline" onClick={e => { e.preventDefault(); setActiveTab('finance'); }}>Global Finance Defaults</a>
-        <span className="flex-1" />
-        <a href="/" className="bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1 rounded transition">Back to Main Page</a>
+      <div className="mb-4 text-sm text-slate-700 text-center">
+        <a href="#" onClick={e => { e.preventDefault(); setActiveTab('pages'); }} className="hover:underline mx-2">Pages Manager</a>
+        |
+        <a href="#" onClick={e => { e.preventDefault(); setActiveTab('project'); }} className="hover:underline mx-2">Project Manager</a>
+        |
+        <a href="#" onClick={e => { e.preventDefault(); setActiveTab('finance'); }} className="hover:underline mx-2">Global Finance Defaults</a>
+        |
+        <a href="/" className="hover:underline mx-2">Back to Main Page</a>
       </div>
       <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
       <div className="flex gap-4 mb-6 border-b pb-2">
