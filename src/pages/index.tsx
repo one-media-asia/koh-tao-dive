@@ -9,6 +9,7 @@ import About from '../components/About';
 import Contact from '../components/Contact';
 import FunDiving from './FunDiving';
 import CurrencyExchange from '../components/CurrencyExchange';
+import FinanceSummary from '../components/FinanceSummary';
 
 const Index = () => {
 	const location = useLocation();
@@ -28,6 +29,7 @@ const Index = () => {
 	return (
 		<div className="min-h-screen bg-background">
 			<Hero />
+			<FinanceSummary />
 			<About />
 			<CurrencyExchange />
 			<DiveSites />

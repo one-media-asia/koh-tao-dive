@@ -5,6 +5,7 @@ const TABS = [
   { key: 'bookings', label: 'Bookings' },
   { key: 'tickets', label: 'Tickets' },
   { key: 'invoices', label: 'Invoices' },
+  { key: 'project', label: 'Project Manager' },
 ];
 
 const AdminDashboard: React.FC = () => {
@@ -38,6 +39,13 @@ const AdminDashboard: React.FC = () => {
             <h2 className="text-xl font-semibold mb-4">Invoices</h2>
             {/* TODO: Generate/view/download invoices here */}
             <p>Invoice management coming soon...</p>
+          </div>
+        )}
+        {activeTab === 'project' && (
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Project Manager</h2>
+            {/* TODO: Add project management features here */}
+            <p>Project management coming soon...</p>
           </div>
         )}
       </div>

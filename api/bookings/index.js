@@ -211,8 +211,26 @@ export default async function handler(req, res) {
 
     if (req.method === 'GET') {
       try {
-        const { rows } = await selectBookings();
-        return res.json((rows || []).map(normalizeBooking));
+        // Check for Supabase Auth JWT in Authorization header
+        const authHeader = req.headers['authorization'] || req.headers['Authorization'];
+        let userId = null;
+        let isAdmin = false;
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+          const jwt = authHeader.slice(7);
+          // Decode JWT to get user id (sub) and role
+          const payload = JSON.parse(Buffer.from(jwt.split('.')[1], 'base64').toString('utf8'));
+          userId = payload.sub;
+          isAdmin = payload.role === 'service_role' || payload.role === 'admin';
+        }
+        if (isAdmin) {
+          const { rows } = await selectBookings();
+          return res.json((rows || []).map(normalizeBooking));
+        } else if (userId) {
+          const { rows } = await selectBookingsForUser(userId);
+          return res.json((rows || []).map(normalizeBooking));
+        } else {
+          return res.status(401).json({ error: 'Unauthorized' });
+        }
       } catch (err) {
         return res.status(500).json({ error: err?.message || 'Failed to load bookings from database' });
       }

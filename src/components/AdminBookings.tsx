@@ -453,6 +453,7 @@ const AdminBookings: React.FC = () => {
                   <th className="border px-1 py-1 whitespace-nowrap">Course</th>
                   <th className="border px-1 py-1 whitespace-nowrap">Date</th>
                   <th className="border px-1 py-1 whitespace-nowrap">Status</th>
+                  <th className="border px-1 py-1 whitespace-nowrap">Notes</th>
                   <th className="border px-1 py-1 whitespace-nowrap">Finance</th>
                   <th className="border px-1 py-1 whitespace-nowrap">PayPal</th>
                   <th className="border px-1 py-1 whitespace-nowrap">Delete</th>
@@ -461,11 +462,37 @@ const AdminBookings: React.FC = () => {
               <tbody>
                 {filteredBookings.map((b) => (
                   <tr key={b.id}>
-                    <td className="border px-1 py-1 whitespace-nowrap">{b.name}</td>
-                    <td className="border px-1 py-1 whitespace-nowrap">{b.email}</td>
-                    <td className="border px-1 py-1 whitespace-nowrap">{b.phone || '-'}</td>
-                    <td className="border px-1 py-1 whitespace-nowrap">{b.course_title}</td>
-                    <td className="border px-1 py-1 whitespace-nowrap">{b.preferred_date || '-'}</td>
+                    {/* Inline editable fields for name, email, phone, course, date */}
+                    <td className="border px-1 py-1 whitespace-nowrap">
+                      <InlineEditCell
+                        value={b.name}
+                        onSave={async (val) => await handleInlineEdit(b.id, 'name', val)}
+                      />
+                    </td>
+                    <td className="border px-1 py-1 whitespace-nowrap">
+                      <InlineEditCell
+                        value={b.email}
+                        onSave={async (val) => await handleInlineEdit(b.id, 'email', val)}
+                      />
+                    </td>
+                    <td className="border px-1 py-1 whitespace-nowrap">
+                      <InlineEditCell
+                        value={b.phone || ''}
+                        onSave={async (val) => await handleInlineEdit(b.id, 'phone', val)}
+                      />
+                    </td>
+                    <td className="border px-1 py-1 whitespace-nowrap">
+                      <InlineEditCell
+                        value={b.course_title}
+                        onSave={async (val) => await handleInlineEdit(b.id, 'course_title', val)}
+                      />
+                    </td>
+                    <td className="border px-1 py-1 whitespace-nowrap">
+                      <InlineEditCell
+                        value={b.preferred_date || ''}
+                        onSave={async (val) => await handleInlineEdit(b.id, 'preferred_date', val)}
+                      />
+                    </td>
                     <td className="border px-1 py-1 whitespace-nowrap">
                       <div className="flex items-center gap-2">
                         <select
@@ -501,6 +528,14 @@ const AdminBookings: React.FC = () => {
                           </button>
                         )}
                       </div>
+                    </td>
+                    {/* Notes column with inline edit */}
+                    <td className="border px-1 py-1 whitespace-nowrap">
+                      <InlineEditCell
+                        value={b.internal_notes || ''}
+                        onSave={async (val) => await handleInlineEdit(b.id, 'internal_notes', val)}
+                        textarea
+                      />
                     </td>
                     <td className="border px-2 py-1">
                       <button
@@ -545,6 +580,68 @@ const AdminBookings: React.FC = () => {
                     </td>
                   </tr>
                 ))}
+              // InlineEditCell component for inline editing
+              const InlineEditCell: React.FC<{
+                value: string;
+                onSave: (val: string) => Promise<void>;
+                textarea?: boolean;
+              }> = ({ value, onSave, textarea }) => {
+                const [editing, setEditing] = useState(false);
+                const [draft, setDraft] = useState(value);
+                const [saving, setSaving] = useState(false);
+                useEffect(() => { setDraft(value); }, [value]);
+                return editing ? (
+                  <span>
+                    {textarea ? (
+                      <textarea
+                        className="border rounded px-1 py-1 w-full"
+                        value={draft}
+                        onChange={e => setDraft(e.target.value)}
+                        rows={2}
+                      />
+                    ) : (
+                      <input
+                        className="border rounded px-1 py-1 w-full"
+                        value={draft}
+                        onChange={e => setDraft(e.target.value)}
+                      />
+                    )}
+                    <button
+                      className="ml-1 px-2 py-1 text-xs bg-blue-600 text-white rounded"
+                      disabled={saving}
+                      onClick={async () => {
+                        setSaving(true);
+                        await onSave(draft);
+                        setSaving(false);
+                        setEditing(false);
+                      }}
+                    >Save</button>
+                    <button
+                      className="ml-1 px-2 py-1 text-xs bg-gray-400 text-white rounded"
+                      onClick={() => { setEditing(false); setDraft(value); }}
+                    >Cancel</button>
+                  </span>
+                ) : (
+                  <span onClick={() => setEditing(true)} className="cursor-pointer hover:underline">
+                    {value || <span className="text-gray-400">(empty)</span>}
+                  </span>
+                );
+              };
+
+              // Handler for inline edit save
+              const handleInlineEdit = async (id: string, field: string, value: string) => {
+                try {
+                  const res = await fetch('/api/bookings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, [field]: value }),
+                  });
+                  if (!res.ok) throw new Error('Failed to update');
+                  setBookings(prev => prev.map(b => b.id === id ? { ...b, [field]: value } : b));
+                } catch (err) {
+                  // Optionally show error
+                }
+              };
               </tbody>
             </table>
           )}
