@@ -54,7 +54,7 @@ const buildAdminHtml = ({
             </tbody>
           </table>
           <div style="margin-top: 32px; text-align: center;">
-            <a href="https://www.divinginasia.com/admin/" style="display: inline-block; background: #2563eb; color: #fff; padding: 12px 28px; border-radius: 6px; font-weight: bold; text-decoration: none; font-size: 16px;">Open Project Manager</a>
+            <a href="https://koh-tao-dive-dreams.vercel.app/admin" style="display: inline-block; background: #2563eb; color: #fff; padding: 12px 28px; border-radius: 6px; font-weight: bold; text-decoration: none; font-size: 16px;">Open Project Manager</a>
           </div>
         </div>
       </div>
