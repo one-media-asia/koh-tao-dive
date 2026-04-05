@@ -23,6 +23,7 @@ const Admin = () => {
   const jiraProjectUrl = import.meta.env.VITE_JIRA_PROJECT_URL || jiraEmbedUrl || 'https://divinginasia.atlassian.net';
   const [activeTab, setActiveTab] = useState('bookings');
   const [bookings, setBookings] = useState([]);
+  const [adminEmail, setAdminEmail] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [selectedBookingId, setSelectedBookingId] = useState(null);
   const [commentDraft, setCommentDraft] = useState('');
@@ -98,6 +99,15 @@ const Admin = () => {
   };
 
   useEffect(() => {
+    // Always get admin email on mount
+    async function fetchAdminEmail() {
+      const { data: { session } } = await supabase.auth.getSession();
+      setAdminEmail(session?.user?.email || null);
+    }
+    fetchAdminEmail();
+  }, []);
+
+  useEffect(() => {
     if (activeTab === 'bookings' || activeTab === 'comments') {
       setLoading(true);
       async function fetchBookings() {
@@ -161,6 +171,9 @@ const Admin = () => {
     <header className="w-full py-8 mb-8 bg-gradient-to-r from-blue-700 to-emerald-600 shadow-lg text-white rounded-b-3xl flex flex-col items-center">
       <h1 className="text-3xl font-bold tracking-wide mb-2">Admin Dashboard</h1>
       <p className="text-lg opacity-80">Manage bookings, pages, and more</p>
+      {adminEmail && (
+        <div className="mt-2 text-base text-emerald-100 opacity-90">Logged in as: <span className="font-semibold">{adminEmail}</span></div>
+      )}
     </header>
       {/* Centered horizontal tab row with more spacing */}
       <div className="flex flex-col items-center mb-8">
