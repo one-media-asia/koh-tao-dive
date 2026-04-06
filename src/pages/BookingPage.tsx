@@ -235,29 +235,6 @@ const BookingPage: React.FC = () => {
                 {isSubmitting ? 'Sending...' : 'Submit Inquiry'}
               </Button>
             </div>
-          try {
-            const amountMajor = (isStayBooking ? 0 : depositMajor) + totalAddons;
-            const selectedAddonsList = isDiveBooking
-              ? availableAddons.filter((addon) => selectedAddons[addon.id]).map((addon) => ({
-                  id: addon.id,
-                  label: addon.label,
-                  amount: addon.amount,
-                }))
-              : [];
-                rel="noopener noreferrer"
-              >
-                <Button variant="outline" className="px-8 py-3 text-lg w-full">
-                  Open PayPal.me/prodivingasia
-                </Button>
-              </a>
-            </div>
-            <p className="text-sm text-muted-foreground">Or <button className="underline" onClick={() => { 
-              form.reset(); 
-              setShowPaymentLinks(false); 
-              setShowSkipPaymentPopup(true); 
-            }}>skip payment for now</button></p>
-          </div>
-        )}
       </div>
 
       <AlertDialog open={showStayPopup} onOpenChange={setShowStayPopup}>
