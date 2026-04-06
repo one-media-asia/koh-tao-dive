@@ -187,55 +187,65 @@ const BookingPage: React.FC = () => {
             amount: addon.amount,
           }))
         : [];
+      // ...existing code...
+    } catch (error) {
+      // ...existing code...
+    }
+  };
 
-            <FormField control={form.control} name="message" render={({ field }) => (
-              <FormItem>
-                <FormLabel className="flex items-center gap-2"><MessageSquare className="h-4 w-4" /> Message</FormLabel>
-                <FormControl><Textarea placeholder="Any special requests or questions?" rows={3} {...field} /></FormControl>
-                <FormMessage />
-              </FormItem>
-            )} />
+  return (
+    <div>
+      {/* Example: wrap your form in <Form> if needed, and include all form fields here */}
+      <Form /* ...form props... */>
+        {/* ...other form fields... */}
+        <FormField control={form.control} name="message" render={({ field }) => (
+          <FormItem>
+            <FormLabel className="flex items-center gap-2"><MessageSquare className="h-4 w-4" /> Message</FormLabel>
+            <FormControl><Textarea placeholder="Any special requests or questions?" rows={3} {...field} /></FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
 
-            <FormField control={form.control} name="paymentChoice" render={({ field }) => (
-              <FormItem>
-                <FormLabel>Payment Method</FormLabel>
-                <FormControl>
-                  <div className="space-y-2">
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        id="payment-now"
-                        name="paymentChoice"
-                        value="now"
-                        checked={field.value === 'now'}
-                        onChange={() => field.onChange('now')}
-                      />
-                      <span>{isStayBooking ? 'Pay after confirmation' : 'Pay deposit now with PayPal'}</span>
-                    </label>
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        id="payment-none"
-                        name="paymentChoice"
-                        value="none"
-                        checked={field.value === 'none'}
-                        onChange={() => field.onChange('none')}
-                      />
-                      <span>{isStayBooking ? 'Send accommodation inquiry' : 'Pay later (inquire only)'}</span>
-                    </label>
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )} />
+        <FormField control={form.control} name="paymentChoice" render={({ field }) => (
+          <FormItem>
+            <FormLabel>Payment Method</FormLabel>
+            <FormControl>
+              <div className="space-y-2">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    id="payment-now"
+                    name="paymentChoice"
+                    value="now"
+                    checked={field.value === 'now'}
+                    onChange={() => field.onChange('now')}
+                  />
+                  <span>{isStayBooking ? 'Pay after confirmation' : 'Pay deposit now with PayPal'}</span>
+                </label>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    id="payment-none"
+                    name="paymentChoice"
+                    value="none"
+                    checked={field.value === 'none'}
+                    onChange={() => field.onChange('none')}
+                  />
+                  <span>{isStayBooking ? 'Send accommodation inquiry' : 'Pay later (inquire only)'}</span>
+                </label>
+              </div>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
 
-            <div className="flex gap-3 pt-4">
-              <Button type="button" variant="outline" onClick={() => navigate(-1)} className="flex-1">Cancel</Button>
-              <Button type="submit" disabled={isSubmitting} className="flex-1 bg-primary hover:bg-primary/90">
-                {isSubmitting ? 'Sending...' : 'Submit Inquiry'}
-              </Button>
-            </div>
-      </div>
+        <div className="flex gap-3 pt-4">
+          <Button type="button" variant="outline" onClick={() => navigate(-1)} className="flex-1">Cancel</Button>
+          <Button type="submit" disabled={isSubmitting} className="flex-1 bg-primary hover:bg-primary/90">
+            {isSubmitting ? 'Sending...' : 'Submit Inquiry'}
+          </Button>
+        </div>
+      </Form>
 
       <AlertDialog open={showStayPopup} onOpenChange={setShowStayPopup}>
         <AlertDialogContent>
@@ -277,6 +287,6 @@ const BookingPage: React.FC = () => {
       </AlertDialog>
     </div>
   );
-};
+}
 
 export default BookingPage;
