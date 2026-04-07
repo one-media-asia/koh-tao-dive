@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
@@ -36,6 +36,9 @@ const isPageContentRows = (value: unknown): value is PageContentRow[] =>
       item !== null &&
       typeof (item as Record<string, unknown>).section_key === 'string'
   );
+
+// Global set to track active Supabase channels (prevents duplicate subscriptions)
+const activeChannels = new Set<string>();
 
 export function usePageContent({ pageSlug, locale, fallbackContent }: UsePageContentOptions) {
   const [content, setContent] = useState<PageContent>(fallbackContent);
@@ -161,12 +164,18 @@ export function usePageContent({ pageSlug, locale, fallbackContent }: UsePageCon
     fetchContent();
 
 
-    // Prevent duplicate subscriptions by using a ref
+
+    const channelName = `page_content:${pageSlug}:${locale}`;
+    if (activeChannels.has(channelName)) {
+      console.warn('[Supabase] Already subscribed to channel:', channelName);
+      return;
+    }
+    activeChannels.add(channelName);
     let channel: any = null;
     let unsubscribed = false;
-    console.log('[Supabase] Subscribing to channel:', `page_content:${pageSlug}:${locale}`);
+    console.log('[Supabase] Subscribing to channel:', channelName);
     channel = supabase
-      .channel(`page_content:${pageSlug}:${locale}`)
+      .channel(channelName)
       .on(
         'postgres_changes',
         {
@@ -200,9 +209,10 @@ export function usePageContent({ pageSlug, locale, fallbackContent }: UsePageCon
     return () => {
       unsubscribed = true;
       if (channel) {
-        console.log('[Supabase] Removing channel:', `page_content:${pageSlug}:${locale}`);
+        console.log('[Supabase] Removing channel:', channelName);
         supabase.removeChannel(channel);
       }
+      activeChannels.delete(channelName);
     };
   }, [pageSlug, locale, fallbackContent]);
 
