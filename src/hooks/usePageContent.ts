@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
+const { data, error } = await getPageContent("home");
 
+if (!data) {
+  // currently likely returns nothing → blank page
+}
 interface PageContent {
   [key: string]: string;
 }
