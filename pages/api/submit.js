@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import { applyCors } from '../_lib/cors.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
@@ -36,6 +36,22 @@ export default async function handler(req, res) {
         .insert([payload])
         .select();
       if (error) throw new Error(error.message);
+
+      // Send booking email using Resend
+      try {
+        const resend = new Resend(process.env.RESEND_API_KEY);
+        await resend.emails.send({
+          from: process.env.SMTP_FROM || 'no-reply@divinginasia.com',
+          to: process.env.CONTACT_EMAIL || 'contact@divinginasia.com',
+          subject: 'New Booking Submission',
+          text: `Name: ${payload.name}\nEmail: ${payload.email}\nPhone: ${payload.phone}\nCourse: ${payload.course_title || ''}\nPreferred Date: ${payload.preferred_date || ''}\nExperience Level: ${payload.experience_level || ''}\nMessage: ${payload.message || ''}`,
+          reply_to: payload.email,
+        });
+      } catch (mailErr) {
+        // Log but do not block booking creation
+        console.error('Resend email error:', mailErr);
+      }
+
       res.status(200).json({ message: 'Booking created', data });
     } catch (err) {
       res.status(500).json({ error: err.message || 'Booking creation failed' });
