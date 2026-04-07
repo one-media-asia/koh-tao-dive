@@ -1,220 +1,51 @@
-import { useState, useEffect, useRef } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
 
-// Example usage (should be inside a function/hook):
-// const { data, error } = await supabase
-//   .from("page_content")
-//   .select("*")
-//   .eq("slug", "home");
-interface PageContent {
-  [key: string]: string;
-}
+const cleanEnv = (value) => String(value || '').replace(/\\n/g, '').trim();
 
-interface UsePageContentOptions {
-  pageSlug: string;
-  locale: string;
-  fallbackContent: PageContent;
-}
+const SUPABASE_URL = cleanEnv(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL);
+const SUPABASE_API_KEY = cleanEnv(
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  process.env.SERVICE_ROLE_KEY ||
+  process.env.SUPABASE_ANON_KEY
+);
 
-interface PageContentRow {
-  section_key: string;
-  content_value: string | null;
-  updated_at?: string | null;
-}
+const supabase = SUPABASE_URL && SUPABASE_API_KEY
+  ? createClient(SUPABASE_URL, SUPABASE_API_KEY, { realtime: { enabled: false } })
+  : null;
 
-interface RealtimePageContentRow extends PageContentRow {
-  page_slug: string;
-  locale: string;
-}
+export default async function handler(req, res) {
+  res.setHeader('Cache-Control', 'no-store, max-age=0');
 
-const isPageContentRows = (value: unknown): value is PageContentRow[] =>
-  Array.isArray(value) &&
-  value.every(
-    (item) =>
-      typeof item === 'object' &&
-      item !== null &&
-      typeof (item as Record<string, unknown>).section_key === 'string'
-  );
+  if (req.method !== 'GET') {
+    res.setHeader('Allow', 'GET');
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
-// Global set to track active Supabase channels (prevents duplicate subscriptions)
-const activeChannels = new Set<string>();
+  const pageSlug = String(req.query.page_slug || '').trim();
+  const locale = String(req.query.locale || 'en').trim();
 
-export function usePageContent({ pageSlug, locale, fallbackContent }: UsePageContentOptions) {
-  const [content, setContent] = useState<PageContent>(fallbackContent);
-  const [isLoading, setIsLoading] = useState(true);
+  if (!pageSlug) {
+    return res.status(400).json({ error: 'Missing page_slug' });
+  }
 
-  useEffect(() => {
-    setIsLoading(true);
+  if (!supabase) {
+    return res.status(500).json({ error: 'Supabase not configured' });
+  }
 
-    const mergeRowsAndSet = (rows: PageContentRow[] | null | undefined) => {
-      if (rows && rows.length > 0) {
-        const latestBySection = new Map<string, PageContentRow>();
+  try {
+    const { data, error } = await supabase
+      .from('page_content')
+      .select('section_key, content_value, content_type, locale, page_slug, updated_at')
+      .eq('page_slug', pageSlug)
+      .eq('locale', locale)
+      .order('section_key', { ascending: true });
 
-        rows.forEach((row) => {
-          const existing = latestBySection.get(row.section_key);
-
-          if (!existing) {
-            latestBySection.set(row.section_key, row);
-            return;
-          }
-
-          const existingTs = Date.parse(existing.updated_at || '');
-          const incomingTs = Date.parse(row.updated_at || '');
-
-          const hasIncomingTs = Number.isFinite(incomingTs);
-          const hasExistingTs = Number.isFinite(existingTs);
-
-          if (!hasExistingTs && hasIncomingTs) {
-            latestBySection.set(row.section_key, row);
-            return;
-          }
-
-          if (hasIncomingTs && hasExistingTs && incomingTs > existingTs) {
-            latestBySection.set(row.section_key, row);
-            return;
-          }
-
-          // If timestamps are missing or equal, keep the later row seen.
-          if (!hasIncomingTs && !hasExistingTs) {
-            latestBySection.set(row.section_key, row);
-          }
-        });
-
-        const stripHtml = (str: string) => str.replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ').trim();
-
-        const dbContent: PageContent = {};
-        latestBySection.forEach((row) => {
-          const val = row.content_value;
-          if (val == null || val === '') return;
-          dbContent[row.section_key] = val.includes('<') ? stripHtml(val) : val;
-        });
-
-        setContent({ ...fallbackContent, ...dbContent });
-        return true;
-      }
-      return false;
-    };
-
-    const applyRealtimeRow = (row: Partial<RealtimePageContentRow> | null | undefined) => {
-      if (!row || row.page_slug !== pageSlug || row.locale !== locale) {
-        return;
-      }
-
-      const sectionKey = row.section_key;
-      const contentValue = row.content_value;
-
-      if (!sectionKey) {
-        return;
-      }
-
-      const safeValue = contentValue
-        ? (contentValue.includes('<') ? contentValue.replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ').trim() : contentValue)
-        : null;
-
-      setContent((prev) => ({
-        ...prev,
-        [sectionKey]: safeValue ?? fallbackContent[sectionKey] ?? '',
-      }));
-    };
-
-    const fetchContent = async () => {
-      try {
-        const apiUrl = `/api/get-page-content?page_slug=${encodeURIComponent(pageSlug)}&locale=${encodeURIComponent(locale)}&t=${Date.now()}`;
-        const res = await fetch(apiUrl);
-        if (res.ok) {
-          try {
-            const result: unknown = await res.json();
-            const apiRows =
-              typeof result === 'object' && result !== null
-                ? (result as { content?: unknown }).content
-                : undefined;
-
-            if (isPageContentRows(apiRows) && mergeRowsAndSet(apiRows)) return;
-          } catch {
-            // Ignore invalid JSON and fallback to direct Supabase query.
-          }
-        }
-
-        const { data, error } = await supabase
-          .from('page_content')
-          .select('section_key, content_value, updated_at')
-          .eq('page_slug', pageSlug)
-          .eq('locale', locale)
-          .order('section_key', { ascending: true })
-          .order('updated_at', { ascending: true });
-
-        if (error) {
-          console.error('Supabase fallback fetch failed:', error.message);
-          setContent(fallbackContent);
-          return;
-        }
-
-        if (!mergeRowsAndSet(data)) {
-          setContent(fallbackContent);
-        }
-      } catch (err) {
-        console.error('Failed to fetch page content:', err);
-        setContent(fallbackContent);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchContent();
-
-
-
-    const channelName = `page_content:${pageSlug}:${locale}`;
-    if (activeChannels.has(channelName)) {
-      console.warn('[Supabase] Already subscribed to channel:', channelName);
-      return;
+    if (error) {
+      return res.status(500).json({ error: error.message, content: [] });
     }
-    activeChannels.add(channelName);
-    let channel: any = null;
-    let unsubscribed = false;
-    console.log('[Supabase] Subscribing to channel:', channelName);
-    channel = supabase
-      .channel(channelName)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'page_content',
-        },
-        (payload: RealtimePostgresChangesPayload<RealtimePageContentRow>) => {
-          if (unsubscribed) return;
-          if (payload.eventType === 'DELETE') {
-            const oldRow = payload.old;
-            if (
-              oldRow?.page_slug === pageSlug &&
-              oldRow?.locale === locale &&
-              oldRow?.section_key
-            ) {
-              setContent((prev) => ({
-                ...prev,
-                [oldRow.section_key]: fallbackContent[oldRow.section_key] ?? '',
-              }));
-            }
-            return;
-          }
-          if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
-            applyRealtimeRow(payload.new);
-          }
-        }
-      )
-      .subscribe();
 
-    return () => {
-      unsubscribed = true;
-      if (channel) {
-        console.log('[Supabase] Removing channel:', channelName);
-        supabase.removeChannel(channel);
-      }
-      activeChannels.delete(channelName);
-    };
-  }, [pageSlug, locale, fallbackContent]);
-
-  return { content, isLoading };
+    return res.status(200).json({ content: data || [] });
+  } catch (err) {
+    return res.status(500).json({ error: err?.message || 'Failed to fetch page content', content: [] });
+  }
 }
