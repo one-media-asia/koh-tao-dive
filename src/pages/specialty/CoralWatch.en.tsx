@@ -1,11 +1,12 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { useNavigate } from 'react-router-dom';
 import Contact from '@/components/Contact';
+import BookingForm from '@/components/BookingForm';
+import { useState } from 'react';
 
 export default function CoralWatch() {
-  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
 
   return (
     <main className="min-h-screen pt-24 pb-16">
@@ -69,7 +70,8 @@ export default function CoralWatch() {
         <Card className="mb-8 p-6 bg-green-50">
           <h2 className="text-2xl font-bold mb-6">Protect Our Reefs</h2>
           <p className="text-gray-700 mb-4">Contribute to coral reef science and conservation with real monitoring data.</p>
-          <Button size="lg" onClick={() => navigate('/booking?course=coral-watch&type=course')}>Book Now</Button>
+          <Button size="lg" onClick={() => window.location.href = '/booking?course=coral-watch&type=course'}>Book Now</Button>
+          />
         </Card>
 
         <div className="mt-12">

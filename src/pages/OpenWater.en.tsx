@@ -98,14 +98,14 @@ const OpenWaterEn: React.FC = () => {
             <strong>Deposit Required:</strong> <span style={{ color: '#059669', fontWeight: 600 }}>฿{deposit}</span>
           </div>
         </div>
-        <BookingForm
-          isOpen={true}
-          onClose={() => {}}
-          itemType="course"
-          itemTitle={courseName}
-          depositMajor={deposit}
-          depositCurrency="THB"
-        />
+        <button
+          style={{
+            background: '#2563eb', color: '#fff', padding: '12px 24px', borderRadius: 8, border: 'none', fontWeight: 600, fontSize: '1rem', cursor: 'pointer', marginBottom: 16
+          }}
+          onClick={() => window.location.href = '/booking?course=open-water&type=course'}
+        >
+          Book Now
+        </button>
       </div>
     </>
   );
