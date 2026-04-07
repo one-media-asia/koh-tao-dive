@@ -1,11 +1,19 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
-const { data, error } = await getPageContent("home");
+const supabaseClient = VITE_SUPABASE_URL && VITE_SUPABASE_ANON_KEY
+  ? createClient(VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY)
+  : null;
 
-if (!data) {
-  // currently likely returns nothing → blank page
+if (!supabaseClient) {
+  console.warn("Supabase is not configured. Skipping API call.");
+  return { data: null, error: "Supabase not configured" };
 }
+
+const { data, error } = await supabaseClient
+  .from("page_content")
+  .select("*")
+  .eq("slug", "home");
 interface PageContent {
   [key: string]: string;
 }
@@ -159,10 +167,8 @@ export function usePageContent({ pageSlug, locale, fallbackContent }: UsePageCon
 
     fetchContent();
 
-    let isMounted = true;
-    const channelName = `page_content:${pageSlug}:${locale}`;
     const channel = supabase
-      .channel(channelName)
+      .channel(`page_content:${pageSlug}:${locale}`)
       .on(
         'postgres_changes',
         {
@@ -171,7 +177,6 @@ export function usePageContent({ pageSlug, locale, fallbackContent }: UsePageCon
           table: 'page_content',
         },
         (payload: RealtimePostgresChangesPayload<RealtimePageContentRow>) => {
-          if (!isMounted) return;
           if (payload.eventType === 'DELETE') {
             const oldRow = payload.old;
             if (
@@ -195,7 +200,6 @@ export function usePageContent({ pageSlug, locale, fallbackContent }: UsePageCon
       .subscribe();
 
     return () => {
-      isMounted = false;
       supabase.removeChannel(channel);
     };
   }, [pageSlug, locale, fallbackContent]);
