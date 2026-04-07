@@ -12,7 +12,7 @@ import { hasAdminAccess } from '@/lib/adminAccess';
 import Layout from './components/Layout';
 import Courses from './components/Courses';
 
-import Index from './pages/index';
+import Index from './pages';
 import NotFound from './pages/NotFound';
 import BookingAffiliate from './pages/BookingAffiliate';
 import AgodaHotels from './pages/AgodaHotels';
