@@ -15,6 +15,7 @@ import Courses from './components/Courses';
 import Index from './pages/index';
 import NotFound from './pages/NotFound';
 import BookingAffiliate from './pages/BookingAffiliate';
+import NewBooking from './pages/NewBooking';
 import AgodaHotels from './pages/AgodaHotels';
 import ClicksDashboard from './pages/ClicksDashboard';
 import BookingPage from './pages/BookingPage';
@@ -204,6 +205,7 @@ const App = () => (
               <Route path="/agoda-hotels" element={<AgodaHotels />} />
               <Route path="/clicks-dashboard" element={<ClicksDashboard />} />
               <Route path="/booking" element={<BookingPage />} />
+              <Route path="/new-booking" element={<NewBooking />} />
               <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} />
               <Route path="/login" element={<Login />} />
               <Route path="/admin/login" element={<Login />} />
