@@ -1,8 +1,57 @@
-export default function Home() {
+import React, { useEffect, useState } from "react";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+const Admin = () => {
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchBookings() {
+      const { data, error } = await supabase.from("bookings").select("*");
+      setBookings(data || []);
+      setLoading(false);
+    }
+    fetchBookings();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+
   return (
-    <div style={{ padding: 40, fontFamily: 'sans-serif' }}>
+    <div>
       <h1>Admin Dashboard</h1>
-      <p>Welcome! The admin panel is now working.</p>
+      <h2>Bookings</h2>
+      {bookings.length === 0 ? (
+        <p>No bookings found.</p>
+      ) : (
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Date</th>
+              <th>Dive Site</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {bookings.map((b) => (
+              <tr key={b.id}>
+                <td>{b.name}</td>
+                <td>{b.email}</td>
+                <td>{b.date}</td>
+                <td>{b.dive_site}</td>
+                <td>{b.status}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
-}
+};
+
+export default Admin;
