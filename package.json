@@ -105,7 +105,7 @@
     "concurrently": "^9.2.1",
     "constructs": "^10.5.1",
     "cors": "^2.8.6",
-    "dotenv": "^17.2.3",
+    "dotenv": "^17.4.1",
     "esbuild": "^0.27.3",
     "eslint": "^9.9.0",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
