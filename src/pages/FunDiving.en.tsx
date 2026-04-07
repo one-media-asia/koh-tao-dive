@@ -162,7 +162,13 @@ const FunDiving = () => {
             >
               Book a Fun Dive NOW
             </Button>
-            <Button size="lg" className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 text-lg" onClick={() => { try{ sessionStorage.setItem('scrollTo','course-openWater') }catch(_){ } ; navigate('/courses'); }}>{content.fun_diving_hero_cta2}</Button>
+            <Button
+              size="lg"
+              className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 text-lg"
+              onClick={() => { navigate('/new-booking'); }}
+            >
+              {content.fun_diving_hero_cta2}
+            </Button>
           </div>
           {showFunDiveBooking && (
             <div
