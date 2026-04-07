@@ -2,10 +2,13 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
+import BookingForm from '@/components/BookingForm';
+import { useState } from 'react';
 import Contact from '@/components/Contact';
 
 export default function DiveAgainstDebris() {
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
 
   return (
     <main className="min-h-screen pt-24 pb-16">
@@ -80,13 +83,7 @@ export default function DiveAgainstDebris() {
                 <span className="text-emerald-700 line-through">฿24,000</span>
                 <span className="text-sm bg-emerald-200 text-emerald-900 px-2 py-1 rounded">Save ฿6,000</span>
               </div>
-              <Button 
-                variant="default" 
-                className="bg-emerald-600 hover:bg-emerald-700"
-                onClick={() => navigate('/booking?item=3%20Specialty%20Bundle&type=course&price=18000&currency=THB')}
-              >
-                Book 3 Specialty Bundle
-              </Button>
+              <Button size="lg" onClick={() => window.location.href = '/booking?course=dive-against-debris&type=course'}>Book Now</Button>
             </div>
           </div>
         </Card>
@@ -94,7 +91,7 @@ export default function DiveAgainstDebris() {
         <Card className="mb-8 p-6 bg-green-50">
           <h2 className="text-2xl font-bold mb-6">Help Clean the Ocean</h2>
           <p className="text-gray-700 mb-4">Join our ocean cleanup efforts and make a real difference for the environment.</p>
-          <Button size="lg" onClick={() => navigate('/booking?course=dive-against-debris&type=course')}>Book Now</Button>
+          <Button size="lg" onClick={() => window.location.href = '/booking?course=dive-against-debris&type=course'}>Book Now</Button>
         </Card>
 
         <div className="mt-12">

@@ -4,22 +4,6 @@ import Papa from 'papaparse';
 // To add more columns or features, edit below. For comments or notes, add a new column and input logic as needed.
 
 import React, { useEffect, useState } from 'react';
-
-// Handler for inline edit save
-const handleInlineEdit = async (id: string, field: string, value: string) => {
-  try {
-    const res = await fetch('/api/bookings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, [field]: value }),
-    });
-    if (!res.ok) throw new Error('Failed to update');
-    setBookings(prev => prev.map(b => b.id === id ? { ...b, [field]: value } : b));
-  } catch (err) {
-    // Optionally show error
-  }
-};
-
 // Comment type for booking comments
 interface BookingComment {
   id: string;
@@ -653,9 +637,8 @@ const AdminBookings: React.FC = () => {
                       </button>
                     </td>
                   </tr>
-                ))}
 
-// ...existing code...
+                ))}
               </tbody>
             </table>
           )}

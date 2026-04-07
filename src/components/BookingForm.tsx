@@ -18,6 +18,8 @@ const bookingSchema = z.object({
   phone: z.string().trim().max(20, "Phone must be less than 20 characters").optional(),
   preferred_date: z.string().optional(),
   experience_level: z.string().optional(),
+  arrival: z.string().max(255, "Arrival details must be less than 255 characters").optional(),
+  accommodation: z.string().max(100, "Accommodation must be less than 100 characters").optional(),
   message: z.string().trim().max(1000, "Message must be less than 1000 characters").optional(),
   paymentChoice: z.enum(['now', 'link', 'none']).optional(),
 });
@@ -46,6 +48,8 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, it
       phone: '',
       preferred_date: '',
       experience_level: '',
+      arrival: '',
+      accommodation: '',
       message: '',
       paymentChoice: 'now',
     },
@@ -60,6 +64,8 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, it
         phone: '',
         preferred_date: '',
         experience_level: '',
+        arrival: '',
+        accommodation: '',
         message: '',
         paymentChoice: 'now',
       });
@@ -70,7 +76,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, it
     setIsSubmitting(true);
     try {
       const paymentChoice = (data as any).paymentChoice || 'none';
-      const messageBody = `Phone: ${data.phone || 'N/A'}\nPreferred Date: ${data.preferred_date || 'N/A'}\nExperience Level: ${data.experience_level || 'N/A'}\nPayment Option: ${paymentChoice}\n\nMessage:\n${data.message || 'N/A'}`;
+      const messageBody = `Phone: ${data.phone || 'N/A'}\nPreferred Date: ${data.preferred_date || 'N/A'}\nExperience Level: ${data.experience_level || 'N/A'}\nArrival: ${data.arrival || 'N/A'}\nAccommodation: ${data.accommodation || 'N/A'}\nPayment Option: ${paymentChoice}\n\nComments / Extras:\n${data.message || 'N/A'}`;
 
       // Send to backend notification API
       const payload = {
@@ -80,6 +86,8 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, it
         phone: data.phone || 'N/A',
         preferred_date: data.preferred_date || 'N/A',
         experience_level: data.experience_level || 'N/A',
+        arrival: data.arrival || 'N/A',
+        accommodation: data.accommodation || 'N/A',
         payment_choice: paymentChoice,
         deposit_amount: typeof depositMajor === 'number' ? `฿${depositMajor}` : 'N/A',
         message: messageBody,
@@ -105,6 +113,8 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, it
           phone: data.phone,
           preferred_date: data.preferred_date,
           experience_level: data.experience_level,
+          arrival: data.arrival,
+          accommodation: data.accommodation,
           message: data.message,
           payment_choice: paymentChoice,
           item_type: itemType,
@@ -116,6 +126,45 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, it
           due_amount,
         }
       ]);
+                  {/* Arrival Details */}
+                  <FormField
+                    control={form.control}
+                    name="arrival"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Arrival Details</FormLabel>
+                        <FormControl>
+                          <Input placeholder="e.g. Ferry arrival time, flight, etc." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Accommodation */}
+                  <FormField
+                    control={form.control}
+                    name="accommodation"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Accommodation</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value || ''}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select accommodation" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="none">None</SelectItem>
+                            <SelectItem value="budget">Budget Dorm</SelectItem>
+                            <SelectItem value="standard">Standard Room</SelectItem>
+                            <SelectItem value="deluxe">Deluxe Room</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
       if (supaError) {
         console.error('Supabase insert error:', supaError);
         toast.error('Booking saved to email, but not to admin database.');
@@ -294,13 +343,13 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, it
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex items-center gap-2">
-                    <MessageSquare className="h-4 w-4" /> Message
+                    <MessageSquare className="h-4 w-4" /> Comments / Extras (add-ons, requests, etc.)
                   </FormLabel>
                   <FormControl>
-                    <Textarea 
-                      placeholder="Any special requests or questions?" 
+                    <Textarea
+                      placeholder="Let us know about extras, add-ons, or anything else."
                       rows={3}
-                      {...field} 
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />

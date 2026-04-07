@@ -252,17 +252,9 @@ const Accommodation = () => {
     openOurAccommodationForm();
   };
 
+  // Removed external booking redirect. Accommodation booking is now disabled.
   const continueToBookingForm = () => {
-    const roomLabel = accommodationType === 'family'
-      ? 'Family Bungalow'
-      : accommodationType === 'basic'
-        ? 'Basic Room'
-        : 'Bungalow';
-    const message = encodeURIComponent(
-      `Accommodation request: ${roomLabel}. Guests: ${peopleCount}. Nights: ${nightCount}. Details: ${accommodationDetails || 'None'}`
-    );
-    const url = `https://booking.divinginasia.com/booking?item=Resort%20Accommodation%20-%20${encodeURIComponent(roomLabel)}&type=stay&currency=THB&people=${peopleCount}&nights=${nightCount}&message=${message}`;
-    window.open(url, '_blank', 'noopener');
+    // No action
   };
 
   return (
@@ -358,9 +350,7 @@ const Accommodation = () => {
                   />
                 </div>
                 <div className="md:col-span-2">
-                  <Button type="button" className="bg-blue-600 hover:bg-blue-700 text-white" onClick={continueToBookingForm}>
-                    {labels.continueBooking}
-                  </Button>
+                  {/* Booking button removed */}
                 </div>
               </div>
             )}
