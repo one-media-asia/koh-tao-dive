@@ -71,7 +71,6 @@ export default function CoralWatch() {
           <h2 className="text-2xl font-bold mb-6">Protect Our Reefs</h2>
           <p className="text-gray-700 mb-4">Contribute to coral reef science and conservation with real monitoring data.</p>
           <Button size="lg" onClick={() => window.location.href = '/booking?course=coral-watch&type=course'}>Book Now</Button>
-          />
         </Card>
 
         <div className="mt-12">

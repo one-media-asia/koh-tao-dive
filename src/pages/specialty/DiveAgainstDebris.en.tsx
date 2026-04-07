@@ -84,7 +84,6 @@ export default function DiveAgainstDebris() {
                 <span className="text-sm bg-emerald-200 text-emerald-900 px-2 py-1 rounded">Save ฿6,000</span>
               </div>
               <Button size="lg" onClick={() => window.location.href = '/booking?course=dive-against-debris&type=course'}>Book Now</Button>
-              />
             </div>
           </div>
         </Card>
@@ -93,7 +92,6 @@ export default function DiveAgainstDebris() {
           <h2 className="text-2xl font-bold mb-6">Help Clean the Ocean</h2>
           <p className="text-gray-700 mb-4">Join our ocean cleanup efforts and make a real difference for the environment.</p>
           <Button size="lg" onClick={() => window.location.href = '/booking?course=dive-against-debris&type=course'}>Book Now</Button>
-          />
         </Card>
 
         <div className="mt-12">
