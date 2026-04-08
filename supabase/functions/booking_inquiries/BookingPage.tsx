@@ -1,131 +1,136 @@
-import React, { useState } from 'react';
+import { handleOptions, applyCors } from '../_lib/cors.js';
+import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 
-export default function ContactForm() {
-  const [price, setPrice] = useState(0);
-  const deposit = price > 0 ? Math.round(price * 0.2) : 0;
-  const [submitting, setSubmitting] = useState(false);
-  const [result, setResult] = useState("");
+const hasSmtpConfig = () => Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setResult("");
-    const form = e.target;
-    const formData = new FormData(form);
-    formData.set("deposit_amount", deposit);
-    formData.set("full_price", price);
-    // Prepare plain object for JSON
-    const data = Object.fromEntries(formData.entries());
+const getResendFromCandidates = () => {
+  const primary = process.env.RESEND_FROM_EMAIL || 'confirmed@divinginasia.com';
+  return Array.from(new Set([primary, 'onboarding@resend.dev']));
+};
 
-    // 1. Submit to Web3Forms
-    const web3Res = await fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      body: formData,
-    });
-    const web3Json = await web3Res.json();
+export default async function handler(req, res) {
+  applyCors(res);
 
-    // 2. Submit to /api/booking
-    const dbRes = await fetch("/api/booking", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    const dbJson = await dbRes.json();
+  if (handleOptions(req, res)) return;
 
-    if (web3Json.success && dbJson.success) {
-      setResult("Form submitted and saved!");
-      form.reset();
-      setPrice(0);
-    } else {
-      setResult("Submission failed. Please try again.");
+  if (req.method !== 'POST') {
+    res.status(405).json({ error: 'Method not allowed' });
+    return;
+  }
+
+  try {
+    const body = req.body;
+    if (typeof body === 'string') {
+      body = JSON.parse(body);
     }
-    setSubmitting(false);
-  };
 
-  return (
-    <>
-      <form
-        onSubmit={handleSubmit}
-        style={{ maxWidth: 400, margin: '2rem auto', display: 'flex', flexDirection: 'column', gap: 12 }}
-      >
-        <input type="hidden" name="access_key" value="e4c4edf6-6e35-456a-87da-b32b961b449a" />
-        <h2 style={{ textAlign: 'center', marginBottom: 8 }}>Booking / Inquiry Form</h2>
+    const {
+      name,
+      email,
+      phone,
+      preferred_date,
+      experience_level,
+      payment_choice,
+      paypal_link,
+      item_title,
+      full_price,
+      dive_count,
+      course_fun_dive_count,
+      course_fun_dive_cost,
+      stay_with_us,
+      deposit_amount,
+      addons,
+      booking_source,
+      message,
+    } = body;
 
-        <label style={{ fontWeight: 'bold', fontSize: 16, marginBottom: 4 }}>Comments / Questions (required)</label>
-        <textarea
-          name="message"
-          required
-          placeholder="Your comments, questions, or anything you'd like to tell us..."
-          style={{ minHeight: 100, marginBottom: 16, border: '2px solid #0070ba', padding: 8, fontSize: 15 }}
-          autoFocus
-        />
+    const adminEmail = process.env.BOOKING_ADMIN_EMAIL || process.env.RESEND_BOOKING_TO_EMAIL || 'bookings@divinginasia.com';
+    const subject = `New Booking Inquiry: ${item_title || 'Booking'}`;
 
-        <input type="text" name="name" required placeholder="Your Name" />
-        <input type="email" name="email" required placeholder="Your Email" />
+    const emailText = [
+      `New booking inquiry received:`,
+      '',
+      `Name: ${name || 'N/A'}`,
+      `Email: ${email || 'N/A'}`,
+      `Phone: ${phone || 'N/A'}`,
+      `Preferred Date: ${preferred_date || 'N/A'}`,
+      `Experience Level: ${experience_level || 'N/A'}`,
+      `Payment Choice: ${payment_choice || 'N/A'}`,
+      paypal_link ? `PayPal Link: ${paypal_link}` : '',
+      `Item: ${item_title || 'N/A'}`,
+      `Full Price: ${full_price || 'N/A'}`,
+      `Dive Count: ${dive_count || 'N/A'}`,
+      `Course Fun Dive Count: ${course_fun_dive_count || 'N/A'}`,
+      `Course Fun Dive Cost: ${course_fun_dive_cost || 'N/A'}`,
+      `Stay With Us: ${stay_with_us || 'N/A'}`,
+      `Deposit Amount: ${deposit_amount || 'N/A'}`,
+      `Addons: ${addons || 'N/A'}`,
+      `Booking Source: ${booking_source || 'N/A'}`,
+      '',
+      `Message:`,
+      message || 'No message',
+    ].filter(line => line !== '').join('\n');
 
-        <label>What course are you interested in?
-          <input type="text" name="course_name" placeholder="e.g. Open Water, Advanced, etc." />
-        </label>
+    let emailSent = false;
+    const resendApiKey = process.env.RESEND_API_KEY;
 
-        <label>How many fun dives?
-          <input type="number" name="fun_dive_count" min="0" max="20" placeholder="0" />
-        </label>
+    if (resendApiKey) {
+      const resend = new Resend(resendApiKey);
 
-        <label>How long do you want to stay (nights)?
-          <input type="number" name="accommodation_nights" min="0" max="30" placeholder="0" />
-        </label>
+      for (const fromEmail of getResendFromCandidates()) {
+        try {
+          const { error } = await resend.emails.send({
+            from: fromEmail,
+            to: adminEmail,
+            subject,
+            text: emailText,
+            replyTo: email || undefined,
+          });
 
-        <label>Accommodation needed?
-          <select name="accommodation">
-            <option value="no">No</option>
-            <option value="yes">Yes</option>
-          </select>
-        </label>
+          if (!error) {
+            emailSent = true;
+            break;
+          }
 
-        <label>Full Price (THB)
-          <input
-            type="number"
-            name="full_price"
-            min="0"
-            placeholder="e.g. 10000"
-            value={price > 0 ? price : ''}
-            onChange={e => setPrice(Number(e.target.value))}
-            required
-          />
-        </label>
+          console.error('Resend send error:', error);
+        } catch (err) {
+          console.error('Resend exception:', err);
+        }
+      }
+    }
 
-        <input type="hidden" name="deposit_amount" value={deposit} />
+    if (!emailSent && hasSmtpConfig()) {
+      const smtpPort = Number(process.env.SMTP_PORT || 587);
+      const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: smtpPort,
+        secure: smtpPort === 465,
+        auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+      });
 
-        <div style={{ fontWeight: 500, color: '#0070ba', margin: '8px 0' }}>
-          {deposit > 0 ? `Deposit (20%): ฿${deposit}` : 'Enter price to see deposit'}
-        </div>
+      await transporter.sendMail({
+        from: process.env.SMTP_USER,
+        to: adminEmail,
+        subject,
+        replyTo: email || undefined,
+        text: emailText,
+      });
 
-        <button type="submit" disabled={submitting}>{submitting ? 'Submitting...' : 'Submit Form'}</button>
-        <span style={{ color: result.includes('failed') ? 'red' : 'green', minHeight: 24 }}>{result}</span>
-      </form>
-      <div style={{ maxWidth: 400, margin: '1rem auto', textAlign: 'center' }}>
-        <a
-          href={`https://paypal.me/prodivingasia/${deposit > 0 ? deposit : ''}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            display: 'inline-block',
-            background: '#0070ba',
-            color: 'white',
-            padding: '12px 32px',
-            borderRadius: 8,
-            fontWeight: 600,
-            fontSize: 18,
-            textDecoration: 'none',
-            marginTop: 16
-          }}
-        >
-          Pay Deposit with PayPal
-        </a>
-        <div style={{ fontSize: 13, color: '#555', marginTop: 6 }}>
-          (You can pay your deposit anytime after submitting the form)
-        </div>
-      </div>
-    </>
-  );
+      emailSent = true;
+    }
+
+    if (!emailSent) {
+      console.warn('No email configuration available, booking notification not sent');
+      return res.status(200).json({
+        success: false,
+        warning: 'Booking saved but email notification could not be sent due to missing email configuration'
+      });
+    }
+
+    res.status(200).json({ success: true });
+  } catch (err) {
+    console.error('send-booking-notification error:', err);
+    res.status(500).json({ error: err.message || 'Internal server error' });
+  }
 }
