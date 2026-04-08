@@ -9,7 +9,7 @@ const OpenWaterEn: React.FC = () => {
       fallbackContent={{
         hero_title: 'PADI Open Water Course',
         hero_subtitle: "The world's most popular scuba course. Learn the fundamentals of scuba diving and get certified to dive independently with a buddy, to 18 metres/60 feet.",
-        course_overview: "The Open Water course combines knowledge development, confined water dives (pool) and open water dives. You'll learn equipment setup, basic underwater skills, buoyancy control and dive planning. Our instructors keep groups small and emphasize safety and fun.",
+        course_overview: "The Open Water course combines knowledge development, confined water dives (pool) and open water dives. You'll learn equipment setup, basic underwater skills, buoyancy control and dive planning. Our instructors keep groups small and emphasize safety and fun.\n\n",
         price_thb: '11000',
         price_usd: '320',
         price_eur: '290',
@@ -71,7 +71,11 @@ const OpenWaterEn: React.FC = () => {
           answer: 'Yes, PADI is the world\'s leading scuba training organization with recognition at dive centers and resorts globally.',
         },
       ]}
-    />
+    >
+      <div style={{textAlign:'center',margin:'2rem 0'}}>
+        <a href="/booknow.html" style={{background:'#0070ba',color:'#fff',padding:'0.75rem 2rem',borderRadius:4,fontSize:'1.2rem',textDecoration:'none',display:'inline-block'}}>Book Now</a>
+      </div>
+    </CoursePageTemplate>
   );
 };
 
