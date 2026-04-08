@@ -15,6 +15,9 @@
 </head>
 <body>
   <div class="form-container">
+    <div style="text-align:center; margin-bottom:1rem;">
+      <img src="/images/logo.png" alt="Diving In Asia Logo" style="max-width:180px; height:auto;"/>
+    </div>
     <h2>Booking / Inquiry Form</h2>
     <form action="https://api.web3forms.com/submit" method="POST">
       <input type="hidden" name="access_key" value="e4c4edf6-6e35-456a-87da-b32b961b449a">
@@ -23,8 +26,9 @@
 
       <label for="name">Name</label>
       <input type="text" id="name" name="name" required>
+
       <label for="course_title">Course</label>
-      <select id="course_title" name="course_title" onchange="updatePrice()" required>
+      <select id="course_title" name="course_title" required>
         <option value="">Select...</option>
         <option value="Open Water">Open Water</option>
         <option value="Advanced Open Water">Advanced Open Water</option>
@@ -33,41 +37,7 @@
         <option value="Fun Dive">Fun Dive</option>
       </select>
 
-      <div style="margin-top:1rem;">
-        <strong>Price:</strong> <span id="display-price">Select a course</span><br>
-        <div id="deposit-section" style="display:none;">
-          <strong>20% Deposit:</strong> <span id="deposit-amount"></span><br>
-          <a id="paypal-link" href="#" target="_blank">Pay 20% Deposit via PayPal</a>
-        </div>
-      </div>
 
-      <script>
-        const coursePrices = {
-          'Open Water': '฿14,900',
-          'Advanced Open Water': '฿12,900',
-          'Rescue Diver': '฿13,900',
-          'Divemaster': '฿35,000',
-          'Fun Dive': '฿2,500',
-        };
-        function updatePrice() {
-          const course = document.getElementById('course_title').value.trim();
-          const price = coursePrices[course] || 'Contact us for a quote';
-          document.getElementById('display-price').textContent = price;
-          const depositSection = document.getElementById('deposit-section');
-          const depositAmount = document.getElementById('deposit-amount');
-          const paypalLink = document.getElementById('paypal-link');
-          if (price.startsWith('฿')) {
-            // Extract numeric value
-            const numeric = parseInt(price.replace(/[^\d]/g, ''), 10);
-            const deposit = Math.round(numeric * 0.2);
-            depositAmount.textContent = `฿${deposit}`;
-            paypalLink.href = `https://paypal.me/prodivingasia/${deposit}THB`;
-            depositSection.style.display = '';
-          } else {
-            depositSection.style.display = 'none';
-          }
-        }
-      </script>
 
       <label for="email">Email</label>
       <input type="email" id="email" name="email" required>
@@ -96,43 +66,17 @@
         <option value="advanced">Advanced (50+ dives)</option>
         <option value="professional">Professional diver</option>
       </select>
-        };
-        function updatePrice() {
-          const course = document.getElementById('course_title').value.trim();
-          const price = coursePrices[course] || 'Contact us for a quote';
-          document.getElementById('display-price').textContent = price;
-          const depositSection = document.getElementById('deposit-section');
-          const depositAmount = document.getElementById('deposit-amount');
-          const paypalLink = document.getElementById('paypal-link');
-          if (price.startsWith('฿')) {
-            // Extract numeric value
-            const numeric = parseInt(price.replace(/[^\d]/g, ''), 10);
-            const deposit = Math.round(numeric * 0.2);
-            depositAmount.textContent = `฿${deposit}`;
-            paypalLink.href = `https://paypal.me/prodivingasia/${deposit}THB`;
-            depositSection.style.display = '';
-          } else {
-            depositSection.style.display = 'none';
-          }
-        }
-      </script>
 
-      <label for="preferred_date">Preferred Date</label>
-      <input type="date" id="preferred_date" name="preferred_date">
 
-      <label for="experience_level">Experience Level</label>
-      <select id="experience_level" name="experience_level">
-        <option value="">Select...</option>
-        <option value="beginner">Beginner</option>
-        <option value="intermediate">Intermediate</option>
-        <option value="advanced">Advanced</option>
-        <option value="professional">Professional</option>
-      </select>
+
 
       <label for="message">Comments / Questions</label>
       <textarea id="message" name="message" rows="3" placeholder="Let us know any special requests, questions, or details..."></textarea>
 
       <button type="submit">Submit Booking</button>
+      <div style="text-align:center; margin-top:2rem; color:#555; font-size:1rem;">
+        — Diving In Asia Team —
+      </div>
     </form>
   </div>
 </body>
