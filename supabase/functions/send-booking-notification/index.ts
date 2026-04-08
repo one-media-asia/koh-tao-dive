@@ -15,7 +15,7 @@ serve(async (req) => {
     const { name, email, item_title, preferred_date, message } = await req.json();
 
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
-    const from = "noreply@divinginasia.com";
+    const from = "onemediaasia@duck.com";
     const to = "bookings@divinginasia.com";
 
     const emailRes = await fetch("https://api.resend.com/emails", {
