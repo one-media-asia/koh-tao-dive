@@ -5,10 +5,17 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+
   const {
     name,
     email,
     phone,
+    course_name,
+    fun_dive_count,
+    accommodation_nights,
+    accommodation,
+    full_price,
+    deposit_amount,
     course_title,
     preferred_date,
     experience_level,
@@ -25,7 +32,12 @@ export default async function handler(req, res) {
       name,
       email,
       phone,
-      course_title,
+      course_name: course_name || course_title,
+      fun_dive_count,
+      accommodation_nights,
+      accommodation,
+      full_price,
+      deposit_amount,
       preferred_date,
       experience_level,
       message
