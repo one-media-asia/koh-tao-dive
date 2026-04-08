@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+
 import { applyCors, handleOptions } from './_lib/cors';
 
 export default async function handler(req, res) {
@@ -17,25 +17,36 @@ export default async function handler(req, res) {
     return;
   }
 
-  // Configure SMTP transport using environment variables
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT) || 587,
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
-
+  // Send email using Resend API
   try {
-    await transporter.sendMail({
-      from: `"${name}" <${email}>`,
-      to: process.env.CONTACT_RECEIVER_EMAIL || process.env.SMTP_USER,
-      subject: `Contact Form Submission from ${name}`,
-      text: message,
-      html: `<p><strong>Name:</strong> ${name}</p><p><strong>Email:</strong> ${email}</p><p><strong>Message:</strong><br>${message.replace(/\n/g, '<br>')}</p>`
+    const resendApiKey = process.env.RESEND_API_KEY;
+    if (!resendApiKey) {
+      res.status(500).json({ error: 'Missing RESEND_API_KEY' });
+      return;
+    }
+
+    const toEmail = process.env.CONTACT_RECEIVER_EMAIL || 'bookings@divinginasia.com';
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${resendApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: 'noreply@divinginasia.com',
+        to: [toEmail],
+        subject: `Contact Form Submission from ${name}`,
+        html: `<p><strong>Name:</strong> ${name}</p><p><strong>Email:</strong> ${email}</p><p><strong>Message:</strong><br>${message.replace(/\n/g, '<br>')}</p>`
+      })
     });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      console.error('Resend API error:', error);
+      res.status(500).json({ error: error.error || 'Failed to send email' });
+      return;
+    }
+
     res.status(200).json({ success: true });
   } catch (err) {
     console.error('Contact form error:', err);
