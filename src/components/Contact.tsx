@@ -256,13 +256,15 @@ const Contact = () => {
               <input type="text" id="phone" name="phone" className="w-full border border-gray-300 rounded px-3 py-2" />
 
               <label htmlFor="course_title" className="block font-semibold">Course / Package</label>
-              <input type="text" id="course_title" name="course_title" className="w-full border border-gray-300 rounded px-3 py-2" />
+
+              <input type="text" id="course_title" name="course_title" className="w-full border border-gray-300 rounded px-3 py-2 text-black" style={{ color: '#222' }} />
 
               <label htmlFor="preferred_date" className="block font-semibold">Preferred Date</label>
-              <input type="date" id="preferred_date" name="preferred_date" className="w-full border border-gray-300 rounded px-3 py-2" />
+
+              <input type="date" id="preferred_date" name="preferred_date" className="w-full border border-gray-300 rounded px-3 py-2 text-black" style={{ color: '#222' }} />
 
               <label htmlFor="experience_level" className="block font-semibold">Experience Level</label>
-              <select id="experience_level" name="experience_level" className="w-full border border-gray-300 rounded px-3 py-2">
+              <select id="experience_level" name="experience_level" className="w-full border border-gray-300 rounded px-3 py-2 text-black" style={{ color: '#222' }}>
                 <option value="">Select...</option>
                 <option value="beginner">Beginner</option>
                 <option value="intermediate">Intermediate</option>
