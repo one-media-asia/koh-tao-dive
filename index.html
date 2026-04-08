@@ -33,39 +33,7 @@
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
     <div id="root"></div>
-    <div class="card" style="max-width: 400px; margin: 2rem auto; text-align: left; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001;">
-      <h2 style="text-align:center;">Booking / Inquiry Form</h2>
-      <form action="https://api.web3forms.com/submit" method="POST">
-        <input type="hidden" name="access_key" value="e4c4edf6-6e35-456a-87da-b32b961b449a">
-        <label for="name">Name</label>
-        <input type="text" id="name" name="name" required style="width:100%;margin-bottom:8px;">
-
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" required style="width:100%;margin-bottom:8px;">
-
-        <label for="phone">Phone</label>
-        <input type="text" id="phone" name="phone" style="width:100%;margin-bottom:8px;">
-
-        <label for="course_title">Course / Package</label>
-        <input type="text" id="course_title" name="course_title" style="width:100%;margin-bottom:8px;">
-
-        <label for="preferred_date">Preferred Date</label>
-        <input type="date" id="preferred_date" name="preferred_date" style="width:100%;margin-bottom:8px;">
-
-        <label for="experience_level">Experience Level</label>
-        <select id="experience_level" name="experience_level" style="width:100%;margin-bottom:8px;">
-          <option value="">Select...</option>
-          <option value="beginner">Beginner</option>
-          <option value="intermediate">Intermediate</option>
-          <option value="professional">Professional</option>
-        </select>
-
-        <label for="message">Comments / Questions</label>
-        <textarea id="message" name="message" rows="4" required style="width:100%;margin-bottom:8px;"></textarea>
-
-        <button type="submit" style="width:100%;background:#0070ba;color:#fff;border:none;border-radius:4px;padding:0.75rem 0;font-size:1rem;font-weight:bold;">Send Booking</button>
-      </form>
-    </div>
+    <!-- Booking form moved to React component. Static form removed. -->
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
