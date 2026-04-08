@@ -52,7 +52,7 @@ const BookingPage: React.FC = () => {
 
         <div>
           <label className="block mb-1 font-medium">Type</label>
-          <select name="type" className="w-full border rounded p-2">
+          <select name="type" defaultValue="booking" className="w-full border rounded p-2">
             <option value="booking">Booking</option>
             <option value="contact">Contact/Inquiry</option>
           </select>
