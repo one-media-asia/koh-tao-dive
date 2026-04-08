@@ -270,7 +270,7 @@ const Contact = () => {
               </select>
 
               <label htmlFor="message" className="block font-semibold">Comments / Questions</label>
-              <textarea id="message" name="message" rows={4} required className="w-full border border-gray-300 rounded px-3 py-2"></textarea>
+              <textarea id="message" name="message" rows={4} required className="w-full border border-gray-300 rounded px-3 py-2 text-black" style={{ color: '#222' }}></textarea>
 
               <button type="submit" className="w-full mt-4 py-3 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 transition">Send Booking</button>
             </form>
