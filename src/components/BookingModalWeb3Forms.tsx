@@ -1,19 +1,7 @@
 import React, { useState } from 'react';
 
-const coursePrices: Record<string, string> = {
-  'Open Water': '฿14,900',
-  'Advanced Open Water': '฿12,900',
-  'Rescue Diver': '฿13,900',
-  'Divemaster': '฿35,000',
-  'Fun Dive': '฿2,500',
-};
-
 const BookingModalWeb3Forms: React.FC = () => {
   const [open, setOpen] = useState(false);
-  const [course, setCourse] = useState('');
-  const price = coursePrices[course] || '';
-  const deposit = price ? `฿${Math.round(parseInt(price.replace(/[^\d]/g, ''), 10) * 0.2)}` : '';
-
   return (
     <>
       <button style={{background:'#0070ba',color:'#fff',padding:'0.75rem 1.5rem',border:'none',borderRadius:4,fontSize:'1rem',cursor:'pointer'}} onClick={() => setOpen(true)}>
@@ -32,48 +20,20 @@ const BookingModalWeb3Forms: React.FC = () => {
               <input type="hidden" name="subject" value="New Booking Inquiry from Website" />
               <input type="hidden" name="redirect" value="https://www.divinginasia.com/thank-you.html" />
               <label>Name<input type="text" name="name" required /></label>
-              <label>Course
-                <select name="course_title" value={course} onChange={e => setCourse(e.target.value)} required>
-                  <option value="">Select...</option>
-                  {Object.keys(coursePrices).map(c => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
-              </label>
-              {price && (
-                <div style={{margin:'1rem 0'}}>
-                  <strong>Price:</strong> {price}<br />
-                  <strong>20% Deposit:</strong> {deposit}<br />
-                  <a href={`https://paypal.me/prodivingasia/${deposit.replace('฿','')}THB`} target="_blank" rel="noopener noreferrer">Pay 20% Deposit via PayPal</a>
-                </div>
-              )}
               <label>Email<input type="email" name="email" required /></label>
               <label>Phone<input type="text" name="phone" /></label>
-              <label>Accommodation Type
-                <select name="accommodation_type">
+              <label>Course / Package<input type="text" name="course_title" /></label>
+              <label>Preferred Date<input type="date" name="preferred_date" /></label>
+              <label>Experience Level
+                <select name="experience_level">
                   <option value="">Select...</option>
-                  <option value="standard">Standard Room</option>
-                  <option value="deluxe">Deluxe Room</option>
-                  <option value="suite">Suite</option>
-                  <option value="other">Other / Not sure</option>
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="professional">Professional</option>
                 </select>
               </label>
-              <label>Arrival Date<input type="date" name="arrival_date" /></label>
-              <label>Diving Experience
-                <select name="diving_experience">
-                  <option value="">Select...</option>
-                  <option value="none">No diving experience</option>
-                  <option value="beginner">Beginner (1-10 dives)</option>
-                  <option value="intermediate">Intermediate (10-50 dives)</option>
-                  <option value="advanced">Advanced (50+ dives)</option>
-                  <option value="professional">Professional diver</option>
-                </select>
-              </label>
-              <label>Comments / Questions
-                <textarea name="message" rows={3} placeholder="Let us know any special requests, questions, or details..."></textarea>
-              </label>
-              <button type="submit" style={{marginTop:'1.5rem',background:'#0070ba',color:'#fff',padding:'0.75rem 1.5rem',border:'none',borderRadius:4,fontSize:'1rem',cursor:'pointer'}}>Submit Booking</button>
-              <div style={{textAlign:'center',marginTop:'2rem',color:'#555',fontSize:'1rem'}}>— Diving In Asia Team —</div>
+              <label>Comments / Questions<textarea name="message" rows={4} required /></label>
+              <button type="submit">Send Booking</button>
             </form>
           </div>
         </div>
