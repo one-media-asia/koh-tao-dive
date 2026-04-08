@@ -67,7 +67,7 @@ export default async function handler(req, res) {
 			// Call Supabase Edge Function for booking notification
 			try {
 				await fetch(
-					process.env.BOOKING_NOTIFICATION_URL || 'https://koh-tao-dive-dreams-peach.vercel.app/api/send-booking-notification',
+					process.env.BOOKING_NOTIFICATION_URL || 'https://koh-tao-dive-dreams-peach.vercel.app/send-booking-notification',
 					{
 						method: 'POST',
 						headers: { 'Content-Type': 'application/json' },
