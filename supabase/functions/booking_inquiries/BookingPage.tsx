@@ -3,12 +3,49 @@ import React, { useState } from 'react';
 export default function ContactForm() {
   const [price, setPrice] = useState(0);
   const deposit = price > 0 ? Math.round(price * 0.2) : 0;
+  const [submitting, setSubmitting] = useState(false);
+  const [result, setResult] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setResult("");
+    const form = e.target;
+    const formData = new FormData(form);
+    formData.set("deposit_amount", deposit);
+    formData.set("full_price", price);
+    // Prepare plain object for JSON
+    const data = Object.fromEntries(formData.entries());
+
+    // 1. Submit to Web3Forms
+    const web3Res = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      body: formData,
+    });
+    const web3Json = await web3Res.json();
+
+    // 2. Submit to /api/booking
+    const dbRes = await fetch("/api/booking", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    const dbJson = await dbRes.json();
+
+    if (web3Json.success && dbJson.success) {
+      setResult("Form submitted and saved!");
+      form.reset();
+      setPrice(0);
+    } else {
+      setResult("Submission failed. Please try again.");
+    }
+    setSubmitting(false);
+  };
 
   return (
     <>
       <form
-        action="https://api.web3forms.com/submit"
-        method="POST"
+        onSubmit={handleSubmit}
         style={{ maxWidth: 400, margin: '2rem auto', display: 'flex', flexDirection: 'column', gap: 12 }}
       >
         <input type="hidden" name="access_key" value="e4c4edf6-6e35-456a-87da-b32b961b449a" />
@@ -63,7 +100,8 @@ export default function ContactForm() {
           {deposit > 0 ? `Deposit (20%): ฿${deposit}` : 'Enter price to see deposit'}
         </div>
 
-        <button type="submit">Submit Form</button>
+        <button type="submit" disabled={submitting}>{submitting ? 'Submitting...' : 'Submit Form'}</button>
+        <span style={{ color: result.includes('failed') ? 'red' : 'green', minHeight: 24 }}>{result}</span>
       </form>
       <div style={{ maxWidth: 400, margin: '1rem auto', textAlign: 'center' }}>
         <a
