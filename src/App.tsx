@@ -105,7 +105,7 @@ import InstructorInternship from './pages/internship/Instructor';
 import FacebookFeedPage from './pages/FacebookFeedPage';
 import BookingToJiraForm from './components/BookingToJiraForm';
 
-import BookNowSite from './pages/BookNowSite';
+// import BookNowSite from './pages/BookNowSite';
 
 import './i18n';
 
@@ -301,7 +301,7 @@ const App = () => (
               <Route path="/WeatherKohTao" element={<WeatherKohTao />} />
               <Route path="/facebook" element={<FacebookFeedPage />} />
               <Route path="/booking-to-jira" element={<RequireAdmin><BookingToJiraForm /></RequireAdmin>} />
-              <Route path="/booknow-site" element={<BookNowSite />} />
+              {/* <Route path="/booknow-site" element={<BookNowSite />} /> */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>
