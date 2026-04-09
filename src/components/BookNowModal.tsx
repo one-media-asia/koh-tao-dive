@@ -12,18 +12,20 @@ const BookNowModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, 
       <div
         style={{
           background: '#fff',
-          borderRadius: 16,
-          maxWidth: 540,
+          borderRadius: 18,
+          maxWidth: 700,
           width: '100%',
-          minWidth: 320,
-          padding: '2.5rem 2rem',
+          minWidth: 340,
+          padding: '3rem 2.5rem',
           position: 'relative',
           boxShadow: '0 4px 32px #0003',
+          maxHeight: '90vh',
+          overflowY: 'auto',
         }}
       >
         <button
           onClick={onClose}
-          style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', fontSize: 28, cursor: 'pointer', color: '#888' }}
+          style={{ position: 'absolute', top: 18, right: 18, background: 'none', border: 'none', fontSize: 32, cursor: 'pointer', color: '#888' }}
           aria-label="Close"
         >
           ×
