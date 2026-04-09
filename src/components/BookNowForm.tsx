@@ -32,7 +32,7 @@ const BookNowForm: React.FC = () => {
 
   const coursePrice = COURSE_PRICES[form.course_title] || 0;
   // For Fun Dive, deposit is always 360; for others, 20%
-  const deposit = courseTitle === 'Fun Dive' ? 360 : (coursePrice ? Math.round(coursePrice * 0.2) : 0);
+  const deposit = form.course_title === 'Fun Dive' ? 360 : (coursePrice ? Math.round(coursePrice * 0.2) : 0);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
