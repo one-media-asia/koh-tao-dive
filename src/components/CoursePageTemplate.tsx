@@ -147,7 +147,7 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
 
   // Scroll to contact section
   const openBookNow = () => {
-    window.open('/booknow.html', '_blank');
+    window.open('/booking-form', '_blank');
   };
 
   return (
