@@ -1,12 +1,11 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { useNavigate } from 'react-router-dom';
+import { useBookNowModal } from '@/components/useBookNowModal';
 import Contact from '@/components/Contact';
 
 export default function DeepDiver() {
-  const navigate = useNavigate();
-
+  const { setShowBookNow, BookNowModalComponent } = useBookNowModal();
   return (
     <main className="min-h-screen pt-24 pb-16">
       <div className="max-w-4xl mx-auto px-4">
@@ -89,7 +88,7 @@ export default function DeepDiver() {
         <Card className="mb-8 p-6 bg-green-50">
           <h2 className="text-2xl font-bold mb-6">Klaar om dieper te gaan?</h2>
           <p className="text-gray-700 mb-4">Ga met ons mee voor een onvergetelijke diepduikervaring. Onze ervaren instructeurs begeleiden je veilig naar grotere dieptes.</p>
-          <Button size="lg" onClick={() => window.open('/booknow.html', '_blank')}>Boek nu</Button>
+          <Button size="lg" onClick={() => setShowBookNow(true)}>Boek nu</Button>
         </Card>
 
         {/* Contact */}
@@ -97,6 +96,7 @@ export default function DeepDiver() {
           <Contact />
         </div>
       </div>
+      {BookNowModalComponent}
     </main>
   );
 }

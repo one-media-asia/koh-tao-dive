@@ -9,7 +9,7 @@ const COURSE_PRICES: Record<string, number> = {
   'Advanced Open Water': 11000,
   'Rescue Diver': 13000,
   'Divemaster': 35000,
-  'Fun Dive': 2500,
+  'Fun Dive': 1800,
 };
 
 const PAYPAL_BASE = 'https://paypal.me/prodivingasia';
@@ -31,7 +31,8 @@ const BookNowForm: React.FC = () => {
   const [showThankYou, setShowThankYou] = useState(false);
 
   const coursePrice = COURSE_PRICES[form.course_title] || 0;
-  const deposit = coursePrice ? Math.round(coursePrice * 0.2) : 0;
+  // For Fun Dive, deposit is always 360; for others, 20%
+  const deposit = courseTitle === 'Fun Dive' ? 360 : (coursePrice ? Math.round(coursePrice * 0.2) : 0);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
