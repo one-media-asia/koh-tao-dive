@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Fish, Waves, MapPin, Clock, DollarSign, Users } from 'lucide-react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useEffect, useState, useMemo } from 'react';
-import FunDiveBooking from '../components/FunDiveBooking';
+import { useBookNowModal } from '@/components/useBookNowModal';
 import DropboxGallerySection from '@/components/DropboxGallerySection';
 import { tryAutoScroll, scrollToWithOffset } from '@/lib/scroll';
 import { usePageContent } from '@/hooks/usePageContent';
@@ -17,7 +17,7 @@ const FUN_DIVING_DROPBOX_FOLDER = 'fun-diving';
 const FunDiving = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
-  const [showFunDiveBooking, setShowFunDiveBooking] = useState(false);
+  const { setShowBookNow, BookNowModalComponent } = useBookNowModal();
   const locale = 'en';
   const fallbackContent = useMemo(() => ({
     fun_diving_hero_title: 'Fun Diving Koh Tao',
@@ -156,31 +156,13 @@ const FunDiving = () => {
             <Button
               size="lg"
               className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 text-lg"
-              onClick={() => {
-                setShowFunDiveBooking(true);
-              }}
+              onClick={() => setShowBookNow(true)}
             >
               Book a Fun Dive NOW
             </Button>
             <Button size="lg" className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 text-lg" onClick={() => { try{ sessionStorage.setItem('scrollTo','course-openWater') }catch(_){ } ; navigate('/courses'); }}>{content.fun_diving_hero_cta2}</Button>
           </div>
-          {showFunDiveBooking && (
-            <div
-              className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black bg-opacity-60 p-4"
-              onClick={() => setShowFunDiveBooking(false)}
-            >
-              <div className="relative z-50 w-full max-w-md" onClick={(event) => event.stopPropagation()}>
-                <FunDiveBooking />
-                <button
-                  className="absolute top-2 right-2 bg-white rounded-full shadow p-2 text-gray-700 hover:bg-gray-100"
-                  onClick={() => setShowFunDiveBooking(false)}
-                  aria-label="Close Fun Dive Booking"
-                >
-                  ✕
-                </button>
-              </div>
-            </div>
-          )}
+          {BookNowModalComponent}
         </div>
       </section>
 
@@ -315,7 +297,7 @@ const FunDiving = () => {
                       <li>Premium equipment</li>
                       <li>Max 4 divers per guide</li>
                     </ul>
-                          <Button variant="secondary" onClick={() => { navigate(`/booking?item=${encodeURIComponent('Fun Dive')}&type=dive&price=1800&currency=THB&dives=2`); }}>Inquire / Book</Button>
+                          <Button variant="secondary" onClick={() => setShowBookNow(true)}>Inquire / Book</Button>
                   </CardContent>
                 </Card>
 
@@ -338,7 +320,7 @@ const FunDiving = () => {
                       <Button variant="outline" asChild>
                         <Link to="/courses/discover-scuba">View Program</Link>
                       </Button>
-                      <Button variant="secondary" onClick={() => { navigate(`/booking?item=${encodeURIComponent('Discover Scuba')}&type=dive&price=2500&currency=THB`); }}>Inquire / Book</Button>
+                      <Button variant="secondary" onClick={() => setShowBookNow(true)}>Inquire / Book</Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -358,7 +340,7 @@ const FunDiving = () => {
                       <li>Experienced guides and briefings</li>
                       <li>Pickup & return to Koh Tao</li>
                     </ul>
-                    <Button variant="secondary" onClick={() => { navigate(`/booking?item=${encodeURIComponent('Sail Rock Special')}&type=dive&price=2900&currency=THB`); }}>Inquire / Book</Button>
+                    <Button variant="secondary" onClick={() => setShowBookNow(true)}>Inquire / Book</Button>
                   </CardContent>
                 </Card>
               </div>
@@ -834,7 +816,7 @@ const FunDiving = () => {
                 </div>
                 <Button
                   size="lg"
-                  onClick={() => window.open('/booknow.html', '_blank')}
+                  onClick={() => setShowBookNow(true)}
                 >
                   Send Booking Request
                 </Button>

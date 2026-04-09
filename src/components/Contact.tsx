@@ -279,10 +279,7 @@ const Contact = () => {
           </div>
         </div>
 
-        <div className="mt-16 pt-8 border-t border-gray-700 text-center text-gray-400">
-          <p>{content.footer_line_1}</p>
-          <p className="mt-2">{content.footer_line_2}</p>
-        </div>
+        {/* Footer lines removed to prevent double footer. Use global Footer in Layout. */}
       </div>
     </section>
   );
