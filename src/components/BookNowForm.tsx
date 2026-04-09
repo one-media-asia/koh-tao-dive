@@ -212,5 +212,3 @@ const BookNowForm: React.FC = () => {
 };
 
 export default BookNowForm;
-
-export default BookNowForm;
