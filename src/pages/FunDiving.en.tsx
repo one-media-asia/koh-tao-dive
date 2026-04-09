@@ -834,7 +834,7 @@ const FunDiving = () => {
                 </div>
                 <Button
                   size="lg"
-                  onClick={() => navigate('/booking?item=Fun%20Dive&type=dive&price=1800&currency=THB&dives=2')}
+                  onClick={() => window.open('/booknow.html', '_blank')}
                 >
                   Send Booking Request
                 </Button>

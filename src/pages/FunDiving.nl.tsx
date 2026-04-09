@@ -808,7 +808,7 @@ const FunDiving = () => {
                 </div>
                 <Button
                   size="lg"
-                  onClick={() => navigate('/booking?item=Fun%20Dive&type=dive&price=2000&currency=THB&dives=2')}
+                  onClick={() => window.open('/booknow.html', '_blank')}
                 >
                   Verstuur boekingsaanvraag
                 </Button>

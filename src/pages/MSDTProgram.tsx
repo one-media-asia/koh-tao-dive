@@ -124,7 +124,7 @@ const MSDTProgram: React.FC = () => {
             </CardHeader>
             <CardContent>
               <p className="mb-4">{content.enroll_body}</p>
-              <Button onClick={() => navigate(bookingUrl)}>{content.enroll_cta}</Button>
+              <Button onClick={() => window.open('/booknow.html', '_blank')}>{content.enroll_cta}</Button>
             </CardContent>
           </Card>
         </div>

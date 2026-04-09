@@ -146,11 +146,8 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
   const { exchangeRates } = useCurrency();
 
   // Scroll to contact section
-  const scrollToContact = () => {
-    const el = document.getElementById('contact-section');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
+  const openBookNow = () => {
+    window.open('/booknow.html', '_blank');
   };
 
   return (
@@ -166,7 +163,7 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
           <h1 className="text-4xl md:text-5xl font-bold">{content.hero_title}</h1>
           <p className="mt-4 max-w-2xl text-lg">{content.hero_subtitle}</p>
           <div className="mt-6">
-            <Button size="lg" onClick={scrollToContact}>
+            <Button size="lg" onClick={openBookNow}>
               {locale === 'nl' ? 'Boek Nu' : 'Book Now'}
             </Button>
           </div>
@@ -267,7 +264,7 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
                     ? 'Inclusief alle training, materialen, PADI certificering en uitrusting' 
                     : 'Includes all training, materials, PADI certification and equipment'}
                 </p>
-                <Button className="w-full" onClick={scrollToContact}>
+                <Button className="w-full" onClick={openBookNow}>
                   {locale === 'nl' ? 'Boek / Informeer' : 'Book / Enquire'}
                 </Button>
               </CardContent>
