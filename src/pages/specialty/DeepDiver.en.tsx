@@ -115,7 +115,7 @@ export default function DeepDiver() {
         <Card className="mb-8 p-6 bg-green-50">
           <h2 className="text-2xl font-bold mb-6">Ready to Go Deeper?</h2>
           <p className="text-gray-700 mb-4">Join us for an unforgettable deep diving experience. Our expert instructors will guide you safely to greater depths.</p>
-          <Button size="lg" onClick={() => navigate('/booking?course=deep-diver&type=course')}>Book Now</Button>
+          <Button size="lg" onClick={() => { const el = document.getElementById('contact-section'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }}>Book Now</Button>
         </Card>
 
         {/* Contact */}

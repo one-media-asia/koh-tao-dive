@@ -145,6 +145,14 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
 
   const { exchangeRates } = useCurrency();
 
+  // Scroll to contact section
+  const scrollToContact = () => {
+    const el = document.getElementById('contact-section');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <section className="relative h-72 md:h-96 flex items-center overflow-hidden">
@@ -158,7 +166,7 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
           <h1 className="text-4xl md:text-5xl font-bold">{content.hero_title}</h1>
           <p className="mt-4 max-w-2xl text-lg">{content.hero_subtitle}</p>
           <div className="mt-6">
-            <Button size="lg" onClick={() => navigate(bookingUrl)}>
+            <Button size="lg" onClick={scrollToContact}>
               {locale === 'nl' ? 'Boek Nu' : 'Book Now'}
             </Button>
           </div>
@@ -259,7 +267,7 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
                     ? 'Inclusief alle training, materialen, PADI certificering en uitrusting' 
                     : 'Includes all training, materials, PADI certification and equipment'}
                 </p>
-                <Button className="w-full" onClick={() => navigate(bookingUrl)}>
+                <Button className="w-full" onClick={scrollToContact}>
                   {locale === 'nl' ? 'Boek / Informeer' : 'Book / Enquire'}
                 </Button>
               </CardContent>
@@ -269,7 +277,7 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
 
         {/* PageContentEditor removed */}
         
-        <section className="mt-12">
+        <section className="mt-12" id="contact-section">
           <Contact />
         </section>
       </main>

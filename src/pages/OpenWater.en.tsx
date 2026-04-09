@@ -71,11 +71,7 @@ const OpenWaterEn: React.FC = () => {
           answer: 'Yes, PADI is the world\'s leading scuba training organization with recognition at dive centers and resorts globally.',
         },
       ]}
-    >
-      <div style={{textAlign:'center',margin:'2rem 0'}}>
-        <a href="/booknow.html" style={{background:'#0070ba',color:'#fff',padding:'0.75rem 2rem',borderRadius:4,fontSize:'1.2rem',textDecoration:'none',display:'inline-block'}}>Book Now</a>
-      </div>
-    </CoursePageTemplate>
+    />
   );
 };
 

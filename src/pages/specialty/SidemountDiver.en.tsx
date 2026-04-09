@@ -104,7 +104,7 @@ export default function SidemountDiver() {
         <Card className="mb-8 p-6 bg-green-50">
           <h2 className="text-2xl font-bold mb-6">Master Sidemount</h2>
           <p className="text-gray-700 mb-4">Learn advanced sidemount configuration for technical dive adventures.</p>
-          <Button size="lg" onClick={() => navigate('/booking?course=sidemount&type=course')}>Book Now</Button>
+          <Button size="lg" onClick={() => { const el = document.getElementById('contact-section'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }}>Book Now</Button>
         </Card>
 
         <div className="mt-12">

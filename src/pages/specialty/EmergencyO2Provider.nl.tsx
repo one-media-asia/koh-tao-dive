@@ -89,7 +89,7 @@ export default function EmergencyO2Provider() {
         <Card className="mb-8 p-6 bg-green-50">
           <h2 className="text-2xl font-bold mb-6">Wees voorbereid op noodgevallen</h2>
           <p className="text-gray-700 mb-4">Leer levensreddende vaardigheden voor zuurstoftoediening. Schrijf je in voor onze Emergency Oxygen Provider-cursus.</p>
-          <Button size="lg" onClick={() => navigate('/booking?course=emergency-o2&type=course')}>Boek nu</Button>
+          <Button size="lg" onClick={() => { const el = document.getElementById('contact-section'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }}>Boek nu</Button>
         </Card>
 
         {/* Contact */}

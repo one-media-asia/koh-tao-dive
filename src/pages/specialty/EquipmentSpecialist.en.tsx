@@ -25,7 +25,7 @@ export default function EquipmentSpecialist() {
 
         <Card className="mb-8 p-6 bg-green-50">
           <h2 className="text-2xl font-bold mb-6">Get Certified</h2>
-          <Button size="lg" onClick={() => navigate('/booking?course=equipment-specialist&type=course')}>Book Now</Button>
+          <Button size="lg" onClick={() => { const el = document.getElementById('contact-section'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }}>Book Now</Button>
         </Card>
 
         <div className="mt-12">
