@@ -1,5 +1,6 @@
 import React from 'react';
 import Navigation from './Navigation';
+import BookNowModal from './BookNowModal';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { trackAffiliateClick } from '@/lib/affiliateTracking';
@@ -131,6 +132,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isAdminRoute = location.pathname.startsWith('/admin') && location.pathname !== '/admin/login';
   const [user, setUser] = React.useState<any>(null);
   const [isAdmin, setIsAdmin] = React.useState(false);
+  const [showBookNow, setShowBookNow] = React.useState(false);
 
   React.useEffect(() => {
     const checkAuth = async () => {
@@ -169,23 +171,30 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           <Button variant="outline" onClick={handleLogout}>{isDutch ? 'Uitloggen' : 'Logout'}</Button>
         </div>
       )}
-     {!isAdminRoute && (
-  <Link
-    to="/booking?source=left-widget"
-    onClick={() => trackBookingWidgetClick('left-widget')}
-  >
-    {isDutch ? 'Boek nu' : 'Book now'}
-  </Link>
-)}  
-      <Link
-        to="/booking?source=mobile-sticky"
-        onClick={() => trackBookingWidgetClick('mobile-sticky')}
-        className="fixed bottom-24 left-1/2 z-40 -translate-x-1/2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-blue-700 motion-safe:animate-pulse md:hidden"
-        aria-label={isDutch ? 'Boek nu' : 'Book now'}
-        title={isDutch ? 'Boek nu' : 'Book now'}
-      >
-        {isDutch ? 'Boek nu' : 'Book now'}
-      </Link>
+      {/* Global Book Now Button (desktop) */}
+      {!isAdminRoute && (
+        <Button
+          onClick={() => setShowBookNow(true)}
+          className="fixed left-4 top-1/2 z-40 -translate-y-1/2 bg-blue-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-700 transition hidden md:block"
+          aria-label={isDutch ? 'Boek nu' : 'Book now'}
+          title={isDutch ? 'Boek nu' : 'Book now'}
+        >
+          {isDutch ? 'Boek nu' : 'Book now'}
+        </Button>
+      )}
+      {/* Global Book Now Button (mobile sticky) */}
+      {!isAdminRoute && (
+        <Button
+          onClick={() => setShowBookNow(true)}
+          className="fixed bottom-24 left-1/2 z-40 -translate-x-1/2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-blue-700 motion-safe:animate-pulse md:hidden"
+          aria-label={isDutch ? 'Boek nu' : 'Book now'}
+          title={isDutch ? 'Boek nu' : 'Book now'}
+        >
+          {isDutch ? 'Boek nu' : 'Book now'}
+        </Button>
+      )}
+      {/* Book Now Modal */}
+      <BookNowModal open={showBookNow} onClose={() => setShowBookNow(false)} />
       <main className="flex-1">{children}</main>
       <CookieConsent />
       <a
