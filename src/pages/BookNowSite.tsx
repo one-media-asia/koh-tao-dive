@@ -1,13 +1,1 @@
-import React from 'react';
-import Layout from '@/components/Layout';
-import BookNowForm from '@/components/BookNowForm';
-
-const BookNowSite: React.FC = () => (
-  <Layout>
-    <div className="min-h-screen bg-background flex items-center justify-center py-12">
-      <BookNowForm />
-    </div>
-  </Layout>
-);
-
-export default BookNowSite;
+// This page has been removed. Booking is now only available via the modal.
