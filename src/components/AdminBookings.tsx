@@ -1,4 +1,4 @@
-// AdminBookings.tsx
+// AdminBooks.tsx
 // Clean admin bookings table: shows Name, Email, Phone, Course, Date, Total, Deposit, To Be Paid, PayPal link.
 // To add more columns or features, edit below. For comments or notes, add a new column and input logic as needed.
 
@@ -9,7 +9,7 @@ import BookingsCalendar from './BookingsCalendar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 
-interface Booking {
+interface Book {
   total_payable_now?: number | null;
   subtotal_amount?: number | null;
   id: string;
@@ -29,16 +29,16 @@ interface Booking {
 
 
 
-const AdminBookings: React.FC = () => {
-  const [bookings, setBookings] = useState<Booking[]>([]);
+const AdminBooks: React.FC = () => {
+  const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [statusDrafts, setStatusDrafts] = useState<Record<string, string>>({});
   const [statusSavingId, setStatusSavingId] = useState<string | null>(null);
   const [statusResult, setStatusResult] = useState<string | null>(null);
   const [view, setView] = useState<'table' | 'calendar'>('table');
-  const [showFunDiveBooking, setShowFunDiveBooking] = useState(false);
-  const [financeModalBooking, setFinanceModalBooking] = useState<Booking | null>(null);
+  const [showFunDiveBook, setShowFunDiveBook] = useState(false);
+  const [financeModalBook, setFinanceModalBook] = useState<Book | null>(null);
   const [paypalLink, setPaypalLink] = useState('https://paypal.me/prodivingasia');
   const [bankTransferDetails, setBankTransferDetails] = useState('');
   const [noteDraft, setNoteDraft] = useState('');
@@ -88,15 +88,15 @@ const AdminBookings: React.FC = () => {
     return `${converted.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`;
   };
 
-  const copyBookingDetails = async (booking: Booking) => {
-    const details = `Name: ${booking.name}\nEmail: ${booking.email}\nPhone: ${booking.phone || '-'}\nCourse: ${booking.course_title}\nDate: ${booking.preferred_date || '-'}\nStatus: ${booking.status}\nNotes: ${booking.internal_notes || ''}`;
+  const copyBookDetails = async (book: Book) => {
+    const details = `Name: ${book.name}\nEmail: ${book.email}\nPhone: ${book.phone || '-'}\nCourse: ${book.course_title}\nDate: ${book.preferred_date || '-'}\nStatus: ${book.status}\nNotes: ${book.internal_notes || ''}`;
     try {
       await navigator.clipboard.writeText(details);
-      setCopyStatus((prev) => ({ ...prev, [booking.id]: 'Copied!' }));
+      setCopyStatus((prev) => ({ ...prev, [book.id]: 'Copied!' }));
     } catch {
-      setCopyStatus((prev) => ({ ...prev, [booking.id]: 'Copy failed!' }));
+      setCopyStatus((prev) => ({ ...prev, [book.id]: 'Copy failed!' }));
     }
-    setTimeout(() => setCopyStatus((prev) => ({ ...prev, [booking.id]: '' })), 2000);
+    setTimeout(() => setCopyStatus((prev) => ({ ...prev, [book.id]: '' })), 2000);
   };
 
   const adminAuthedFetch = async (url: string, init?: RequestInit) => {
@@ -122,60 +122,60 @@ const AdminBookings: React.FC = () => {
     return fetch(url, { ...init, headers });
   };
 
-  const escalateToJira = async (booking: Booking) => {
-    setJiraStatus((prev) => ({ ...prev, [booking.id]: 'Sending...' }));
+  const escalateToJira = async (book: Book) => {
+    setJiraStatus((prev) => ({ ...prev, [book.id]: 'Sending...' }));
     try {
-      const res = await adminAuthedFetch('/api/create-jira-booking', {
+      const res = await adminAuthedFetch('/api/create-jira-book', {
         method: 'POST',
         body: JSON.stringify({
-          name: booking.name,
-          email: booking.email,
-          bookingDetails: `Course: ${booking.course_title}\nDate: ${booking.preferred_date || '-'}\nPhone: ${booking.phone || '-'}\nStatus: ${booking.status}\nNotes: ${booking.internal_notes || ''}`,
+          name: book.name,
+          email: book.email,
+          bookDetails: `Course: ${book.course_title}\nDate: ${book.preferred_date || '-'}\nPhone: ${book.phone || '-'}\nStatus: ${book.status}\nNotes: ${book.internal_notes || ''}`,
         }),
       });
       if (res.ok) {
-        setJiraStatus((prev) => ({ ...prev, [booking.id]: 'Escalated!' }));
+        setJiraStatus((prev) => ({ ...prev, [book.id]: 'Escalated!' }));
       } else {
-        setJiraStatus((prev) => ({ ...prev, [booking.id]: 'Failed!' }));
+        setJiraStatus((prev) => ({ ...prev, [book.id]: 'Failed!' }));
       }
     } catch {
-      setJiraStatus((prev) => ({ ...prev, [booking.id]: 'Error!' }));
+      setJiraStatus((prev) => ({ ...prev, [book.id]: 'Error!' }));
     }
-    setTimeout(() => setJiraStatus((prev) => ({ ...prev, [booking.id]: '' })), 3000);
+    setTimeout(() => setJiraStatus((prev) => ({ ...prev, [book.id]: '' })), 3000);
   };
 
-  const calendarFeedUrl = 'https://koh-tao-dive-dreams.vercel.app/api/bookings/calendar';
+  const calendarFeedUrl = 'https://koh-tao-dive-dreams.vercel.app/api/books/calendar';
 
   useEffect(() => {
-    async function fetchBookings() {
+    async function fetchBooks() {
       setLoading(true);
       setError(null);
       try {
         const { data: { session } } = await supabase.auth.getSession();
         const token = session?.access_token;
         if (!token) throw new Error('Not authenticated');
-        const res = await fetch('/api/bookings', {
+        const res = await fetch('/api/books', {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (!res.ok) throw new Error('Failed to fetch bookings');
+        if (!res.ok) throw new Error('Failed to fetch books');
         const data = await res.json();
-        setBookings(data);
+        setBooks(data);
         const initialDrafts: Record<string, string> = {};
         if (Array.isArray(data)) {
-          data.forEach((booking: Booking) => {
-            initialDrafts[booking.id] = booking.status || 'pending';
+          data.forEach((book: Book) => {
+            initialDrafts[book.id] = book.status || 'pending';
           });
         } else {
           console.error('Data is not an array:', data);
         }
         setStatusDrafts(initialDrafts);
       } catch (err: any) {
-        setError(err.message || 'Failed to fetch bookings');
+        setError(err.message || 'Failed to fetch books');
       } finally {
         setLoading(false);
       }
     }
-    fetchBookings();
+    fetchBooks();
   }, []);
 
   useEffect(() => {
@@ -199,15 +199,15 @@ const AdminBookings: React.FC = () => {
       });
   }, []);
 
-  const getPayableNow = (booking: Booking) => {
-    if (typeof booking.total_payable_now === 'number' && booking.total_payable_now > 0) return booking.total_payable_now;
-    if (typeof booking.deposit_amount === 'number' && booking.deposit_amount > 0) return booking.deposit_amount;
-    if (typeof booking.total_amount === 'number' && booking.total_amount > 0) return booking.total_amount;
+  const getPayableNow = (book: Book) => {
+    if (typeof book.total_payable_now === 'number' && book.total_payable_now > 0) return book.total_payable_now;
+    if (typeof book.deposit_amount === 'number' && book.deposit_amount > 0) return book.deposit_amount;
+    if (typeof book.total_amount === 'number' && book.total_amount > 0) return book.total_amount;
     return null;
   };
 
-  const buildPayPalUrl = (booking: Booking) => {
-    const amount = getPayableNow(booking);
+  const buildPayPalUrl = (book: Book) => {
+    const amount = getPayableNow(book);
     if (amount === null) return null;
     // Add account_id and site_id as query parameters for commission tracking
     const accountId = '7864578';
@@ -216,33 +216,33 @@ const AdminBookings: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!financeModalBooking) return;
-    setNoteDraft(financeModalBooking.internal_notes || '');
+    if (!financeModalBook) return;
+    setNoteDraft(financeModalBook.internal_notes || '');
     setNoteResult(null);
-    setBankTransferDraft(financeModalBooking.bank_transfer_details || bankTransferDetails || '');
+    setBankTransferDraft(financeModalBook.bank_transfer_details || bankTransferDetails || '');
     setBankTransferResult(null);
-  }, [financeModalBooking, bankTransferDetails]);
+  }, [financeModalBook, bankTransferDetails]);
 
-  const saveBookingNote = async () => {
-    if (!financeModalBooking) return;
+  const saveBookNote = async () => {
+    if (!financeModalBook) return;
 
     setNoteSaving(true);
     setNoteResult(null);
     try {
-      const res = await fetch('/api/bookings', {
+      const res = await fetch('/api/books', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: financeModalBooking.id, internal_notes: noteDraft }),
+        body: JSON.stringify({ id: financeModalBook.id, internal_notes: noteDraft }),
       });
 
       if (!res.ok) {
         const payload = await res.json().catch(() => ({}));
-        throw new Error(payload?.error || 'Failed to save booking note');
+        throw new Error(payload?.error || 'Failed to save book note');
       }
 
-      setBookings((prev) =>
+      setBooks((prev) =>
         prev.map((b) =>
-          b.id === financeModalBooking.id
+          b.id === financeModalBook.id
             ? {
                 ...b,
                 internal_notes: noteDraft,
@@ -250,7 +250,7 @@ const AdminBookings: React.FC = () => {
             : b
         )
       );
-      setFinanceModalBooking((prev) =>
+      setFinanceModalBook((prev) =>
         prev
           ? {
               ...prev,
@@ -267,16 +267,16 @@ const AdminBookings: React.FC = () => {
   };
 
   const saveBankTransferDetails = async () => {
-    if (!financeModalBooking) return;
+    if (!financeModalBook) return;
 
     setBankTransferSaving(true);
     setBankTransferResult(null);
 
     try {
-      const res = await fetch('/api/bookings', {
+      const res = await fetch('/api/books', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: financeModalBooking.id, bank_transfer_details: bankTransferDraft }),
+        body: JSON.stringify({ id: financeModalBook.id, bank_transfer_details: bankTransferDraft }),
       });
 
       if (!res.ok) {
@@ -284,9 +284,9 @@ const AdminBookings: React.FC = () => {
         throw new Error(payload?.error || 'Failed to save bank transfer details');
       }
 
-      setBookings((prev) =>
+      setBooks((prev) =>
         prev.map((b) =>
-          b.id === financeModalBooking.id
+          b.id === financeModalBook.id
             ? {
                 ...b,
                 bank_transfer_details: bankTransferDraft,
@@ -294,7 +294,7 @@ const AdminBookings: React.FC = () => {
             : b
         )
       );
-      setFinanceModalBooking((prev) =>
+      setFinanceModalBook((prev) =>
         prev
           ? {
               ...prev,
@@ -310,18 +310,18 @@ const AdminBookings: React.FC = () => {
     }
   };
 
-  const saveStatus = async (bookingId: string, explicitStatus?: string) => {
-    const selectedStatus = explicitStatus || statusDrafts[bookingId];
+  const saveStatus = async (bookId: string, explicitStatus?: string) => {
+    const selectedStatus = explicitStatus || statusDrafts[bookId];
     if (!selectedStatus) return;
 
-    setStatusSavingId(bookingId);
+    setStatusSavingId(bookId);
     setStatusResult(null);
 
     try {
-      const res = await fetch('/api/bookings', {
+      const res = await fetch('/api/books', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: bookingId, status: selectedStatus }),
+        body: JSON.stringify({ id: bookId, status: selectedStatus }),
       });
 
       if (!res.ok) {
@@ -330,7 +330,7 @@ const AdminBookings: React.FC = () => {
       }
 
       const updatedBooking = await res.json();
-      setBookings((prev) => prev.map((booking) => (booking.id === bookingId ? { ...booking, status: updatedBooking.status || selectedStatus } : booking)));
+      setBooks((prev) => prev.map((booking) => (booking.id === bookingId ? { ...booking, status: updatedBooking.status || selectedStatus } : booking)));
       setStatusResult(`Status updated to ${updatedBooking.status || selectedStatus}.`);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to update booking status';
@@ -340,7 +340,7 @@ const AdminBookings: React.FC = () => {
     }
   };
 
-  if (loading) return <div>Loading bookings...</div>;
+  if (loading) return <div>Loading books...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
@@ -361,7 +361,7 @@ const AdminBookings: React.FC = () => {
         </select>
         <button
           className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded"
-          onClick={() => setShowFunDiveBooking(true)}
+          onClick={() => setShowFunDiveBook(true)}
         >
           Book a Fun Dive
         </button>
@@ -425,16 +425,16 @@ const AdminBookings: React.FC = () => {
         </button>
       </div>
 
-      {showFunDiveBooking && (
+      {showFunDiveBook && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black bg-opacity-60 p-4"
-          onClick={() => setShowFunDiveBooking(false)}
+          onClick={() => setShowFunDiveBook(false)}
         >
           <div className="relative z-50 w-full max-w-md" onClick={(event) => event.stopPropagation()}>
             <FunDiveBooking />
             <button
               className="absolute top-2 right-2 bg-white rounded-full shadow p-2 text-gray-700 hover:bg-gray-100"
-              onClick={() => setShowFunDiveBooking(false)}
+              onClick={() => setShowFunDiveBook(false)}
               aria-label="Close Fun Dive Booking"
             >
               ✕
@@ -447,7 +447,7 @@ const AdminBookings: React.FC = () => {
       {copyResult && <div className="mb-4 text-slate-700">{copyResult}</div>}
       {statusResult && <div className="mb-4 text-emerald-700">{statusResult}</div>}
       {view === 'calendar' ? (
-        <BookingsCalendar bookings={bookings} />
+        <BookingsCalendar books={books} />
       ) : (
       <table className="w-full border">
         <thead>
@@ -463,7 +463,7 @@ const AdminBookings: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {bookings.map((b) => (
+          {books.map((b) => (
             <tr key={b.id}>
               <td className="border px-1 py-1 whitespace-nowrap">{b.name}</td>
               <td className="border px-1 py-1 whitespace-nowrap">{b.email}</td>
@@ -509,7 +509,7 @@ const AdminBookings: React.FC = () => {
               <td className="border px-2 py-1">
                 <button
                   type="button"
-                  onClick={() => setFinanceModalBooking(b)}
+                  onClick={() => setFinanceModalBook(b)}
                   className="mt-2 rounded bg-slate-700 px-2 py-1 text-xs font-semibold text-white hover:bg-slate-800"
                 >
                   Finance
@@ -548,7 +548,7 @@ const AdminBookings: React.FC = () => {
                 )}
                 <button
                   className="ml-2 px-2 py-1 text-xs bg-slate-600 text-white rounded"
-                  onClick={() => copyBookingDetails(b)}
+                  onClick={() => copyBookDetails(b)}
                   title="Copy booking details to clipboard"
                 >
                   Copy Details
@@ -563,38 +563,38 @@ const AdminBookings: React.FC = () => {
       </table>
       )}
 
-      <Dialog open={Boolean(financeModalBooking)} onOpenChange={(open) => { if (!open) setFinanceModalBooking(null); }}>
+      <Dialog open={Boolean(financeModalBook)} onOpenChange={(open) => { if (!open) setFinanceModalBook(null); }}>
         <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
             <DialogTitle>
-              Individual Finance Details{financeModalBooking ? ` - ${financeModalBooking.name}` : ''}
+              Individual Finance Details{financeModalBook ? ` - ${financeModalBook.name}` : ''}
             </DialogTitle>
           </DialogHeader>
 
-          {financeModalBooking && (
+          {financeModalBook && (
             <div className="space-y-3 text-sm">
               {/* Finance Section Heading and Status */}
               <FinanceSection />
-              <div><strong>Booking ID:</strong> {financeModalBooking.id}</div>
-              <div><strong>Course:</strong> {financeModalBooking.course_title}</div>
-              <div><strong>Date:</strong> {financeModalBooking.preferred_date || '-'}</div>
-              <div><strong>Total:</strong> {typeof financeModalBooking.total_amount === 'number' ? financeModalBooking.total_amount : '-'}</div>
-              <div><strong>Deposit:</strong> {typeof financeModalBooking.deposit_amount === 'number' ? financeModalBooking.deposit_amount : '-'}</div>
-              <div><strong>Due:</strong> {typeof financeModalBooking.due_amount === 'number' ? financeModalBooking.due_amount : '-'}</div>
+              <div><strong>Booking ID:</strong> {financeModalBook.id}</div>
+              <div><strong>Course:</strong> {financeModalBook.course_title}</div>
+              <div><strong>Date:</strong> {financeModalBook.preferred_date || '-'}</div>
+              <div><strong>Total:</strong> {typeof financeModalBook.total_amount === 'number' ? financeModalBook.total_amount : '-'}</div>
+              <div><strong>Deposit:</strong> {typeof financeModalBook.deposit_amount === 'number' ? financeModalBook.deposit_amount : '-'}</div>
+              <div><strong>Due:</strong> {typeof financeModalBook.due_amount === 'number' ? financeModalBook.due_amount : '-'}</div>
               <div>
                 <strong>Payable now:</strong>{' '}
-                {getPayableNow(financeModalBooking) !== null ? getPayableNow(financeModalBooking) : '-'}
+                {getPayableNow(financeModalBook) !== null ? getPayableNow(financeModalBook) : '-'}
               </div>
               <div>
                 <strong>PayPal URL:</strong>{' '}
-                {buildPayPalUrl(financeModalBooking) ? (
+                {buildPayPalUrl(financeModalBook) ? (
                   <a
-                    href={buildPayPalUrl(financeModalBooking) || '#'}
+                    href={buildPayPalUrl(financeModalBook) || '#'}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="break-all text-blue-600 underline"
                   >
-                    {buildPayPalUrl(financeModalBooking)}
+                    {buildPayPalUrl(financeModalBook)}
                   </a>
                 ) : (
                   '-'
@@ -635,7 +635,7 @@ const AdminBookings: React.FC = () => {
                 <div className="mt-2 flex items-center gap-2">
                   <button
                     type="button"
-                    onClick={saveBookingNote}
+                    onClick={saveBookNote}
                     disabled={noteSaving}
                     className="rounded bg-blue-600 px-3 py-1 text-xs font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                   >
@@ -652,4 +652,4 @@ const AdminBookings: React.FC = () => {
   );
 };
 
-export default AdminBookings;
+export default AdminBooks;

@@ -1,8 +1,8 @@
 -- Drop the old bookings table if it exists
-DROP TABLE IF EXISTS bookings;
+DROP TABLE IF EXISTS books;
 
--- Create a new bookings table with all required fields
-CREATE TABLE bookings (
+-- Create a new books table with all required fields
+CREATE TABLE books (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   name text NOT NULL,
   email text NOT NULL,
@@ -30,20 +30,20 @@ BEGIN
   IF NOT EXISTS (
     SELECT 1
     FROM pg_constraint
-    WHERE conname = 'bookings_status_check'
+    WHERE conname = 'books_status_check'
   ) THEN
-    ALTER TABLE bookings
-      ADD CONSTRAINT bookings_status_check
+    ALTER TABLE books
+      ADD CONSTRAINT books_status_check
       CHECK (status IN ('pending', 'confirmed', 'completed', 'cancelled', 'paid'));
   END IF;
 END $$;
 
 -- Helpful indexes for admin screens and updates
-CREATE INDEX IF NOT EXISTS idx_bookings_created_at ON bookings(created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_bookings_status ON bookings(status);
+CREATE INDEX IF NOT EXISTS idx_books_created_at ON books(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_books_status ON books(status);
 
 -- Keep updated_at current on writes
-CREATE OR REPLACE FUNCTION set_bookings_updated_at()
+CREATE OR REPLACE FUNCTION set_books_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN
   NEW.updated_at = now();
@@ -51,25 +51,25 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-DROP TRIGGER IF EXISTS trg_set_bookings_updated_at ON bookings;
-CREATE TRIGGER trg_set_bookings_updated_at
-  BEFORE UPDATE ON bookings
+DROP TRIGGER IF EXISTS trg_set_books_updated_at ON books;
+CREATE TRIGGER trg_set_books_updated_at
+  BEFORE UPDATE ON books
   FOR EACH ROW
-  EXECUTE FUNCTION set_bookings_updated_at();
+  EXECUTE FUNCTION set_books_updated_at();
 
 -- Enable RLS and provide safe defaults
-ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE books ENABLE ROW LEVEL SECURITY;
 
 DO $$
 BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM pg_policies
     WHERE schemaname = 'public'
-      AND tablename = 'bookings'
+      AND tablename = 'books'
       AND policyname = 'Anyone can submit bookings'
   ) THEN
     CREATE POLICY "Anyone can submit bookings"
-      ON bookings
+      ON books
       FOR INSERT
       WITH CHECK (true);
   END IF;
@@ -77,11 +77,11 @@ BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM pg_policies
     WHERE schemaname = 'public'
-      AND tablename = 'bookings'
+      AND tablename = 'books'
       AND policyname = 'Admins can view bookings'
   ) THEN
     CREATE POLICY "Admins can view bookings"
-      ON bookings
+      ON books
       FOR SELECT
       TO authenticated
       USING (public.has_role(auth.uid(), 'admin'));
@@ -118,7 +118,7 @@ END $$;
 DO $$
 BEGIN
   IF to_regclass('public.booking_inquiries') IS NOT NULL THEN
-    INSERT INTO bookings (
+    INSERT INTO books (
       id,
       name,
       email,

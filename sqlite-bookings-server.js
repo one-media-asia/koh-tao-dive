@@ -11,7 +11,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Create bookings table if not exists
-const createTable = `CREATE TABLE IF NOT EXISTS bookings (
+const createTable = `CREATE TABLE IF NOT EXISTS books (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
   email TEXT NOT NULL,
@@ -35,7 +35,7 @@ db.run(createTable);
 
 // Get all bookings
 app.get('/api/sqlite-bookings', (req, res) => {
-  db.all('SELECT * FROM bookings ORDER BY created_at DESC', [], (err, rows) => {
+  db.all('SELECT * FROM books ORDER BY created_at DESC', [], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(rows);
   });
@@ -44,7 +44,7 @@ app.get('/api/sqlite-bookings', (req, res) => {
 // Add a booking
 app.post('/api/sqlite-bookings', (req, res) => {
   const b = req.body;
-  const stmt = db.prepare(`INSERT INTO bookings (name, email, phone, item_type, course_title, preferred_date, experience_level, addons, addons_json, addons_total, subtotal_amount, total_payable_now, internal_notes, message, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+  const stmt = db.prepare(`INSERT INTO books (name, email, phone, item_type, course_title, preferred_date, experience_level, addons, addons_json, addons_total, subtotal_amount, total_payable_now, internal_notes, message, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
   stmt.run(b.name, b.email, b.phone, b.item_type, b.course_title, b.preferred_date, b.experience_level, b.addons, b.addons_json, b.addons_total, b.subtotal_amount, b.total_payable_now, b.internal_notes, b.message, b.status || 'pending', function(err) {
     if (err) return res.status(500).json({ error: err.message });
     res.json({ id: this.lastID });
@@ -60,7 +60,7 @@ app.patch('/api/sqlite-bookings/:id', (req, res) => {
   const setClause = keys.map(k => `${k} = ?`).join(', ');
   const values = keys.map(k => fields[k]);
   values.push(id);
-  db.run(`UPDATE bookings SET ${setClause}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`, values, function(err) {
+  db.run(`UPDATE books SET ${setClause}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`, values, function(err) {
     if (err) return res.status(500).json({ error: err.message });
     res.json({ updated: this.changes });
   });
@@ -68,7 +68,7 @@ app.patch('/api/sqlite-bookings/:id', (req, res) => {
 
 // Delete a booking
 app.delete('/api/sqlite-bookings/:id', (req, res) => {
-  db.run('DELETE FROM bookings WHERE id = ?', [req.params.id], function(err) {
+  db.run('DELETE FROM books WHERE id = ?', [req.params.id], function(err) {
     if (err) return res.status(500).json({ error: err.message });
     res.json({ deleted: this.changes });
   });
