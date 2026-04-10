@@ -1,9 +1,12 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useBookNowModal } from '@/components/useBookNowModal';
 import Contact from '@/components/Contact';
 
+
+export default function BoatDiver() {
   const { setShowBookNow, BookNowModalComponent } = useBookNowModal();
   return (
     <main className="min-h-screen pt-24 pb-16">

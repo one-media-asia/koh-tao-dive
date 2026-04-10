@@ -4,7 +4,7 @@ import { useCurrency } from '@/hooks/useCurrency';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useNavigate } from 'react-router-dom';
+import { useBookNowModal } from '@/components/useBookNowModal';
 import { usePageContent } from '@/hooks/usePageContent';
 // PageContentEditor import removed
 import Contact from './Contact';
@@ -74,7 +74,7 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
 
 
 
-  const navigate = useNavigate();
+  const { setShowBookNow, BookNowModalComponent } = useBookNowModal();
   const { content, isLoading } = usePageContent({
     pageSlug,
     locale,
@@ -147,7 +147,7 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
 
   // Scroll to contact section
   const openBookNow = () => {
-    window.open('/booknow-site', '_blank');
+    setShowBookNow(true);
   };
 
   return (
@@ -277,6 +277,7 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
         <section className="mt-12" id="contact-section">
           <Contact />
         </section>
+        {BookNowModalComponent}
       </main>
     </div>
   );
