@@ -107,8 +107,8 @@ const Footer: React.FC = () => {
               <li><Link to="/WeatherKohTao" className="hover:text-white transition">{isDutch ? 'Weer' : 'Weather'}</Link></li>
               <li><Link to="/VisasKohTao" className="hover:text-white transition">Visas</Link></li>
               <li><Link to="/MedicalServices" className="hover:text-white transition">{isDutch ? 'Medisch' : 'Medical'}</Link></li>
-              <li><Link to="/accommodation-booking" className="hover:text-white transition">Booking.com</Link></li>
-              {/* Trip.com and Agoda links removed as requested */}
+              <li><a href="https://www.divinginasia.com/agoda-hotels" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">Agoda</a></li>
+              {/* Trip.com link removed as requested, Agoda link added */}
               <li><a href="https://www.divinginasia.com/#contact" className="hover:text-white transition">Contact</a></li>
             </ul>
           </div>
@@ -172,28 +172,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           <Button variant="outline" onClick={handleLogout}>{isDutch ? 'Uitloggen' : 'Logout'}</Button>
         </div>
       )}
-      {/* Global Book Now Button (desktop) */}
-      {!isAdminRoute && (
-        <Button
-          onClick={() => setShowBookNow(true)}
-          className="fixed left-4 top-1/2 z-40 -translate-y-1/2 bg-blue-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-700 transition hidden md:block"
-          aria-label={isDutch ? 'Boek nu' : 'Book now'}
-          title={isDutch ? 'Boek nu' : 'Book now'}
-        >
-          {isDutch ? 'Boek nu' : 'Book now'}
-        </Button>
-      )}
-      {/* Global Book Now Button (mobile sticky) */}
-      {!isAdminRoute && (
-        <Button
-          onClick={() => setShowBookNow(true)}
-          className="fixed bottom-24 left-1/2 z-40 -translate-x-1/2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-blue-700 motion-safe:animate-pulse md:hidden"
-          aria-label={isDutch ? 'Boek nu' : 'Book now'}
-          title={isDutch ? 'Boek nu' : 'Book now'}
-        >
-          {isDutch ? 'Boek nu' : 'Book now'}
-        </Button>
-      )}
+      {/* Global Book Now Button removed as requested */}
       {/* Book Now Modal */}
       <BookNowModal open={showBookNow} onClose={() => setShowBookNow(false)} />
       <main className="flex-1">{children}</main>
