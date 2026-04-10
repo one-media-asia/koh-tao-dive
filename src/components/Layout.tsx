@@ -22,9 +22,13 @@ const trackBookingWidgetClick = (source: 'left-widget' | 'mobile-sticky') => {
     const current = Number(window.localStorage.getItem(key) || '0');
     window.localStorage.setItem(key, String(current + 1));
 
+
     const payload = {
       event: 'booking_widget_click',
       source,
+      path: window.location.pathname,
+      clicked_at: new Date().toISOString(),
+    };
 
     if (Array.isArray((window as any).dataLayer)) {
       (window as any).dataLayer.push(payload);
