@@ -161,9 +161,13 @@ const AdminBookings: React.FC = () => {
         const data = await res.json();
         setBookings(data);
         const initialDrafts: Record<string, string> = {};
-        data.forEach((booking: Booking) => {
-          initialDrafts[booking.id] = booking.status || 'pending';
-        });
+        if (Array.isArray(data)) {
+          data.forEach((booking: Booking) => {
+            initialDrafts[booking.id] = booking.status || 'pending';
+          });
+        } else {
+          console.error('Data is not an array:', data);
+        }
         setStatusDrafts(initialDrafts);
       } catch (err: any) {
         setError(err.message || 'Failed to fetch bookings');
@@ -180,11 +184,15 @@ const AdminBookings: React.FC = () => {
       .then((payload) => {
         const rows = Array.isArray(payload?.content) ? payload.content : [];
         if (!rows.length) return;
-        rows.forEach((row: any) => {
-          if (!row?.section_key) return;
-          if (row.section_key === 'paypal_link' && row.content_value) setPaypalLink(row.content_value);
-          if (row.section_key === 'bank_transfer_details' && row.content_value) setBankTransferDetails(row.content_value);
-        });
+        if (Array.isArray(rows)) {
+          rows.forEach((row: any) => {
+            if (!row?.section_key) return;
+            if (row.section_key === 'paypal_link' && row.content_value) setPaypalLink(row.content_value);
+            if (row.section_key === 'bank_transfer_details' && row.content_value) setBankTransferDetails(row.content_value);
+          });
+        } else {
+          console.error('Rows is not an array:', rows);
+        }
       })
       .catch(() => {
         // Keep defaults if settings are unavailable.
