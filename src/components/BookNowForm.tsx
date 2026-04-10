@@ -110,7 +110,7 @@ const BookNowForm: React.FC = () => {
   };
 
   return (
-    <div className="form-container" style={{ maxWidth: 500, margin: '2rem auto', background: '#fff', padding: '2.5rem', borderRadius: 10, boxShadow: '0 2px 12px #0002' }}>
+    <div className="form-container" style={{ maxWidth: 500, margin: '2rem auto', background: '#fff', color: '#222', padding: '2.5rem', borderRadius: 10, boxShadow: '0 2px 12px #0002' }}>
       <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
         <img src="/images/logo.png" alt="Diving In Asia Logo" style={{ maxWidth: 180, height: 'auto' }} />
       </div>

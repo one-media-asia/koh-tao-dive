@@ -12,6 +12,7 @@ const BookNowModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, 
       <div
         style={{
           background: '#fff',
+          color: '#222',
           borderRadius: 18,
           maxWidth: 700,
           width: '100%',
