@@ -90,11 +90,11 @@ BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM pg_policies
     WHERE schemaname = 'public'
-      AND tablename = 'bookings'
+      AND tablename = 'books'
       AND policyname = 'Admins can update bookings'
   ) THEN
     CREATE POLICY "Admins can update bookings"
-      ON bookings
+      ON books
       FOR UPDATE
       TO authenticated
       USING (public.has_role(auth.uid(), 'admin'));
@@ -103,11 +103,11 @@ BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM pg_policies
     WHERE schemaname = 'public'
-      AND tablename = 'bookings'
+      AND tablename = 'books'
       AND policyname = 'Admins can delete bookings'
   ) THEN
     CREATE POLICY "Admins can delete bookings"
-      ON bookings
+      ON books
       FOR DELETE
       TO authenticated
       USING (public.has_role(auth.uid(), 'admin'));
