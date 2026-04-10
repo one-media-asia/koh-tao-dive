@@ -526,7 +526,7 @@ const AdminBookings: React.FC = () => {
                     PayPal
                   </a>
                 )}
-                <span style={{ marginLeft: 8 }} />
+                <span className="margin-left-8" />
                 <a
                   href={`https://www.trip.com/hotels/list?city=19957&display=Koh%20Tao&optionId=19957&optionType=City&optionName=Koh%20Tao&Allianceid=7864578&SID=295439656&trip_sub1=${b.trip_sub1 || 'tao1'}&trip_sub3=${b.trip_sub3 || 'D15055497'}`}
                   target="_blank"
