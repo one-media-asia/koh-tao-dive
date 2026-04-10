@@ -192,7 +192,7 @@ const Admin = () => {
         </a>
       </div>
       {/* Main Content */}
-      <div>
+      <div className="full-width">
         <Dialog open={financeModalOpen} onOpenChange={setFinanceModalOpen}>
           <DialogContent className="sm:max-w-2xl">
             <DialogHeader>
