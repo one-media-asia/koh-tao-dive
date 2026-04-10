@@ -1,4 +1,4 @@
-// AdminBooks.tsx
+// AdminBookings.tsx
 // Clean admin bookings table: shows Name, Email, Phone, Course, Date, Total, Deposit, To Be Paid, PayPal link.
 // To add more columns or features, edit below. For comments or notes, add a new column and input logic as needed.
 
@@ -9,7 +9,7 @@ import BookingsCalendar from './BookingsCalendar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 
-interface Book {
+interface Booking {
   total_payable_now?: number | null;
   subtotal_amount?: number | null;
   id: string;
@@ -27,10 +27,8 @@ interface Book {
   bank_transfer_details?: string | null;
 }
 
-
-
-const AdminBooks: React.FC = () => {
-  const [books, setBooks] = useState<Book[]>([]);
+const AdminBookings: React.FC = () => {
+  const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [statusDrafts, setStatusDrafts] = useState<Record<string, string>>({});
@@ -38,7 +36,7 @@ const AdminBooks: React.FC = () => {
   const [statusResult, setStatusResult] = useState<string | null>(null);
   const [view, setView] = useState<'table' | 'calendar'>('table');
   const [showFunDiveBook, setShowFunDiveBook] = useState(false);
-  const [financeModalBook, setFinanceModalBook] = useState<Book | null>(null);
+  const [financeModalBook, setFinanceModalBook] = useState<Booking | null>(null);
   const [paypalLink, setPaypalLink] = useState('https://paypal.me/prodivingasia');
   const [bankTransferDetails, setBankTransferDetails] = useState('');
   const [noteDraft, setNoteDraft] = useState('');
@@ -88,7 +86,7 @@ const AdminBooks: React.FC = () => {
     return `${converted.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`;
   };
 
-  const copyBookDetails = async (book: Book) => {
+  const copyBookDetails = async (book: Booking) => {
     const details = `Name: ${book.name}\nEmail: ${book.email}\nPhone: ${book.phone || '-'}\nCourse: ${book.course_title}\nDate: ${book.preferred_date || '-'}\nStatus: ${book.status}\nNotes: ${book.internal_notes || ''}`;
     try {
       await navigator.clipboard.writeText(details);
@@ -122,7 +120,7 @@ const AdminBooks: React.FC = () => {
     return fetch(url, { ...init, headers });
   };
 
-  const escalateToJira = async (book: Book) => {
+  const escalateToJira = async (book: Booking) => {
     setJiraStatus((prev) => ({ ...prev, [book.id]: 'Sending...' }));
     try {
       const res = await adminAuthedFetch('/api/create-jira-book', {
@@ -159,10 +157,10 @@ const AdminBooks: React.FC = () => {
         });
         if (!res.ok) throw new Error('Failed to fetch books');
         const data = await res.json();
-        setBooks(data);
+        setBookings(data);
         const initialDrafts: Record<string, string> = {};
         if (Array.isArray(data)) {
-          data.forEach((book: Book) => {
+          data.forEach((book: Booking) => {
             initialDrafts[book.id] = book.status || 'pending';
           });
         } else {
@@ -199,14 +197,14 @@ const AdminBooks: React.FC = () => {
       });
   }, []);
 
-  const getPayableNow = (book: Book) => {
+  const getPayableNow = (book: Booking) => {
     if (typeof book.total_payable_now === 'number' && book.total_payable_now > 0) return book.total_payable_now;
     if (typeof book.deposit_amount === 'number' && book.deposit_amount > 0) return book.deposit_amount;
     if (typeof book.total_amount === 'number' && book.total_amount > 0) return book.total_amount;
     return null;
   };
 
-  const buildPayPalUrl = (book: Book) => {
+  const buildPayPalUrl = (book: Booking) => {
     const amount = getPayableNow(book);
     if (amount === null) return null;
     // Add account_id and site_id as query parameters for commission tracking
@@ -240,7 +238,7 @@ const AdminBooks: React.FC = () => {
         throw new Error(payload?.error || 'Failed to save book note');
       }
 
-      setBooks((prev) =>
+      setBookings((prev) =>
         prev.map((b) =>
           b.id === financeModalBook.id
             ? {
@@ -284,7 +282,7 @@ const AdminBooks: React.FC = () => {
         throw new Error(payload?.error || 'Failed to save bank transfer details');
       }
 
-      setBooks((prev) =>
+      setBookings((prev) =>
         prev.map((b) =>
           b.id === financeModalBook.id
             ? {
@@ -330,7 +328,7 @@ const AdminBooks: React.FC = () => {
       }
 
       const updatedBooking = await res.json();
-      setBooks((prev) => prev.map((booking) => (booking.id === bookingId ? { ...booking, status: updatedBooking.status || selectedStatus } : booking)));
+      setBookings((prev) => prev.map((booking) => (booking.id === bookingId ? { ...booking, status: updatedBooking.status || selectedStatus } : booking)));
       setStatusResult(`Status updated to ${updatedBooking.status || selectedStatus}.`);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to update booking status';
@@ -447,7 +445,7 @@ const AdminBooks: React.FC = () => {
       {copyResult && <div className="mb-4 text-slate-700">{copyResult}</div>}
       {statusResult && <div className="mb-4 text-emerald-700">{statusResult}</div>}
       {view === 'calendar' ? (
-        <BookingsCalendar books={books} />
+        <BookingsCalendar bookings={bookings} />
       ) : (
       <table className="w-full border">
         <thead>
@@ -463,7 +461,7 @@ const AdminBooks: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {books.map((b) => (
+          {bookings.map((b) => (
             <tr key={b.id}>
               <td className="border px-1 py-1 whitespace-nowrap">{b.name}</td>
               <td className="border px-1 py-1 whitespace-nowrap">{b.email}</td>
@@ -652,4 +650,4 @@ const AdminBooks: React.FC = () => {
   );
 };
 
-export default AdminBooks;
+export default AdminBookings;
