@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
-import { BLOCKS } from '@contentful/rich-text-types';
+import './chumphon-pinnacle.css';
+import { documentToReactComponents, Options } from '@contentful/rich-text-react-renderer';
+import { BLOCKS, Document } from '@contentful/rich-text-types';
 
 type ContentfulData = {
 	title: string;
-	description: { json: any };
+	description: { json: Document };
 };
 
 export default function ChumphonPinnaclePage() {
@@ -15,8 +16,8 @@ export default function ChumphonPinnaclePage() {
 	useEffect(() => {
 		async function fetchData() {
 			try {
-				const space = process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID;
-				const accessToken = process.env.NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN;
+				const space = import.meta.env.VITE_CONTENTFUL_SPACE_ID;
+				const accessToken = import.meta.env.VITE_CONTENTFUL_ACCESS_TOKEN;
 				// Fetch by content type and slug
 				const res = await fetch(
 					`https://cdn.contentful.com/spaces/${space}/environments/master/entries?access_token=${accessToken}&content_type=diveasia&fields.slug=chumphon-pinnacle&limit=1`
@@ -31,8 +32,8 @@ export default function ChumphonPinnaclePage() {
 						description: json.items[0].fields.description,
 					});
 				}
-			} catch (e: any) {
-				setError(e.message);
+			} catch (e) {
+				setError(e instanceof Error ? e.message : String(e));
 			} finally {
 				setLoading(false);
 			}
@@ -45,13 +46,17 @@ export default function ChumphonPinnaclePage() {
 	if (!data) return <div>No content found.</div>;
 
 	return (
-		<main style={{ maxWidth: 700, margin: '0 auto', padding: 24 }}>
+		<main className="chumphon-main">
 			<h1>{data.title}</h1>
-			<div>{documentToReactComponents(data.description.json, {
-				renderNode: {
-					[BLOCKS.PARAGRAPH]: (node, children) => <p style={{ marginBottom: 16 }}>{children}</p>,
-				},
-			})}</div>
+			<div>
+				{documentToReactComponents(data.description.json, {
+					renderNode: {
+						[BLOCKS.PARAGRAPH]: (node, children) => (
+							<p className="chumphon-paragraph">{children}</p>
+						),
+					},
+				} as Options)}
+			</div>
 		</main>
 	);
 }
