@@ -1,17 +1,16 @@
-import { createClient } from '@supabase/supabase-js';
+const sqlite3 = require('sqlite3').verbose();
+const db = new sqlite3.Database('./bookings.sqlite');
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
-
-export default async function handler(req, res) {
+module.exports = (req, res) => {
   if (req.method === 'GET') {
-    const { data, error } = await supabase.from('bookings').select('*');
-    if (error) return res.status(500).json({ error: error.message });
-    return res.status(200).json({ bookings: data });
+    db.all('SELECT * FROM bookings', [], (err, rows) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.status(200).json({ bookings: rows });
+    });
   } else {
     res.setHeader('Allow', ['GET']);
-    return res.status(405).end(`Method ${req.method} Not Allowed`);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

@@ -6,7 +6,7 @@ function Bookings() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('https://divinginasia.com/api/bookings')
+    fetch('https://koh-tao-dive-dream.vercel.app/api/bookings')
       .then((res) => res.json())
       .then((data) => {
         setBookings(data.bookings || []);
