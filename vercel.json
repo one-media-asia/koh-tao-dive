@@ -21,5 +21,6 @@
     { "source": "/functions/v1/page_content", "destination": "https://wulgixdyofyfdwcymwec.functions.supabase.co/page_content" },
     { "source": "/api/:path*", "destination": "/api/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
-  ]
+  ],
+  // ...existing code...
 }
