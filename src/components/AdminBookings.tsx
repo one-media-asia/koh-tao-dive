@@ -142,38 +142,38 @@ const AdminBookings: React.FC = () => {
     setTimeout(() => setJiraStatus((prev) => ({ ...prev, [book.id]: '' })), 3000);
   };
 
-  const calendarFeedUrl = 'https://koh-tao-dive-dreams.vercel.app/api/books/calendar';
+  const calendarFeedUrl = 'https://koh-tao-dive-dreams.vercel.app/api/bookings/calendar';
 
   useEffect(() => {
-    async function fetchBooks() {
+    async function fetchBookings() {
       setLoading(true);
       setError(null);
       try {
         const { data: { session } } = await supabase.auth.getSession();
         const token = session?.access_token;
         if (!token) throw new Error('Not authenticated');
-        const res = await fetch('/api/books', {
+        const res = await fetch('/api/bookings', {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (!res.ok) throw new Error('Failed to fetch books');
+        if (!res.ok) throw new Error('Failed to fetch bookings');
         const data = await res.json();
         setBookings(data);
         const initialDrafts: Record<string, string> = {};
         if (Array.isArray(data)) {
-          data.forEach((book: Booking) => {
-            initialDrafts[book.id] = book.status || 'pending';
+          data.forEach((booking: Booking) => {
+            initialDrafts[booking.id] = booking.status || 'pending';
           });
         } else {
           console.error('Data is not an array:', data);
         }
         setStatusDrafts(initialDrafts);
       } catch (err: any) {
-        setError(err.message || 'Failed to fetch books');
+        setError(err.message || 'Failed to fetch bookings');
       } finally {
         setLoading(false);
       }
     }
-    fetchBooks();
+    fetchBookings();
   }, []);
 
   useEffect(() => {
@@ -227,7 +227,7 @@ const AdminBookings: React.FC = () => {
     setNoteSaving(true);
     setNoteResult(null);
     try {
-      const res = await fetch('/api/books', {
+      const res = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: financeModalBook.id, internal_notes: noteDraft }),
@@ -235,7 +235,7 @@ const AdminBookings: React.FC = () => {
 
       if (!res.ok) {
         const payload = await res.json().catch(() => ({}));
-        throw new Error(payload?.error || 'Failed to save book note');
+        throw new Error(payload?.error || 'Failed to save booking note');
       }
 
       setBookings((prev) =>
@@ -256,7 +256,7 @@ const AdminBookings: React.FC = () => {
             }
           : prev
       );
-      setNoteResult('Note saved.');
+      setNoteResult('Booking note saved.');
     } catch (err) {
       setNoteResult(err instanceof Error ? err.message : 'Failed to save note');
     } finally {
@@ -271,7 +271,7 @@ const AdminBookings: React.FC = () => {
     setBankTransferResult(null);
 
     try {
-      const res = await fetch('/api/books', {
+      const res = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: financeModalBook.id, bank_transfer_details: bankTransferDraft }),
@@ -279,7 +279,7 @@ const AdminBookings: React.FC = () => {
 
       if (!res.ok) {
         const payload = await res.json().catch(() => ({}));
-        throw new Error(payload?.error || 'Failed to save bank transfer details');
+        throw new Error(payload?.error || 'Failed to save booking bank transfer details');
       }
 
       setBookings((prev) =>
@@ -316,7 +316,7 @@ const AdminBookings: React.FC = () => {
     setStatusResult(null);
 
     try {
-      const res = await fetch('/api/books', {
+      const res = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: bookId, status: selectedStatus }),
@@ -338,7 +338,7 @@ const AdminBookings: React.FC = () => {
     }
   };
 
-  if (loading) return <div>Loading books...</div>;
+  if (loading) return <div>Loading bookings...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
