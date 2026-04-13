@@ -1,5 +1,5 @@
 const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('./bookings.sqlite');
+const db = new sqlite3.Database('./bookings.db');
 
 module.exports = (req, res) => {
   if (req.method === 'GET') {
