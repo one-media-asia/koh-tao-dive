@@ -6,7 +6,7 @@ function Bookings() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('/api/bookings')
+    fetch('https://divinginasia.com/api/bookings')
       .then((res) => res.json())
       .then((data) => {
         setBookings(data.bookings || []);
