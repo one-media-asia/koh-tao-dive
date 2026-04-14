@@ -16,6 +16,7 @@
 <body>
   <div class="form-container">
     <h2>Booking / Inquiry Form</h2>
+    <a href="https://buy.stripe.com/aFacN5bN2bP25si1a55os00" target="_blank" rel="noopener" style="display:block;width:100%;margin-bottom:1em;text-align:center;background:#635bff;color:#fff;padding:0.75em 0;border-radius:4px;font-size:1.1em;text-decoration:none;font-weight:bold;">Pay with Card (Stripe)</a>
     <button class="book-now-btn" style="width:100%">Book Now / Inquiry</button>
     <!-- Modal Structure -->
     <div id="booking-modal" style="display:none;position:fixed;z-index:1000;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;">
@@ -50,35 +51,14 @@
 </body>
 <script src="/public/booking-modal.js"></script>
 <script>
-// Stripe Checkout integration
+// Simple Stripe Payment Link redirect after form submit
 document.addEventListener('DOMContentLoaded', function() {
   const form = document.getElementById('booking-form');
   if (!form) return;
-  form.addEventListener('submit', async function(e) {
+  form.addEventListener('submit', function(e) {
     e.preventDefault();
-    const errorDiv = document.getElementById('stripe-error');
-    errorDiv.textContent = '';
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-    try {
-      // Optionally, save booking to your DB first (not required for Stripe Checkout)
-      // await fetch('/api/bookings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-
-      // Create Stripe Checkout session
-      const res = await fetch('/api/create-stripe-session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-      const result = await res.json();
-      if (result.url) {
-        window.location.href = result.url;
-      } else {
-        errorDiv.textContent = result.error || 'Payment error. Please try again.';
-      }
-    } catch (err) {
-      errorDiv.textContent = err.message || 'Payment error. Please try again.';
-    }
+    // Optionally, collect form data here if you want to send it somewhere
+    window.location.href = 'https://buy.stripe.com/aFacN5bN2bP25si1a55os00';
   });
 });
 </script>
