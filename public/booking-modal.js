@@ -110,31 +110,5 @@ document.addEventListener('DOMContentLoaded', function () {
     // Let Web3Forms handle the actual form submit
     setTimeout(() => { modal.style.display = 'none'; }, 1000);
   };
-    const fd = new FormData(form);
-    const bookingData = {
-      name: fd.get('name') || '',
-      email: fd.get('contact') || '',
-      phone: '',
-      item_type: 'course',
-      course_title: fd.get('course') || '',
-      preferred_date: '',
-      experience_level: fd.get('experience') || '',
-      addons: '',
-      addons_json: '',
-      addons_total: 0,
-      subtotal_amount: 0,
-      total_payable_now: 0,
-      internal_notes: '',
-      message: '',
-      status: 'pending',
-    };
-    // Save to local DB (non-blocking)
-    fetch('/api/sqlite-bookings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(bookingData),
-    });
-    // Let Web3Forms handle the actual form submit
-    setTimeout(() => { modal.style.display = 'none'; }, 1000);
-  };
+
 });
