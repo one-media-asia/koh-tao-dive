@@ -33,6 +33,18 @@
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
     <div id="root"></div>
+    <!-- Book Now Button -->
+    <button class="book-now-btn" style="position:fixed;bottom:2rem;right:2rem;z-index:9999;">Book Now / Inquiry</button>
+
+    <!-- Modal Structure -->
+    <div id="booking-modal" style="display:none;position:fixed;z-index:1000;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;">
+      <div style="background:#fff;padding:2rem;border-radius:8px;max-width:400px;width:90%;position:relative;box-shadow:0 2px 16px #0003;">
+        <button id="booking-modal-close" style="position:absolute;top:10px;right:10px;background:none;border:none;font-size:1.5rem;cursor:pointer;">&times;</button>
+        <form></form>
+      </div>
+    </div>
+
+    <script src="/public/booking-modal.js"></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
