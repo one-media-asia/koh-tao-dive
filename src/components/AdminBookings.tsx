@@ -328,7 +328,7 @@ const AdminBookings: React.FC = () => {
       }
 
       const updatedBooking = await res.json();
-      setBookings((prev) => prev.map((booking) => (booking.id === bookingId ? { ...booking, status: updatedBooking.status || selectedStatus } : booking)));
+      setBookings((prev) => prev.map((booking) => (booking.id === bookId ? { ...booking, status: updatedBooking.status || selectedStatus } : booking)));
       setStatusResult(`Status updated to ${updatedBooking.status || selectedStatus}.`);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to update booking status';
