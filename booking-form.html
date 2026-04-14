@@ -21,8 +21,7 @@
     <div id="booking-modal" style="display:none;position:fixed;z-index:1000;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;">
       <div style="background:#fff;padding:2rem;border-radius:8px;max-width:400px;width:90%;position:relative;box-shadow:0 2px 16px #0003;">
         <button id="booking-modal-close" style="position:absolute;top:10px;right:10px;background:none;border:none;font-size:1.5rem;cursor:pointer;">&times;</button>
-        <form action="https://www.divinginasia.com/admin" method="POST">
-          <input type="hidden" name="redirect" value="/thank-you.html" />
+        <form id="booking-form">
           <label for="name">Name</label>
           <input type="text" id="name" name="name" required>
           <label for="email">Email</label>
@@ -30,7 +29,7 @@
           <label for="phone">Phone</label>
           <input type="text" id="phone" name="phone">
           <label for="course_title">Course / Package</label>
-          <input type="text" id="course_title" name="course_title">
+          <input type="text" id="course_title" name="course_title" required>
           <label for="preferred_date">Preferred Date</label>
           <input type="date" id="preferred_date" name="preferred_date">
           <label for="experience_level">Experience Level</label>
@@ -42,11 +41,45 @@
           </select>
           <label for="message">Comments / Questions</label>
           <textarea id="message" name="message" rows="4" required></textarea>
-          <button type="submit">Send Booking</button>
+          <button type="submit">Book & Pay with Card</button>
         </form>
+        <div id="stripe-error" style="color:red;margin-top:1em;"></div>
       </div>
     </div>
   </div>
 </body>
 <script src="/public/booking-modal.js"></script>
+<script>
+// Stripe Checkout integration
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('booking-form');
+  if (!form) return;
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const errorDiv = document.getElementById('stripe-error');
+    errorDiv.textContent = '';
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    try {
+      // Optionally, save booking to your DB first (not required for Stripe Checkout)
+      // await fetch('/api/bookings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+
+      // Create Stripe Checkout session
+      const res = await fetch('/api/create-stripe-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      if (result.url) {
+        window.location.href = result.url;
+      } else {
+        errorDiv.textContent = result.error || 'Payment error. Please try again.';
+      }
+    } catch (err) {
+      errorDiv.textContent = err.message || 'Payment error. Please try again.';
+    }
+  });
+});
+</script>
 </html>
