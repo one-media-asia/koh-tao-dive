@@ -1,5 +1,6 @@
+const dbPath = process.env.SQLITE_PATH || './bookings.db';
 const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('./bookings.db');
+const db = new sqlite3.Database(dbPath);
 
 module.exports = (req, res) => {
   if (req.method === 'GET') {
