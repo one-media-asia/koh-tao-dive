@@ -72,6 +72,7 @@
     "lucide-react": "^0.462.0",
     "next-themes": "^0.3.0",
     "node-fetch": "^3.3.2",
+    "openai": "^6.34.0",
     "papaparse": "^5.5.3",
     "react": "^19.2.5",
     "react-big-calendar": "^1.19.4",
