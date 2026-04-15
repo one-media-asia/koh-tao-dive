@@ -1,4 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
+// Supported currencies for selection
+const SUPPORTED_CURRENCIES = ['THB', 'USD', 'EUR', 'GBP', 'AUD', 'SGD', 'MYR', 'IDR', 'PHP', 'INR', 'CNY', 'JPY'];
+const EXCHANGE_API_URL = 'https://api.exchangerate.host/latest';
 
 import { Clock, Star, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -114,12 +117,39 @@ const Courses = () => {
   };
 
   const localeTag = isDutch ? 'nl-NL' : 'en-US';
-  const formatCurrency = (amount: number, currency: 'THB' | 'USD' | 'EUR') =>
+  const formatCurrency = (amount: number, currency: string) =>
     new Intl.NumberFormat(localeTag, {
       style: 'currency',
       currency,
       maximumFractionDigits: 0,
     }).format(amount);
+
+  // --- Currency selection and rates ---
+  const [selectedCurrency, setSelectedCurrency] = useState('THB');
+  const [exchangeRates, setExchangeRates] = useState<{ [key: string]: number }>({ THB: 1 });
+  const [ratesLoading, setRatesLoading] = useState(false);
+  const [ratesError, setRatesError] = useState('');
+
+  useEffect(() => {
+    if (selectedCurrency === 'THB') {
+      setExchangeRates({ THB: 1 });
+      setRatesError('');
+      return;
+    }
+    setRatesLoading(true);
+    setRatesError('');
+    fetch(`${EXCHANGE_API_URL}?base=THB&symbols=${SUPPORTED_CURRENCIES.join(',')}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.rates) {
+          setExchangeRates({ ...data.rates, THB: 1 });
+        } else {
+          setRatesError('Failed to fetch rates');
+        }
+      })
+      .catch(() => setRatesError('Failed to fetch rates'))
+      .finally(() => setRatesLoading(false));
+  }, [selectedCurrency]);
   // Helper to get THB price as number from price string (e.g., '฿2,500')
   const getThbPrice = (price: string) => {
     const digits = String(price || '').replace(/[^\d.]/g, '').replace(/,/g, '');
@@ -329,8 +359,18 @@ const Courses = () => {
                   </span>
                 </div>
                 <div className="text-right">
-                  <div className="text-3xl font-bold text-blue-600">{formatCurrency(getThbPrice(course.price), 'THB')}</div>
-                  {/* Currency conversion removed */}
+                  <div className="text-3xl font-bold text-blue-600">
+                    {ratesLoading ? '...' :
+                      ratesError ? (
+                        <span title={ratesError}>{formatCurrency(getThbPrice(course.price), 'THB')}</span>
+                      ) : (
+                        formatCurrency(
+                          getThbPrice(course.price) * (exchangeRates[selectedCurrency] || 1),
+                          selectedCurrency
+                        )
+                      )
+                    }
+                  </div>
                   <div className="text-sm text-gray-500">{t('courses.perPerson')}</div>
                 </div>
               </div>
@@ -415,6 +455,23 @@ const Courses = () => {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Currency selector */}
+        <div className="flex justify-end mb-8">
+          <label htmlFor="currency-select" className="mr-2 font-semibold">Currency:</label>
+          <select
+            id="currency-select"
+            value={selectedCurrency}
+            onChange={e => setSelectedCurrency(e.target.value)}
+            className="border rounded px-2 py-1"
+          >
+            {SUPPORTED_CURRENCIES.map(cur => (
+              <option key={cur} value={cur}>{cur}</option>
+            ))}
+          </select>
+          {ratesLoading && <span className="ml-3 text-sm text-gray-500">Updating rates...</span>}
+          {ratesError && <span className="ml-3 text-sm text-red-500">{ratesError}</span>}
         </div>
 
         <div className="bg-blue-600 rounded-xl p-8 text-white text-center">
