@@ -710,6 +710,32 @@ const AdminPagesManager: React.FC = () => {
                 Editing <span className="font-semibold text-gray-700">{selectedPageSlug}</span> in <span className="font-semibold text-gray-700">{selectedLocale}</span>.
               </div>
 
+              {selectedLocale === 'nl' && (
+                <div className="mt-2 mb-4">
+                  <button
+                    type="button"
+                    className="px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-700"
+                    onClick={() => {
+                      const nextDraft = { ...pageDraft };
+                      pageSectionKeys.forEach((sectionKey) => {
+                        const enRow = data.find(
+                          (item) =>
+                            matchesSelectedPageSlug(item.page_slug, selectedPageSlug) &&
+                            item.locale === 'en' &&
+                            item.section_key === sectionKey
+                        );
+                        if (enRow) {
+                          nextDraft[sectionKey] = normalizeEditorValue(enRow.content_value || '');
+                        }
+                      });
+                      setPageDraft(nextDraft);
+                    }}
+                  >
+                    Copy all English content to Dutch
+                  </button>
+                </div>
+              )}
+
               <div className="mt-3 space-y-4">
                 {groupedPageSectionKeys.map(({ group, keys }) => (
                   <div key={group} className="rounded border border-gray-200 p-3">
