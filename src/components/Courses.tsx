@@ -316,7 +316,7 @@ const Courses = () => {
             <div
               key={index}
               id={`course-${course.key}`}
-              className="bg-background rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow duration-300 scroll-mt-20"
+              className="bg-gray-100 border border-gray-300 rounded-xl shadow-md p-8 hover:shadow-lg transition-shadow duration-300 scroll-mt-20"
             >
               <div className="flex items-start justify-between mb-6">
                 <div>
@@ -324,26 +324,26 @@ const Courses = () => {
                     <span className="text-3xl mr-3">{course.icon}</span>
                     <h3 className="text-2xl font-bold text-gray-900">{course.title}</h3>
                   </div>
-                  <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium border ${getLevelColor(course.level)}`}>
+                  <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium border ${getLevelColor(course.level)} bg-gray-200 text-gray-800 border-gray-400`}>
                     {course.level}
                   </span>
                 </div>
                 <div className="text-right">
                   <div className="text-3xl font-bold text-blue-600">{formatCurrency(getThbPrice(course.price), 'THB')}</div>
                   {/* Currency conversion removed */}
-                  <div className="text-sm text-gray-500">{t('courses.perPerson')}</div>
+                  <div className="text-sm text-gray-600">{t('courses.perPerson')}</div>
                 </div>
               </div>
 
               <p className="text-gray-600 mb-4">{course.description}</p>
 
               <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
-                <div className="flex items-center text-gray-600">
-                  <Clock className="h-4 w-4 mr-2 text-blue-600" />
+                <div className="flex items-center text-gray-700">
+                  <Clock className="h-4 w-4 mr-2 text-gray-500" />
                   {t('courses.duration')}: {course.duration}
                 </div>
-                <div className="flex items-center text-gray-600">
-                  <div className="h-4 w-4 mr-2 text-blue-600 font-bold">📏</div>
+                <div className="flex items-center text-gray-700">
+                  <div className="h-4 w-4 mr-2 text-gray-500 font-bold">📏</div>
                   {t('courses.maxDepth')}: {course.maxDepth}
                 </div>
               </div>
@@ -352,8 +352,8 @@ const Courses = () => {
                 <h4 className="font-semibold text-gray-900 mb-3">{t('courses.courseIncludes')}:</h4>
                 <ul className="space-y-2">
                   {(course.includes as string[]).map((item: string, idx: number) => (
-                    <li key={idx} className="flex items-center text-gray-600">
-                      <Star className="h-4 w-4 mr-2 text-blue-600" />
+                    <li key={idx} className="flex items-center text-gray-700">
+                      <Star className="h-4 w-4 mr-2 text-gray-500" />
                       {item}
                     </li>
                   ))}
