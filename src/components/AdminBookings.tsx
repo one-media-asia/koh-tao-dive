@@ -4,6 +4,7 @@ import Papa from 'papaparse';
 // To add more columns or features, edit below. For comments or notes, add a new column and input logic as needed.
 
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import FunDiveBooking from './FunDiveBooking';
 import FinanceSection from './FinanceSection';
 import BookingsCalendar from './BookingsCalendar';
@@ -382,39 +383,42 @@ const AdminBookings: React.FC = () => {
     }
   };
 
-  if (loading) return <div>Loading bookings...</div>;
-  if (error) return <div>Error: {error}</div>;
+
+  const { t } = useTranslation();
+
+  if (loading) return <div>{t('admin.loading')}</div>;
+  if (error) return <div>{t('admin.error')}: {error}</div>;
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">Bookings</h2>
+      <h2 className="text-xl font-bold mb-4">{t('admin.bookings')}</h2>
       {/* Unified horizontal control bar */}
       <div className="flex flex-wrap items-center gap-3 mb-6">
         <input
           type="text"
-          placeholder="Search name, email, course..."
+          placeholder={t('admin.search_placeholder')}
           className="px-2 py-1 rounded border border-gray-300"
           value={filterText}
           onChange={e => setFilterText(e.target.value)}
         />
-        <label htmlFor="status-filter" className="sr-only">Filter by status</label>
+        <label htmlFor="status-filter" className="sr-only">{t('admin.filter_status')}</label>
         <select
           id="status-filter"
-          title="Filter by status"
+          title={t('admin.filter_status')}
           className="px-2 py-1 rounded border border-gray-300"
           value={filterStatus}
           onChange={e => setFilterStatus(e.target.value)}
         >
-          <option value="">All Statuses</option>
-          <option value="pending">Pending</option>
-          <option value="confirmed">Confirmed</option>
-          <option value="cancelled">Cancelled</option>
+          <option value="">{t('admin.all_statuses')}</option>
+          <option value="pending">{t('admin.status_pending')}</option>
+          <option value="confirmed">{t('admin.status_confirmed')}</option>
+          <option value="cancelled">{t('admin.status_cancelled')}</option>
         </select>
         <button
           className="px-4 py-2 bg-slate-700 text-white rounded"
           onClick={handleExportCSV}
         >
-          Export CSV
+          {t('admin.export_csv')}
         </button>
         {/* ...other controls... */}
       </div>
@@ -447,15 +451,15 @@ const AdminBookings: React.FC = () => {
             <table className="w-full border">
               <thead>
                 <tr>
-                  <th className="border px-1 py-1 whitespace-nowrap">Name</th>
-                  <th className="border px-1 py-1 whitespace-nowrap">Email</th>
-                  <th className="border px-1 py-1 whitespace-nowrap">Phone</th>
-                  <th className="border px-1 py-1 whitespace-nowrap">Course</th>
-                  <th className="border px-1 py-1 whitespace-nowrap">Date</th>
-                  <th className="border px-1 py-1 whitespace-nowrap">Status</th>
-                  <th className="border px-1 py-1 whitespace-nowrap">Finance</th>
-                  <th className="border px-1 py-1 whitespace-nowrap">PayPal</th>
-                  <th className="border px-1 py-1 whitespace-nowrap">Delete</th>
+                  <th className="border px-1 py-1 whitespace-nowrap">{t('admin.name')}</th>
+                  <th className="border px-1 py-1 whitespace-nowrap">{t('admin.email')}</th>
+                  <th className="border px-1 py-1 whitespace-nowrap">{t('admin.phone')}</th>
+                  <th className="border px-1 py-1 whitespace-nowrap">{t('admin.course')}</th>
+                  <th className="border px-1 py-1 whitespace-nowrap">{t('admin.date')}</th>
+                  <th className="border px-1 py-1 whitespace-nowrap">{t('admin.status')}</th>
+                  <th className="border px-1 py-1 whitespace-nowrap">{t('admin.finance')}</th>
+                  <th className="border px-1 py-1 whitespace-nowrap">{t('admin.paypal')}</th>
+                  <th className="border px-1 py-1 whitespace-nowrap">{t('admin.delete')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -470,16 +474,16 @@ const AdminBookings: React.FC = () => {
                       <div className="flex items-center gap-2">
                         <select
                           className="border rounded px-2 py-1"
-                          title="Booking status"
+                          title={t('admin.status')}
                           value={statusDrafts[b.id] || b.status || 'pending'}
                           onChange={(e) => {
                             const nextStatus = e.target.value;
                             setStatusDrafts((prev) => ({ ...prev, [b.id]: nextStatus }));
                           }}
                         >
-                          <option value="pending">pending</option>
-                          <option value="confirmed">confirmed</option>
-                          <option value="cancelled">cancelled</option>
+                          <option value="pending">{t('admin.status_pending')}</option>
+                          <option value="confirmed">{t('admin.status_confirmed')}</option>
+                          <option value="cancelled">{t('admin.status_cancelled')}</option>
                         </select>
                         <button
                           className="px-2 py-1 text-xs bg-emerald-600 text-white rounded disabled:opacity-60"

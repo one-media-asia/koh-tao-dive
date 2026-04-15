@@ -219,11 +219,26 @@
     }
   },
   "admin": {
-    "title": "Admin Dashboard",
-    "bookings": "Boekingsaanvragen",
-    "noBookings": "Nog geen boekingsaanvragen.",
-    "delete": "Verwijderen",
-    "confirmDelete": "Weet je zeker dat je deze boeking wilt verwijderen?"
+    "panel": "Beheer Paneel",
+    "loading": "Boekingen laden...",
+    "error": "Fout",
+    "bookings": "Boekingen",
+    "search_placeholder": "Zoek naam, e-mail, cursus...",
+    "filter_status": "Filter op status",
+    "all_statuses": "Alle statussen",
+    "status_pending": "In afwachting",
+    "status_confirmed": "Bevestigd",
+    "status_cancelled": "Geannuleerd",
+    "export_csv": "Exporteer CSV",
+    "name": "Naam",
+    "email": "E-mail",
+    "phone": "Telefoon",
+    "course": "Cursus",
+    "date": "Datum",
+    "status": "Status",
+    "finance": "Financiën",
+    "paypal": "PayPal",
+    "delete": "Verwijderen"
   },
   "footer": {
      "copyright": "© 2024 Diving In Asia. Alle rechten voorbehouden."
