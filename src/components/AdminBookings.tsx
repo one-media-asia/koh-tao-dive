@@ -42,6 +42,11 @@ const AdminBookings: React.FC = () => {
     const [deleting, setDeleting] = useState(false);
     const [deleteResult, setDeleteResult] = useState<string | null>(null);
 
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 10;
+
     // Filtered bookings
     const filteredBookings = bookings.filter((b) => {
       const statusMatch = filterStatus ? (b.status === filterStatus) : true;
@@ -54,6 +59,15 @@ const AdminBookings: React.FC = () => {
         (b.phone && b.phone.toLowerCase().includes(text));
       return statusMatch && textMatch;
     });
+
+    // Pagination logic
+    const pageCount = Math.ceil(filteredBookings.length / pageSize);
+    const pagedBookings = filteredBookings.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+    // Reset to first page if filter changes and current page is out of range
+    useEffect(() => {
+      if (currentPage > pageCount) setCurrentPage(1);
+    }, [filterStatus, filterText, bookings, pageCount]);
 
     // Delete booking
     const handleDelete = async (id: string) => {
@@ -72,14 +86,14 @@ const AdminBookings: React.FC = () => {
       }
     };
 
-    // Export CSV
+    // Export CSV (current page only)
     const handleExportCSV = () => {
-      const csv = Papa.unparse(filteredBookings.map(({ id, ...b }) => b));
+      const csv = Papa.unparse(pagedBookings.map(({ id, ...b }) => b));
       const blob = new Blob([csv], { type: 'text/csv' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'bookings.csv';
+      a.download = `bookings_page_${currentPage}.csv`;
       a.click();
       URL.revokeObjectURL(url);
     };
@@ -448,23 +462,24 @@ const AdminBookings: React.FC = () => {
           {view === 'calendar' ? (
             <BookingsCalendar bookings={bookings} />
           ) : (
-            <table className="w-full border">
-              <thead>
-                <tr>
-                  <th className="border px-1 py-1 whitespace-nowrap">{t('admin.name')}</th>
-                  <th className="border px-1 py-1 whitespace-nowrap">{t('admin.email')}</th>
-                  <th className="border px-1 py-1 whitespace-nowrap">{t('admin.phone')}</th>
-                  <th className="border px-1 py-1 whitespace-nowrap">{t('admin.course')}</th>
-                  <th className="border px-1 py-1 whitespace-nowrap">{t('admin.date')}</th>
-                  <th className="border px-1 py-1 whitespace-nowrap">{t('admin.status')}</th>
-                  <th className="border px-1 py-1 whitespace-nowrap">{t('admin.finance')}</th>
-                  <th className="border px-1 py-1 whitespace-nowrap">{t('admin.paypal')}</th>
-                  <th className="border px-1 py-1 whitespace-nowrap">{t('admin.delete')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredBookings.map((b) => (
-                  <tr key={b.id}>
+            <>
+              <table className="w-full border">
+                <thead>
+                  <tr>
+                    <th className="border px-1 py-1 whitespace-nowrap">{t('admin.name')}</th>
+                    <th className="border px-1 py-1 whitespace-nowrap">{t('admin.email')}</th>
+                    <th className="border px-1 py-1 whitespace-nowrap">{t('admin.phone')}</th>
+                    <th className="border px-1 py-1 whitespace-nowrap">{t('admin.course')}</th>
+                    <th className="border px-1 py-1 whitespace-nowrap">{t('admin.date')}</th>
+                    <th className="border px-1 py-1 whitespace-nowrap">{t('admin.status')}</th>
+                    <th className="border px-1 py-1 whitespace-nowrap">{t('admin.finance')}</th>
+                    <th className="border px-1 py-1 whitespace-nowrap">{t('admin.paypal')}</th>
+                    <th className="border px-1 py-1 whitespace-nowrap">{t('admin.delete')}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pagedBookings.map((b) => (
+                    <tr key={b.id}>
                     <td className="border px-1 py-1 whitespace-nowrap">{b.name}</td>
                     <td className="border px-1 py-1 whitespace-nowrap">{b.email}</td>
                     <td className="border px-1 py-1 whitespace-nowrap">{b.phone || '-'}</td>
@@ -549,8 +564,31 @@ const AdminBookings: React.FC = () => {
                     </td>
                   </tr>
                 ))}
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+              {/* Pagination controls */}
+              {pageCount > 1 && (
+                <div className="flex justify-center items-center gap-2 mt-4">
+                  <button
+                    className="px-3 py-1 rounded border bg-white"
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                  >
+                    &lt; Prev
+                  </button>
+                  <span>
+                    Page {currentPage} of {pageCount}
+                  </span>
+                  <button
+                    className="px-3 py-1 rounded border bg-white"
+                    onClick={() => setCurrentPage((p) => Math.min(pageCount, p + 1))}
+                    disabled={currentPage === pageCount}
+                  >
+                    Next &gt;
+                  </button>
+                </div>
+              )}
+            </>
           )}
 
           {/* Finance Modal rendered outside the table for valid JSX */}
