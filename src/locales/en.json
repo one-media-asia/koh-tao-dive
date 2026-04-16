@@ -217,11 +217,26 @@
     }
   },
   "admin": {
-    "title": "Admin Dashboard",
-    "bookings": "Booking Inquiries",
-    "noBookings": "No booking inquiries yet.",
-    "delete": "Delete",
-    "confirmDelete": "Are you sure you want to delete this booking?"
+    "panel": "Admin Panel",
+    "loading": "Loading bookings...",
+    "error": "Error",
+    "bookings": "Bookings",
+    "search_placeholder": "Search name, email, course...",
+    "filter_status": "Filter by status",
+    "all_statuses": "All Statuses",
+    "status_pending": "Pending",
+    "status_confirmed": "Confirmed",
+    "status_cancelled": "Cancelled",
+    "export_csv": "Export CSV",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "course": "Course",
+    "date": "Date",
+    "status": "Status",
+    "finance": "Finance",
+    "paypal": "PayPal",
+    "delete": "Delete"
   },
   "footer": {
     "copyright": "© 2024 Pro Diving Asia All rights reserved."
