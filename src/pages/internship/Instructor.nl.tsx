@@ -1,11 +1,16 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { useNavigate } from 'react-router-dom';
+import { useRef } from 'react';
 import Contact from '@/components/Contact';
 
 export default function InstructorInternship() {
-  const navigate = useNavigate();
+  const contactRef = useRef<HTMLDivElement>(null);
+  const handleContactScroll = () => {
+    if (contactRef.current) {
+      contactRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <main className="min-h-screen pt-24 pb-16">
@@ -246,10 +251,10 @@ export default function InstructorInternship() {
         <Card className="mb-8 p-6 bg-green-50">
           <h2 className="text-2xl font-bold mb-6">Klaar om PADI-duikinstructeur te worden?</h2>
           <p className="text-gray-700 mb-4">Verander je passie voor duiken in een wereldwijde carrière als gecertificeerd PADI-duikinstructeur.</p>
-          <Button size="lg" onClick={() => window.open('https://booking.divinginasia.com/booking?course=instructor-internship&type=course', '_blank', 'noopener')}>Boek nu</Button>
+          <Button size="lg" onClick={handleContactScroll}>Informatie / Contact</Button>
         </Card>
 
-        <div className="mt-12">
+        <div ref={contactRef} className="mt-12">
           <Contact />
         </div>
       </div>

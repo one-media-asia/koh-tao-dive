@@ -1,7 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
+// Example usage (should be inside a function/hook):
+// const { data, error } = await supabase
+//   .from("page_content")
+//   .select("*")
+//   .eq("slug", "home");
 interface PageContent {
   [key: string]: string;
 }
@@ -31,6 +36,9 @@ const isPageContentRows = (value: unknown): value is PageContentRow[] =>
       item !== null &&
       typeof (item as Record<string, unknown>).section_key === 'string'
   );
+
+// Global set to track active Supabase channels (prevents duplicate subscriptions)
+const activeChannels = new Set<string>();
 
 export function usePageContent({ pageSlug, locale, fallbackContent }: UsePageContentOptions) {
   const [content, setContent] = useState<PageContent>(fallbackContent);
@@ -155,8 +163,19 @@ export function usePageContent({ pageSlug, locale, fallbackContent }: UsePageCon
 
     fetchContent();
 
-    const channel = supabase
-      .channel(`page_content:${pageSlug}:${locale}`)
+
+
+    const channelName = `page_content:${pageSlug}:${locale}`;
+    if (activeChannels.has(channelName)) {
+      console.warn('[Supabase] Already subscribed to channel:', channelName);
+      return;
+    }
+    activeChannels.add(channelName);
+    let channel: any = null;
+    let unsubscribed = false;
+    console.log('[Supabase] Subscribing to channel:', channelName);
+    channel = supabase
+      .channel(channelName)
       .on(
         'postgres_changes',
         {
@@ -165,6 +184,7 @@ export function usePageContent({ pageSlug, locale, fallbackContent }: UsePageCon
           table: 'page_content',
         },
         (payload: RealtimePostgresChangesPayload<RealtimePageContentRow>) => {
+          if (unsubscribed) return;
           if (payload.eventType === 'DELETE') {
             const oldRow = payload.old;
             if (
@@ -179,7 +199,6 @@ export function usePageContent({ pageSlug, locale, fallbackContent }: UsePageCon
             }
             return;
           }
-
           if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
             applyRealtimeRow(payload.new);
           }
@@ -188,7 +207,12 @@ export function usePageContent({ pageSlug, locale, fallbackContent }: UsePageCon
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      unsubscribed = true;
+      if (channel) {
+        console.log('[Supabase] Removing channel:', channelName);
+        supabase.removeChannel(channel);
+      }
+      activeChannels.delete(channelName);
     };
   }, [pageSlug, locale, fallbackContent]);
 
