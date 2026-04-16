@@ -1,4 +1,4 @@
--- Drop the old bookings table if it exists
+-- Drop the old books table if it exists
 DROP TABLE IF EXISTS bookings;
 
 -- Create a new bookings table with all required fields

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -57,6 +57,12 @@ const MSDTProgram: React.FC = () => {
     content.hero_title || 'PADI Master Scuba Diver Trainer (MSDT) Program'
   )}&type=course&currency=THB`;
 
+  const contactRef = useRef<HTMLDivElement>(null);
+  const handleContactScroll = () => {
+    if (contactRef.current) {
+      contactRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
   return (
     <div className="min-h-screen bg-background">
       <section className="py-20">
@@ -124,11 +130,16 @@ const MSDTProgram: React.FC = () => {
             </CardHeader>
             <CardContent>
               <p className="mb-4">{content.enroll_body}</p>
-              <Button onClick={() => navigate(bookingUrl)}>{content.enroll_cta}</Button>
+              <Button onClick={handleContactScroll}>{content.enroll_cta}</Button>
             </CardContent>
           </Card>
         </div>
       </section>
+      <div ref={contactRef} className="max-w-4xl mx-auto px-4 pb-20">
+        <h2 className="text-2xl font-bold mb-4">Contact for More Info</h2>
+        <p>Contact us for course dates, pricing, and specialty advice. We'll help you plan your MSDT journey.</p>
+        {/* You can add a contact form or component here if desired */}
+      </div>
     </div>
   );
 };

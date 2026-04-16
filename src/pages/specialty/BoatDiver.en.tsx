@@ -1,11 +1,13 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { useNavigate } from 'react-router-dom';
+import { useBookNowModal } from '@/components/useBookNowModal';
 import Contact from '@/components/Contact';
 
+
 export default function BoatDiver() {
-  const navigate = useNavigate();
+  const { setShowBookNow, BookNowModalComponent } = useBookNowModal();
   return (
     <main className="min-h-screen pt-24 pb-16">
       <div className="max-w-4xl mx-auto px-4">
@@ -22,12 +24,13 @@ export default function BoatDiver() {
         <Card className="mb-8 p-6 bg-green-50">
           <h2 className="text-2xl font-bold mb-6">Book a Boat Diver Course</h2>
           <p className="text-gray-700 mb-4">Practical sessions are run from local dive boats. Suitable for divers wishing to improve confidence and boat skills.</p>
-          <Button size="lg" onClick={() => navigate('/booking?course=boat-diver&type=course')}>Book Now</Button>
+          <Button size="lg" onClick={() => setShowBookNow(true)}>Book Now</Button>
         </Card>
 
         <div className="mt-12">
           <Contact />
         </div>
+        {BookNowModalComponent}
       </div>
     </main>
   );

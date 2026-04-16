@@ -1,7 +1,4 @@
 import React, { useMemo, useState, useEffect } from 'react';
-// Supported currencies for selection
-const SUPPORTED_CURRENCIES = ['THB', 'USD', 'EUR', 'GBP', 'AUD', 'SGD', 'MYR', 'IDR', 'PHP', 'INR', 'CNY', 'JPY'];
-const EXCHANGE_API_URL = 'https://api.exchangerate.host/latest';
 
 import { Clock, Star, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -117,39 +114,12 @@ const Courses = () => {
   };
 
   const localeTag = isDutch ? 'nl-NL' : 'en-US';
-  const formatCurrency = (amount: number, currency: string) =>
+  const formatCurrency = (amount: number, currency: 'THB' | 'USD' | 'EUR') =>
     new Intl.NumberFormat(localeTag, {
       style: 'currency',
       currency,
       maximumFractionDigits: 0,
     }).format(amount);
-
-  // --- Currency selection and rates ---
-  const [selectedCurrency, setSelectedCurrency] = useState('THB');
-  const [exchangeRates, setExchangeRates] = useState<{ [key: string]: number }>({ THB: 1 });
-  const [ratesLoading, setRatesLoading] = useState(false);
-  const [ratesError, setRatesError] = useState('');
-
-  useEffect(() => {
-    if (selectedCurrency === 'THB') {
-      setExchangeRates({ THB: 1 });
-      setRatesError('');
-      return;
-    }
-    setRatesLoading(true);
-    setRatesError('');
-    fetch(`${EXCHANGE_API_URL}?base=THB&symbols=${SUPPORTED_CURRENCIES.join(',')}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data && data.rates) {
-          setExchangeRates({ ...data.rates, THB: 1 });
-        } else {
-          setRatesError('Failed to fetch rates');
-        }
-      })
-      .catch(() => setRatesError('Failed to fetch rates'))
-      .finally(() => setRatesLoading(false));
-  }, [selectedCurrency]);
   // Helper to get THB price as number from price string (e.g., '฿2,500')
   const getThbPrice = (price: string) => {
     const digits = String(price || '').replace(/[^\d.]/g, '').replace(/,/g, '');
@@ -346,7 +316,7 @@ const Courses = () => {
             <div
               key={index}
               id={`course-${course.key}`}
-              className="bg-gray-100 border border-gray-300 rounded-xl shadow p-8 hover:shadow-xl transition-shadow duration-300 scroll-mt-20"
+              className="bg-gray-100 border border-gray-300 rounded-xl shadow-md p-8 hover:shadow-lg transition-shadow duration-300 scroll-mt-20"
             >
               <div className="flex items-start justify-between mb-6">
                 <div>
@@ -354,36 +324,26 @@ const Courses = () => {
                     <span className="text-3xl mr-3">{course.icon}</span>
                     <h3 className="text-2xl font-bold text-gray-900">{course.title}</h3>
                   </div>
-                  <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium border ${getLevelColor(course.level)}`}>
+                  <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium border ${getLevelColor(course.level)} bg-gray-200 text-gray-800 border-gray-400`}>
                     {course.level}
                   </span>
                 </div>
                 <div className="text-right">
-                  <div className="text-3xl font-bold text-blue-600">
-                    {ratesLoading ? '...' :
-                      ratesError ? (
-                        <span title={ratesError}>{formatCurrency(getThbPrice(course.price), 'THB')}</span>
-                      ) : (
-                        formatCurrency(
-                          getThbPrice(course.price) * (exchangeRates[selectedCurrency] || 1),
-                          selectedCurrency
-                        )
-                      )
-                    }
-                  </div>
-                  <div className="text-sm text-gray-500">{t('courses.perPerson')}</div>
+                  <div className="text-3xl font-bold text-blue-600">{formatCurrency(getThbPrice(course.price), 'THB')}</div>
+                  {/* Currency conversion removed */}
+                  <div className="text-sm text-gray-600">{t('courses.perPerson')}</div>
                 </div>
               </div>
 
               <p className="text-gray-600 mb-4">{course.description}</p>
 
               <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
-                <div className="flex items-center text-gray-600">
-                  <Clock className="h-4 w-4 mr-2 text-blue-600" />
+                <div className="flex items-center text-gray-700">
+                  <Clock className="h-4 w-4 mr-2 text-gray-500" />
                   {t('courses.duration')}: {course.duration}
                 </div>
-                <div className="flex items-center text-gray-600">
-                  <div className="h-4 w-4 mr-2 text-blue-600 font-bold">📏</div>
+                <div className="flex items-center text-gray-700">
+                  <div className="h-4 w-4 mr-2 text-gray-500 font-bold">📏</div>
                   {t('courses.maxDepth')}: {course.maxDepth}
                 </div>
               </div>
@@ -392,8 +352,8 @@ const Courses = () => {
                 <h4 className="font-semibold text-gray-900 mb-3">{t('courses.courseIncludes')}:</h4>
                 <ul className="space-y-2">
                   {(course.includes as string[]).map((item: string, idx: number) => (
-                    <li key={idx} className="flex items-center text-gray-600">
-                      <Star className="h-4 w-4 mr-2 text-blue-600" />
+                    <li key={idx} className="flex items-center text-gray-700">
+                      <Star className="h-4 w-4 mr-2 text-gray-500" />
                       {item}
                     </li>
                   ))}
@@ -443,10 +403,7 @@ const Courses = () => {
                     <Button variant="outline" className="w-full">{t('courses.viewCourse', 'View course')}</Button>
                   </Link>
                   <button
-                    onClick={() => {
-                      const url = `https://booking.divinginasia.com/booking?item=${encodeURIComponent(course.title)}&type=${course.bookingType || 'course'}&price=${parsePriceMajor(course.price)}&currency=${course.depositCurrency}`;
-                      window.open(url, '_blank', 'noopener');
-                    }}
+                    onClick={() => navigate(`/booking?item=${encodeURIComponent(course.title)}&type=${course.bookingType || 'course'}&price=${parsePriceMajor(course.price)}&currency=${course.depositCurrency}`)}
                     className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-semibold"
                   >
                     {t('courses.bookButton')}
@@ -455,23 +412,6 @@ const Courses = () => {
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Currency selector */}
-        <div className="flex justify-end mb-8">
-          <label htmlFor="currency-select" className="mr-2 font-semibold">Currency:</label>
-          <select
-            id="currency-select"
-            value={selectedCurrency}
-            onChange={e => setSelectedCurrency(e.target.value)}
-            className="border rounded px-2 py-1"
-          >
-            {SUPPORTED_CURRENCIES.map(cur => (
-              <option key={cur} value={cur}>{cur}</option>
-            ))}
-          </select>
-          {ratesLoading && <span className="ml-3 text-sm text-gray-500">Updating rates...</span>}
-          {ratesError && <span className="ml-3 text-sm text-red-500">{ratesError}</span>}
         </div>
 
         <div className="bg-blue-600 rounded-xl p-8 text-white text-center">
@@ -503,9 +443,7 @@ const Courses = () => {
               </div>
               <Button 
                 className="w-full mt-4 bg-background text-emerald-600 hover:bg-emerald-50"
-                onClick={() => {
-                  window.open('https://booking.divinginasia.com/booking?item=3%20Specialty%20Bundle&type=course&price=18000&currency=THB', '_blank', 'noopener');
-                }}
+                onClick={() => navigate('/booking?item=3%20Specialty%20Bundle&type=course&price=18000&currency=THB')}
               >
                 {isDutch ? 'Boek Bundel' : 'Book Bundle'}
               </Button>

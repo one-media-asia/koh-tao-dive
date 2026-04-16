@@ -129,12 +129,13 @@ const Contact = () => {
     setIsSubmitting(true);
     try {
       const payload = {
+        type: 'contact',
         name: `${formData.firstName} ${formData.lastName}`,
         email: formData.email,
         subject: formData.subject || 'Contact Form Submission',
         message: formData.message
       };
-      const response = await fetch(apiUrl('/api/contact'), {
+      const response = await fetch(apiUrl('/api/submit'), {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -242,50 +243,43 @@ const Contact = () => {
           </div>
 
           <div className="bg-gray-800 rounded-lg p-8">
-            <h3 className="text-2xl font-bold mb-6">{content.form_title}</h3>
-            
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">{content.form_first_name_label}</label>
-                  <input type="text" name="firstName" value={formData.firstName} onChange={handleInputChange} required className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white" placeholder="John" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">{content.form_last_name_label}</label>
-                  <input type="text" name="lastName" value={formData.lastName} onChange={handleInputChange} required className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white" placeholder="Doe" />
-                </div>
-              </div>
+            <h3 className="text-2xl font-bold mb-6 text-center">Booking / Inquiry Form</h3>
+            <form action="https://api.web3forms.com/submit" method="POST" className="space-y-4">
+              <input type="hidden" name="access_key" value="e4c4edf6-6e35-456a-87da-b32b961b449a" />
+              <label htmlFor="name" className="block font-semibold">Name</label>
+              <input type="text" id="name" name="name" required className="w-full border border-gray-300 rounded px-3 py-2" />
 
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">{content.form_email_label}</label>
-                <input type="email" name="email" value={formData.email} onChange={handleInputChange} required className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white" placeholder="john@example.com" />
-              </div>
+              <label htmlFor="email" className="block font-semibold">Email</label>
+              <input type="email" id="email" name="email" required className="w-full border border-gray-300 rounded px-3 py-2" />
 
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">{content.form_subject_label}</label>
-                <select name="subject" value={formData.subject} onChange={handleInputChange} title="Subject" className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white">
-                  {subjectOptions.map((option) => (
-                    <option key={option} value={option}>{option}</option>
-                  ))}
-                </select>
-              </div>
+              <label htmlFor="phone" className="block font-semibold">Phone</label>
+              <input type="text" id="phone" name="phone" className="w-full border border-gray-300 rounded px-3 py-2" />
 
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">{content.form_message_label}</label>
-                <textarea name="message" value={formData.message} onChange={handleInputChange} required rows={4} className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white" placeholder="Tell us about your diving experience and what you're looking for..."></textarea>
-              </div>
+              <label htmlFor="course_title" className="block font-semibold">Course / Package</label>
 
-              <button type="submit" disabled={isSubmitting} className="w-full bg-primary text-primary-foreground py-3 rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 font-semibold">
-                {isSubmitting ? content.form_sending_label : content.form_submit_label}
-              </button>
+              <input type="text" id="course_title" name="course_title" className="w-full border border-gray-300 rounded px-3 py-2 text-black" style={{ color: '#222' }} />
+
+              <label htmlFor="preferred_date" className="block font-semibold">Preferred Date</label>
+
+              <input type="date" id="preferred_date" name="preferred_date" className="w-full border border-gray-300 rounded px-3 py-2 text-black" style={{ color: '#222' }} />
+
+              <label htmlFor="experience_level" className="block font-semibold">Experience Level</label>
+              <select id="experience_level" name="experience_level" className="w-full border border-gray-300 rounded px-3 py-2 text-black" style={{ color: '#222' }}>
+                <option value="">Select...</option>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="professional">Professional</option>
+              </select>
+
+              <label htmlFor="message" className="block font-semibold">Comments / Questions</label>
+              <textarea id="message" name="message" rows={4} required className="w-full border border-gray-300 rounded px-3 py-2 text-black" style={{ color: '#222' }}></textarea>
+
+              <button type="submit" className="w-full mt-4 py-3 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 transition">Send Booking</button>
             </form>
           </div>
         </div>
 
-        <div className="mt-16 pt-8 border-t border-gray-700 text-center text-gray-400">
-          <p>{content.footer_line_1}</p>
-          <p className="mt-2">{content.footer_line_2}</p>
-        </div>
+        {/* Footer lines removed to prevent double footer. Use global Footer in Layout. */}
       </div>
     </section>
   );

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking Form</title>
+  <style>
+    body { font-family: sans-serif; background: #f8f8f8; }
+    .form-container { max-width: 400px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px #0001; }
+    label { display: block; margin-top: 1rem; font-weight: bold; }
+    input, select, textarea { width: 100%; padding: 0.5rem; margin-top: 0.25rem; border: 1px solid #ccc; border-radius: 4px; }
+    button { margin-top: 1.5rem; padding: 0.75rem 1.5rem; background: #0070ba; color: #fff; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; }
+    button:hover { background: #005fa3; }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Booking / Inquiry Form</h2>
+    <a href="https://buy.stripe.com/aFacN5bN2bP25si1a55os00" target="_blank" rel="noopener" style="display:block;width:100%;margin-bottom:1em;text-align:center;background:#635bff;color:#fff;padding:0.75em 0;border-radius:4px;font-size:1.1em;text-decoration:none;font-weight:bold;">Pay with Card (Stripe)</a>
+    <button class="book-now-btn" style="width:100%">Book Now / Inquiry</button>
+    <!-- Modal Structure -->
+    <div id="booking-modal" style="display:none;position:fixed;z-index:1000;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;">
+      <div style="background:#fff;padding:2rem;border-radius:8px;max-width:400px;width:90%;position:relative;box-shadow:0 2px 16px #0003;">
+        <button id="booking-modal-close" style="position:absolute;top:10px;right:10px;background:none;border:none;font-size:1.5rem;cursor:pointer;">&times;</button>
+        <form id="booking-form">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" required>
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required>
+          <label for="phone">Phone</label>
+          <input type="text" id="phone" name="phone">
+          <label for="course_title">Course / Package</label>
+          <input type="text" id="course_title" name="course_title" required>
+          <label for="preferred_date">Preferred Date</label>
+          <input type="date" id="preferred_date" name="preferred_date">
+          <label for="experience_level">Experience Level</label>
+          <select id="experience_level" name="experience_level">
+            <option value="">Select...</option>
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="professional">Professional</option>
+          </select>
+          <label for="message">Comments / Questions</label>
+          <textarea id="message" name="message" rows="4" required></textarea>
+          <button type="submit">Book & Pay with Card</button>
+        </form>
+        <div id="stripe-error" style="color:red;margin-top:1em;"></div>
+      </div>
+    </div>
+  </div>
+</body>
+<script src="/public/booking-modal.js"></script>
+<script>
+// Simple Stripe Payment Link redirect after form submit
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('booking-form');
+  if (!form) return;
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    // Optionally, collect form data here if you want to send it somewhere
+    window.location.href = 'https://buy.stripe.com/aFacN5bN2bP25si1a55os00';
+  });
+});
+</script>
+</html>

@@ -6,7 +6,7 @@ import DiveSites from '../components/DiveSites';
 import Courses from '../components/Courses';
 import Gallery from '../components/Gallery';
 import About from '../components/About';
-import Contact from '../components/Contact';
+// import Contact from '../components/Contact';
 import FunDiving from './FunDiving';
 import CurrencyExchange from '../components/CurrencyExchange';
 
@@ -34,7 +34,7 @@ const Index = () => {
 			<Courses />
 			<FunDiving />
 			<Gallery />
-			<Contact />
+		// <Contact />
 		</div>
 	);
 };

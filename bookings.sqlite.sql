@@ -19,3 +19,6 @@ CREATE TABLE IF NOT EXISTS bookings (
   created_at TEXT DEFAULT CURRENT_TIMESTAMP,
   updated_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Allow read to everyone
+USING (true);

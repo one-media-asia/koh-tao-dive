@@ -340,9 +340,7 @@ const DiveSitesPage = () => {
                 </div>
                 <Button 
                   className="w-full"
-                  onClick={() => {
-                    window.open('https://booking.divinginasia.com/booking?item=Fun%20Dive&type=dive&price=1800&currency=THB&dives=2', '_blank', 'noopener');
-                  }}
+                  onClick={() => navigate(`/booking?item=${encodeURIComponent('Fun Dive')}&type=dive&price=1800&currency=THB&dives=2`)}
                 >
                   {pageContent.book_dive}
                 </Button>
@@ -374,9 +372,7 @@ const DiveSitesPage = () => {
                 </ul>
                 <Button 
                   className="w-full"
-                  onClick={() => {
-                    window.open('https://booking.divinginasia.com/booking?item=Sail%20Rock%20Special&type=dive&price=2900&currency=THB', '_blank', 'noopener');
-                  }}
+                  onClick={() => navigate(`/booking?item=${encodeURIComponent('Sail Rock Special')}&type=dive&price=2900&currency=THB`)}
                 >
                   {isDutch ? 'Boek Sail Rock' : 'Book Sail Rock'}
                 </Button>

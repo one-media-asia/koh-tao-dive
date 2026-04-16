@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import AdminBookings from './AdminBookings';
 
 const TABS = [
   { key: 'bookings', label: 'Bookings' },
@@ -25,7 +24,13 @@ const AdminDashboard: React.FC = () => {
         ))}
       </div>
       <div className="bg-white rounded shadow p-6 min-h-[300px]">
-        {activeTab === 'bookings' && <AdminBookings />}
+        {activeTab === 'bookings' && (
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Bookings</h2>
+            {/* TODO: List and manage bookings here */}
+            <p>Booking management coming soon...</p>
+          </div>
+        )}
         {activeTab === 'tickets' && (
           <div>
             <h2 className="text-xl font-semibold mb-4">Tickets</h2>

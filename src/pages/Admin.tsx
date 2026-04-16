@@ -16,6 +16,7 @@ const Admin = () => {
     // Add more admin tabs here
     const tabs = [
       { key: 'bookings', label: 'Bookings' },
+      { key: 'affiliate-clicks', label: 'Affiliate Clicks' },
       { key: 'pages', label: 'Pages Manager' },
       { key: 'project-manager', label: 'Project Manager' },
     ];
@@ -23,7 +24,6 @@ const Admin = () => {
   const jiraProjectUrl = import.meta.env.VITE_JIRA_PROJECT_URL || jiraEmbedUrl || 'https://divinginasia.atlassian.net';
   const [activeTab, setActiveTab] = useState('bookings');
   const [bookings, setBookings] = useState([]);
-  const [adminEmail, setAdminEmail] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [selectedBookingId, setSelectedBookingId] = useState(null);
   const [commentDraft, setCommentDraft] = useState('');
@@ -99,15 +99,6 @@ const Admin = () => {
   };
 
   useEffect(() => {
-    // Always get admin email on mount
-    async function fetchAdminEmail() {
-      const { data: { session } } = await supabase.auth.getSession();
-      setAdminEmail(session?.user?.email || null);
-    }
-    fetchAdminEmail();
-  }, []);
-
-  useEffect(() => {
     if (activeTab === 'bookings' || activeTab === 'comments') {
       setLoading(true);
       async function fetchBookings() {
@@ -171,9 +162,6 @@ const Admin = () => {
     <header className="w-full py-8 mb-8 bg-gradient-to-r from-blue-700 to-emerald-600 shadow-lg text-white rounded-b-3xl flex flex-col items-center">
       <h1 className="text-3xl font-bold tracking-wide mb-2">Admin Dashboard</h1>
       <p className="text-lg opacity-80">Manage bookings, pages, and more</p>
-      {adminEmail && (
-        <div className="mt-2 text-base text-emerald-100 opacity-90">Logged in as: <span className="font-semibold">{adminEmail}</span></div>
-      )}
     </header>
       {/* Centered horizontal tab row with more spacing */}
       <div className="flex flex-col items-center mb-8">
@@ -204,7 +192,7 @@ const Admin = () => {
         </a>
       </div>
       {/* Main Content */}
-      <div>
+      <div className="full-width">
         <Dialog open={financeModalOpen} onOpenChange={setFinanceModalOpen}>
           <DialogContent className="sm:max-w-2xl">
             <DialogHeader>
@@ -263,7 +251,11 @@ const Admin = () => {
               <AdminBookings />
             </div>
           )}
-          {/* Affiliate Clicks tab removed */}
+          {activeTab === 'affiliate-clicks' && (
+            <div className="bg-white rounded-2xl shadow-xl p-6 mb-6 border border-gray-100">
+              <AffiliateClicksAdmin />
+            </div>
+          )}
           {activeTab === 'pages' && (
             <div className="bg-white rounded-2xl shadow-xl p-6 mb-6 border border-gray-100">
               <React.Suspense fallback={<div>Loading Pages Manager...</div>}>

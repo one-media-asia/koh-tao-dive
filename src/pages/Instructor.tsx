@@ -1,6 +1,7 @@
 import Contact from '../components/Contact';
 
 import React, { useMemo, useState, useEffect } from 'react';
+import BookNowModal from '@/components/BookNowModal';
 import DropboxGallery from '@/components/DropboxGallery';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -14,6 +15,7 @@ type Currency = typeof SUPPORTED_CURRENCIES[number];
 const IDC_DROPBOX_FOLDER = 'instructor';
 
 const Instructor: React.FC = () => {
+  const [showBookNow, setShowBookNow] = useState(false);
   // Currency state
   const [currency, setCurrency] = useState<Currency>('THB');
   const [exchangeRates, setExchangeRates] = useState<{ [key: string]: number }>({ THB: 1, USD: 1, EUR: 1 });
@@ -155,7 +157,7 @@ const Instructor: React.FC = () => {
           <h1 className="text-4xl md:text-5xl font-bold">{content.hero_title}</h1>
           <p className="mt-4 max-w-2xl">{content.hero_subtitle}</p>
           <div className="mt-6">
-            <Button size="lg" onClick={() => navigate(bookingUrl)}>{content.cta_primary}</Button>
+            <Button size="lg" onClick={() => setShowBookNow(true)}>{content.cta_primary}</Button>
           </div>
         </div>
       </section>
@@ -223,25 +225,7 @@ const Instructor: React.FC = () => {
             </div>
           </div>
 
-          <aside>
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle>{content.sidebar_title}</CardTitle>
-                  <Badge>{content.sidebar_badge}</Badge>
-                </div>
-                <CardDescription>{content.sidebar_subtitle}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-2xl font-bold text-sky-600 mb-1">฿{basePriceTHB} THB</p>
-                {currency !== 'THB' && (
-                  <p className="text-lg font-semibold text-sky-700 mb-3">{convertCurrency(basePriceTHB, 'THB')}</p>
-                )}
-                <p className="text-sm text-muted-foreground mb-4">{content.sidebar_note}</p>
-                <Button onClick={() => navigate(bookingUrl)}>{content.sidebar_cta}</Button>
-              </CardContent>
-            </Card>
-          </aside>
+          {/* Sidebar Book Now widget removed as requested */}
         </div>
 
         <section className="mt-12">
@@ -259,10 +243,11 @@ const Instructor: React.FC = () => {
             <a href="/#contact" target="_blank" rel="noopener noreferrer" className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded font-semibold mb-2">{content.contact_cta}</a>
             <div className="text-muted-foreground text-sm mb-4">{content.contact_hint}</div>
           </div>
-          <Button onClick={() => navigate(bookingUrl)}>{content.bottom_cta}</Button>
+          <Button onClick={() => setShowBookNow(true)}>{content.bottom_cta}</Button>
         </section>
       </main>
         <Contact />
+      <BookNowModal open={showBookNow} onClose={() => setShowBookNow(false)} />
     </div>
   );
 };

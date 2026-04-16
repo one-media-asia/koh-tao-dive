@@ -1,5 +1,6 @@
 import React from 'react';
 import Navigation from './Navigation';
+import BookNowModal from './BookNowModal';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { trackAffiliateClick } from '@/lib/affiliateTracking';
@@ -20,6 +21,7 @@ const trackBookingWidgetClick = (source: 'left-widget' | 'mobile-sticky') => {
     const key = `booking-widget-clicks:${source}`;
     const current = Number(window.localStorage.getItem(key) || '0');
     window.localStorage.setItem(key, String(current + 1));
+
 
     const payload = {
       event: 'booking_widget_click',
@@ -105,8 +107,8 @@ const Footer: React.FC = () => {
               <li><Link to="/WeatherKohTao" className="hover:text-white transition">{isDutch ? 'Weer' : 'Weather'}</Link></li>
               <li><Link to="/VisasKohTao" className="hover:text-white transition">Visas</Link></li>
               <li><Link to="/MedicalServices" className="hover:text-white transition">{isDutch ? 'Medisch' : 'Medical'}</Link></li>
-              <li><Link to="/accommodation-booking" className="hover:text-white transition">Booking.com</Link></li>
-              {/* Trip.com and Agoda links removed as requested */}
+              <li><a href="https://www.divinginasia.com/agoda-hotels" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">Agoda</a></li>
+              {/* Trip.com link removed as requested, Agoda link added */}
               <li><a href="https://www.divinginasia.com/#contact" className="hover:text-white transition">Contact</a></li>
             </ul>
           </div>
@@ -131,6 +133,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isAdminRoute = location.pathname.startsWith('/admin') && location.pathname !== '/admin/login';
   const [user, setUser] = React.useState<any>(null);
   const [isAdmin, setIsAdmin] = React.useState(false);
+  const [showBookNow, setShowBookNow] = React.useState(false);
 
   React.useEffect(() => {
     const checkAuth = async () => {
@@ -169,23 +172,9 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           <Button variant="outline" onClick={handleLogout}>{isDutch ? 'Uitloggen' : 'Logout'}</Button>
         </div>
       )}
-     {!isAdminRoute && (
-  <Link
-    to="/booking?source=left-widget"
-    onClick={() => trackBookingWidgetClick('left-widget')}
-  >
-    {isDutch ? 'Boek nu' : 'Book now'}
-  </Link>
-)}  
-      <Link
-        to="/booking?source=mobile-sticky"
-        onClick={() => trackBookingWidgetClick('mobile-sticky')}
-        className="fixed bottom-24 left-1/2 z-40 -translate-x-1/2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-blue-700 motion-safe:animate-pulse md:hidden"
-        aria-label={isDutch ? 'Boek nu' : 'Book now'}
-        title={isDutch ? 'Boek nu' : 'Book now'}
-      >
-        {isDutch ? 'Boek nu' : 'Book now'}
-      </Link>
+      {/* Global Book Now Button removed as requested */}
+      {/* Book Now Modal */}
+      <BookNowModal open={showBookNow} onClose={() => setShowBookNow(false)} />
       <main className="flex-1">{children}</main>
       <CookieConsent />
       <a
