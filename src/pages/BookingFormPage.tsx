@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import BookingForm from '@/components/BookingForm';
+import CurrencyExchange from '@/components/CurrencyExchange';
 
 function useQuery() {
   const { search } = typeof window !== 'undefined' ? window.location : { search: '' };
@@ -24,6 +25,7 @@ const BookingFormPage: React.FC = () => {
     <Layout>
       <div className="min-h-screen bg-background flex items-center justify-center py-12">
         <div className="w-full max-w-lg bg-white rounded-xl shadow-lg p-8">
+          <CurrencyExchange />
           <h1 className="text-3xl font-bold mb-6 text-center">Booking / Inquiry Form</h1>
           <BookingForm
             standalone
