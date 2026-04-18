@@ -1,3 +1,4 @@
+import './Courses.css';
 import React, { useMemo, useState, useEffect } from 'react';
 
 import { Clock, Star, ChevronDown, ChevronUp } from 'lucide-react';
@@ -316,7 +317,7 @@ const Courses = () => {
             <div
               key={index}
               id={`course-${course.key}`}
-              className="bg-gray-100 border border-gray-300 rounded-xl shadow-md p-8 hover:shadow-lg transition-shadow duration-300 scroll-mt-20"
+              className="course-card scroll-mt-20"
             >
               <div className="flex items-start justify-between mb-6">
                 <div>

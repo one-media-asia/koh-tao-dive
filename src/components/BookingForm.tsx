@@ -46,9 +46,17 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, it
     defaultValues: {
       name: '',
       email: '',
+      import React, { useRef } from 'react';
+      import { loadStripe } from '@stripe/stripe-js';
+      import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
       phone: '',
       preferred_date: '',
       experience_level: '',
+      // Stripe and PayPal keys (replace with your actual keys or use env variables)
+      const STRIPE_PUBLISHABLE_KEY = 'pk_live_51O...'; // Replace with your real key
+      const PAYPAL_CLIENT_ID = 'Ae...'; // Replace with your real client ID
+
+      const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
       message: '',
       paymentChoice: 'now',
     },
@@ -56,6 +64,19 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, it
 
   // Reset form whenever dialog opens with a new course/item selection
   useEffect(() => {
+        // PayPal SDK loader
+        const paypalRef = useRef<HTMLDivElement>(null);
+        const [paypalLoaded, setPaypalLoaded] = useState(false);
+
+        useEffect(() => {
+          if (paypalRef.current && !paypalLoaded && window && (window as any).paypal === undefined) {
+            const script = document.createElement('script');
+            script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=THB`;
+            script.async = true;
+            script.onload = () => setPaypalLoaded(true);
+            document.body.appendChild(script);
+          }
+        }, [paypalLoaded]);
     if (isOpen) {
       form.reset({
         name: '',
@@ -124,6 +145,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, it
         toast.error('Booking saved to email, but not to admin database.');
       }
 
+            // After successful payment, redirect to thank you page
       if (response.ok && responseData.success) {
         if (responseData.warning) {
           toast.warning(`Booking saved, but email notification needs attention: ${responseData.warning}`);
