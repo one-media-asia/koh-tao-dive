@@ -31,9 +31,10 @@ interface BookingFormProps {
   itemTitle: string;
   depositMajor?: number;
   depositCurrency?: string;
+  paymentMethod?: 'stripe' | 'paypal';
 }
 
-const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, itemTitle, depositMajor, depositCurrency }) => {
+const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, itemTitle, depositMajor, depositCurrency, paymentMethod }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const apiBase = (import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || '').trim().replace(/\/+$/, '');
   const apiUrl = (path: string) => (apiBase ? `${apiBase}${path}` : path);
@@ -283,6 +284,44 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, it
                       </label>
                     </div>
                   </FormControl>
+                  {/* Show Stripe/PayPal choice if "Pay deposit now" is selected */}
+                  {field.value === 'now' && (
+                    <div className="mt-3">
+                      <FormLabel>Choose payment method:</FormLabel>
+                      <div className="flex gap-4 mt-2">
+                        <label className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="stripe"
+                            defaultChecked={paymentMethod !== 'paypal'}
+                          />
+                          <span>Stripe</span>
+                        </label>
+                        <label className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="paypal"
+                            defaultChecked={paymentMethod === 'paypal'}
+                          />
+                          <span>PayPal</span>
+                        </label>
+                      </div>
+                      {/* Show PayPal instructions if PayPal is selected */}
+                      {/* Show Stripe or PayPal instructions based on selection */}
+                      {typeof window !== 'undefined' && document.querySelector('input[name="paymentMethod"]:checked')?.value === 'paypal' && (
+                        <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded">
+                          <strong>PayPal:</strong> Please send your deposit to <a href="https://paypal.me/prodiving" target="_blank" rel="noopener noreferrer" className="text-blue-700 underline">paypal.me/prodiving</a>
+                        </div>
+                      )}
+                      {typeof window !== 'undefined' && document.querySelector('input[name="paymentMethod"]:checked')?.value === 'stripe' && (
+                        <div className="mt-2 p-3 bg-purple-50 border border-purple-200 rounded text-center">
+                          <a href="https://buy.stripe.com/aFacN5bN2bP25si1a55os00" target="_blank" rel="noopener noreferrer" className="inline-block bg-[#635bff] text-white px-6 py-3 rounded font-bold text-lg">Pay with Card (Stripe)</a>
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}

@@ -14,7 +14,10 @@ const BookingFormPage: React.FC = () => {
   const query = useQuery();
   const itemTitle = query.get('item') || 'General Inquiry';
   const itemType = (query.get('type') === 'dive' || query.get('type') === 'course') ? query.get('type') : 'course';
-  const depositMajor = query.get('price') ? Number(query.get('price')) : undefined;
+  // Calculate 20% deposit
+  const depositMajor = query.get('price') ? Math.round(Number(query.get('price')) * 0.2) : undefined;
+  // Add payment method selection (default to 'stripe')
+  const paymentMethod = query.get('payment') === 'paypal' ? 'paypal' : 'stripe';
   const depositCurrency = query.get('currency') || undefined;
 
   return (
@@ -29,6 +32,7 @@ const BookingFormPage: React.FC = () => {
             itemTitle={itemTitle}
             depositMajor={depositMajor}
             depositCurrency={depositCurrency}
+            paymentMethod={paymentMethod}
           />
         </div>
       </div>
