@@ -119,6 +119,8 @@ const Footer: React.FC = () => {
           <a href="https://www.onemedia.asia" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 transition font-medium">
             One Media Asia Co, Ltd
           </a>
+          {' | '}
+          <Link to="/BookNow" className="text-blue-400 hover:text-blue-300 transition font-medium ml-2">Book Now</Link>
         </div>
       </div>
     </footer>
@@ -176,6 +178,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       {/* Book Now Modal */}
       <BookNowModal open={showBookNow} onClose={() => setShowBookNow(false)} />
       <main className="flex-1">{children}</main>
+      <Footer />
       <CookieConsent />
       <a
         href={WHATSAPP_LINK}
