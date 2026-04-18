@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './BookingForm.css';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -174,219 +175,65 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, it
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-bold">
-            Book {itemType === 'course' ? 'Course' : 'Dive'}: {itemTitle}
-          </DialogTitle>
-          <DialogDescription>
-            Fill out the form below and we'll get back to you within 24 hours.
-          </DialogDescription>
-        </DialogHeader>
-
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2">
-                    <User className="h-4 w-4" /> Full Name *
-                  </FormLabel>
-                  <FormControl>
-                    <Input placeholder="John Doe" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2">
-                    <Mail className="h-4 w-4" /> Email *
-                  </FormLabel>
-                  <FormControl>
-                    <Input type="email" placeholder="john@example.com" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2">
-                    <Phone className="h-4 w-4" /> Phone
-                  </FormLabel>
-                  <FormControl>
-                    <Input placeholder="+66 123 456 789" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="preferred_date"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" /> Preferred Date
-                  </FormLabel>
-                  <FormControl>
-                    <Input type="date" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="experience_level"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Experience Level</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value || ''}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select your experience level" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="none">No diving experience</SelectItem>
-                      <SelectItem value="beginner">Beginner (1-10 dives)</SelectItem>
-                      <SelectItem value="intermediate">Intermediate (10-50 dives)</SelectItem>
-                      <SelectItem value="advanced">Advanced (50+ dives)</SelectItem>
-                      <SelectItem value="professional">Professional diver</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="paymentChoice"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Payment option</FormLabel>
-                  <FormControl>
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <label className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          value="now"
-                          checked={field.value === 'now'}
-                          onChange={() => field.onChange('now')}
-                        />
-                        <span className="ml-2">Pay deposit now</span>
-                      </label>
-
-                      <label className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          value="link"
-                          checked={field.value === 'link'}
-                          onChange={() => field.onChange('link')}
-                        />
-                        <span className="ml-2">Send payment link to my email</span>
-                      </label>
-
-                      <label className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          value="none"
-                          checked={field.value === 'none'}
-                          onChange={() => field.onChange('none')}
-                        />
-                        <span className="ml-2">Just an inquiry (no deposit)</span>
-                      </label>
-                    </div>
-                  </FormControl>
-                  {/* Show Stripe/PayPal choice if "Pay deposit now" is selected */}
-                  {field.value === 'now' && (
-                    <div className="mt-3">
-                      <FormLabel>Choose payment method:</FormLabel>
-                      <div className="flex gap-4 mt-2">
-                        <label className="flex items-center gap-2">
-                          <input
-                            type="radio"
-                            name="paymentMethod"
-                            value="stripe"
-                            defaultChecked={paymentMethod !== 'paypal'}
-                          />
-                          <span>Stripe</span>
-                        </label>
-                        <label className="flex items-center gap-2">
-                          <input
-                            type="radio"
-                            name="paymentMethod"
-                            value="paypal"
-                            defaultChecked={paymentMethod === 'paypal'}
-                          />
-                          <span>PayPal</span>
-                        </label>
-                      </div>
-                      {/* Show PayPal instructions if PayPal is selected */}
-                      {/* Show Stripe or PayPal instructions based on selection */}
-                      {typeof window !== 'undefined' && document.querySelector('input[name="paymentMethod"]:checked')?.value === 'paypal' && (
-                        <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded">
-                          <strong>PayPal:</strong> Please send your deposit to <a href="https://paypal.me/prodiving" target="_blank" rel="noopener noreferrer" className="text-blue-700 underline">paypal.me/prodiving</a>
-                        </div>
-                      )}
-                      {typeof window !== 'undefined' && document.querySelector('input[name="paymentMethod"]:checked')?.value === 'stripe' && (
-                        <div className="mt-2 p-3 bg-purple-50 border border-purple-200 rounded text-center">
-                          <a href="https://buy.stripe.com/aFacN5bN2bP25si1a55os00" target="_blank" rel="noopener noreferrer" className="inline-block bg-[#635bff] text-white px-6 py-3 rounded font-bold text-lg">Pay with Card (Stripe)</a>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="message"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2">
-                    <MessageSquare className="h-4 w-4" /> Message
-                  </FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder="Any special requests or questions?" 
-                      rows={3}
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="flex gap-3 pt-4">
-              <Button type="button" variant="outline" onClick={onClose} className="flex-1">
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isSubmitting} className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground">
-                {isSubmitting ? 'Submitting...' : 'Submit Inquiry'}
-              </Button>
+      <DialogContent>
+        <div className="booking-form-container">
+          <div className="booking-form-title">Booking / Inquiry Form</div>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="booking-form-field">
+              <label className="booking-form-label">Full Name *</label>
+              <input className="booking-form-input" placeholder="John Doe" {...form.register('name')} />
+            </div>
+            <div className="booking-form-field">
+              <label className="booking-form-label">Email *</label>
+              <input className="booking-form-input" type="email" placeholder="john@example.com" {...form.register('email')} />
+            </div>
+            <div className="booking-form-field">
+              <label className="booking-form-label">Phone</label>
+              <input className="booking-form-input" placeholder="+66 123 456 789" {...form.register('phone')} />
+            </div>
+            <div className="booking-form-field">
+              <label className="booking-form-label">Course / Package</label>
+              <input className="booking-form-input" value={itemTitle} disabled />
+            </div>
+            <div className="booking-form-field">
+              <label className="booking-form-label">Preferred Date</label>
+              <input className="booking-form-input" type="date" {...form.register('preferred_date')} />
+            </div>
+            <div className="booking-form-field">
+              <label className="booking-form-label">Experience Level</label>
+              <select className="booking-form-select" {...form.register('experience_level')}>
+                <option value="">Select...</option>
+                <option value="none">No diving experience</option>
+                <option value="beginner">Beginner (1-10 dives)</option>
+                <option value="intermediate">Intermediate (10-50 dives)</option>
+                <option value="advanced">Advanced (50+ dives)</option>
+                <option value="professional">Professional diver</option>
+              </select>
+            </div>
+            <div className="booking-form-field">
+              <label className="booking-form-label">Payment Option</label>
+              <div className="booking-form-radio-group">
+                <label className="booking-form-radio-label">
+                  <input type="radio" value="now" {...form.register('paymentChoice')} defaultChecked /> Pay deposit now
+                </label>
+                <label className="booking-form-radio-label">
+                  <input type="radio" value="link" {...form.register('paymentChoice')} /> Send payment link to my email
+                </label>
+                <label className="booking-form-radio-label">
+                  <input type="radio" value="none" {...form.register('paymentChoice')} /> Just an inquiry
+                </label>
+              </div>
+            </div>
+            <div className="booking-form-field">
+              <label className="booking-form-label">Comments / Questions</label>
+              <textarea className="booking-form-textarea" rows={3} placeholder="Any special requests or questions?" {...form.register('message')} />
+            </div>
+            <div className="booking-form-actions">
+              <button type="button" className="booking-form-btn outline" onClick={onClose}>Cancel</button>
+              <button type="submit" className="booking-form-btn" disabled={isSubmitting}>{isSubmitting ? 'Submitting...' : 'Send Booking'}</button>
             </div>
           </form>
-        </Form>
+        </div>
       </DialogContent>
     </Dialog>
   );
