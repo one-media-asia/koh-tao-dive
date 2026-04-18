@@ -1,41 +1,3 @@
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
-const STRIPE_CLIENT_SECRET = 'cpmt_1TNhaaHfLuEywLiXbQFZEgMa'; // Provided PaymentIntent client secret
-const stripePromise = loadStripe('pk_live_51O...'); // Replace with your real publishable key
-function StripePaymentForm({ onSuccess }: { onSuccess: () => void }) {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [processing, setProcessing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setProcessing(true);
-    setError(null);
-    if (!stripe || !elements) return;
-    const result = await stripe.confirmPayment({
-      elements,
-      confirmParams: {},
-      redirect: 'if_required',
-    });
-    setProcessing(false);
-    if (result.error) {
-      setError(result.error.message || 'Payment failed');
-    } else {
-      onSuccess();
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="stripe-form">
-      <PaymentElement />
-      {error && <div style={{ color: 'red', marginTop: 8 }}>{error}</div>}
-      <button className="booking-form-btn" type="submit" disabled={processing || !stripe} style={{ marginTop: 16 }}>
-        {processing ? 'Processing...' : 'Pay with Card (Stripe)'}
-      </button>
-    </form>
-  );
-}
 import React, { useState, useEffect } from 'react';
 import './BookingForm.css';
 import { useForm } from 'react-hook-form';
@@ -85,17 +47,9 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, it
     defaultValues: {
       name: '',
       email: '',
-      import React, { useRef } from 'react';
-      import { loadStripe } from '@stripe/stripe-js';
-      import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
       phone: '',
       preferred_date: '',
       experience_level: '',
-      // Stripe and PayPal keys (replace with your actual keys or use env variables)
-      const STRIPE_PUBLISHABLE_KEY = 'pk_live_51O...'; // Replace with your real key
-      const PAYPAL_CLIENT_ID = 'Ae...'; // Replace with your real client ID
-
-      const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
       message: '',
       paymentChoice: 'now',
     },

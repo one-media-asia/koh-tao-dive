@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import styles from "./CurrencyExchange.module.css";
 
 
-// Use environment variable for API key if needed
-const API_URL = "https://api.exchangerate.host/latest";
-const API_KEY = import.meta.env.VITE_MY_CUSTOM_API_KEY || import.meta.env.MY_CUSTOM_API_KEY;
+// Use Open Exchange Rates API
+const API_URL = "https://openexchangerates.org/api/latest.json";
+const APP_ID = import.meta.env.VITE_OPENEXCHANGE_APP_ID || import.meta.env.OPENEXCHANGE_APP_ID;
 
 const CURRENCIES = ["USD", "EUR", "THB", "GBP", "AUD", "SGD", "MYR", "IDR", "PHP", "INR", "CNY", "JPY"];
 
@@ -20,16 +20,22 @@ export const CurrencyExchange: React.FC = () => {
     if (from && to && amount > 0) {
       setLoading(true);
       setError("");
-      const url = `${API_URL}?base=${from}&symbols=${to}`;
-      const headers: Record<string, string> = {};
-      if (API_KEY) {
-        headers["Authorization"] = `Bearer ${API_KEY}`;
+      if (!APP_ID) {
+        setError("Missing Open Exchange Rates App ID");
+        setResult(null);
+        setLoading(false);
+        return;
       }
-      fetch(url, { headers })
+      const url = `${API_URL}?app_id=${APP_ID}`;
+      fetch(url)
         .then((res) => res.json())
         .then((data) => {
-          if (data && data.rates && data.rates[to]) {
-            setResult(data.rates[to] * amount);
+          if (data && data.rates && data.rates[from] && data.rates[to]) {
+            // Convert from base USD to 'from' and 'to'
+            const usdToFrom = data.rates[from];
+            const usdToTo = data.rates[to];
+            const rate = usdToTo / usdToFrom;
+            setResult(rate * amount);
           } else {
             setError("Failed to fetch rates");
             setResult(null);
