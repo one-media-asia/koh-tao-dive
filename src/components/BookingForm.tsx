@@ -192,7 +192,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen = false, onClose, item
             />
           </div>
           <div className="booking-form-field">
-            <label className="booking-form-label">Change Currency</label>
+            <label className="booking-form-label">Select Currency</label>
             <select
               className="booking-form-select"
               value={currency}
@@ -244,13 +244,23 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen = false, onClose, item
             <div className="payment-section">
               <a
                 className="booking-form-btn paypal-btn"
-                href={currency === 'EUR' ? 'https://www.paypal.com/paypalme/prodivingasia/60thb' : 'https://www.paypal.com/paypalme/prodivingasia/2400'}
+                href={
+                  currency === 'THB'
+                    ? 'https://www.paypal.com/paypalme/prodivingasia/2400'
+                    : currency === 'USD'
+                    ? 'https://www.paypal.com/paypalme/prodivingasia/65usd'
+                    : 'https://www.paypal.com/paypalme/prodivingasia/60eur'
+                }
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{ display: 'block', textAlign: 'center', textDecoration: 'none' }}
                 onClick={() => setTimeout(() => navigate('/thankyou'), 1200)}
               >
-                {currency === 'EUR' ? 'Pay 60 EUR with PayPal' : 'Pay 2400 THB with PayPal'}
+                {currency === 'THB'
+                  ? 'Pay 2400 THB with PayPal'
+                  : currency === 'USD'
+                  ? 'Pay 65 USD with PayPal'
+                  : 'Pay 60 EUR with PayPal'}
               </a>
             </div>
           )}
