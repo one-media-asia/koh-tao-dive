@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useNavigate } from 'react-router-dom';
 import { Calendar, User, Mail, Phone, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -36,6 +37,7 @@ interface BookingFormProps {
 
 const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, itemTitle, depositMajor, depositCurrency, paymentMethod }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
   const apiBase = (import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || '').trim().replace(/\/+$/, '');
   const apiUrl = (path: string) => (apiBase ? `${apiBase}${path}` : path);
 
@@ -134,6 +136,12 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, it
         console.error('Booking notification error:', errMsg, responseData);
         toast.error(`Failed to send booking: ${errMsg}. Please try again.`);
       }
+      // Example: After successful payment, redirect to thank you page
+      const handlePaymentSuccess = () => {
+        navigate('/thankyou');
+      };
+
+      // Pass handlePaymentSuccess to your payment logic (Stripe/PayPal integration)
     } catch (error) {
       console.error('Booking submission failed:', error);
       toast.error(`Failed to send booking: ${error instanceof Error ? error.message : 'Unknown error'}`);

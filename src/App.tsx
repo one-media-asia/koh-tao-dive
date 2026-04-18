@@ -1,6 +1,7 @@
 import MSDTProgram from './pages/MSDTProgram';
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import ThankYou from './pages/ThankYou';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CurrencyProvider } from './hooks/useCurrency';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -230,6 +231,7 @@ const App = () => (
               <Route path="/specialty/deep-diver" element={<DeepDiver />} />
               <Route path="/specialty/wreck-diver" element={<WreckDiver />} />
               <Route path="/specialty/enriched-air-diver" element={<EnrichedAirDiver />} />
+              <Route path="/thankyou" element={<ThankYou />} />
               <Route path="/specialty/night-diver" element={<NightDiver />} />
               <Route path="/specialty/peak-performance-buoyancy" element={<PeakPerformanceBuoyancy />} />
               <Route path="/specialty/search-recovery" element={<SearchRecovery />} />
