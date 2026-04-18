@@ -244,13 +244,13 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen = false, onClose, item
             <div className="payment-section">
               <a
                 className="booking-form-btn paypal-btn"
-                href="https://www.paypal.com/paypalme/prodivingasia/2400"
+                href={currency === 'EUR' ? 'https://www.paypal.com/paypalme/prodivingasia/60thb' : 'https://www.paypal.com/paypalme/prodivingasia/2400'}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{ display: 'block', textAlign: 'center', textDecoration: 'none' }}
                 onClick={() => setTimeout(() => navigate('/thankyou'), 1200)}
               >
-                Pay 2400 THB with PayPal
+                {currency === 'EUR' ? 'Pay 60 EUR with PayPal' : 'Pay 2400 THB with PayPal'}
               </a>
             </div>
           )}
