@@ -26,8 +26,7 @@ const BookingFormPage: React.FC = () => {
         <div className="w-full max-w-lg bg-white rounded-xl shadow-lg p-8">
           <h1 className="text-3xl font-bold mb-6 text-center">Booking / Inquiry Form</h1>
           <BookingForm
-            isOpen={formOpen}
-            onClose={() => setFormOpen(false)}
+            standalone
             itemType={itemType as 'course' | 'dive'}
             itemTitle={itemTitle}
             depositMajor={depositMajor}

@@ -27,20 +27,33 @@ const bookingSchema = z.object({
 type BookingFormData = z.infer<typeof bookingSchema>;
 
 interface BookingFormProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen?: boolean;
+  onClose?: () => void;
   itemType: 'course' | 'dive';
   itemTitle: string;
   depositMajor?: number;
   depositCurrency?: string;
   paymentMethod?: 'stripe' | 'paypal';
+  standalone?: boolean; // If true, render as a styled standalone form (not modal)
 }
 
-const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, itemTitle, depositMajor, depositCurrency, paymentMethod }) => {
+const BookingForm: React.FC<BookingFormProps> = ({ isOpen = false, onClose, itemType, itemTitle, depositMajor, depositCurrency, paymentMethod, standalone = false }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currency, setCurrency] = useState<'THB' | 'USD' | 'EUR'>(depositCurrency === 'USD' || depositCurrency === 'EUR' ? depositCurrency : 'THB');
   const navigate = useNavigate();
-  const apiBase = (import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || '').trim().replace(/\/+$/, '');
+  const apiBase = (import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || '').trim().replace(/\/+$|^\/+/, '');
   const apiUrl = (path: string) => (apiBase ? `${apiBase}${path}` : path);
+
+  // Simple conversion rates (replace with real rates if needed)
+  const rates = { THB: 1, USD: 0.027, EUR: 0.025 };
+  const formatCurrency = (amount: number, currency: 'THB' | 'USD' | 'EUR') => {
+    if (!amount) return '';
+    return currency === 'THB'
+      ? `${amount} THB`
+      : currency === 'USD'
+      ? `$${(amount * rates.USD).toFixed(2)} USD`
+      : `€${(amount * rates.EUR).toFixed(2)} EUR`;
+  };
 
   const form = useForm<BookingFormData>({
     resolver: zodResolver(bookingSchema),
@@ -57,20 +70,8 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, it
 
   // Reset form whenever dialog opens with a new course/item selection
   useEffect(() => {
-        // PayPal SDK loader
-        const paypalRef = useRef<HTMLDivElement>(null);
-        const [paypalLoaded, setPaypalLoaded] = useState(false);
-
-        useEffect(() => {
-          if (paypalRef.current && !paypalLoaded && window && (window as any).paypal === undefined) {
-            const script = document.createElement('script');
-            script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=THB`;
-            script.async = true;
-            script.onload = () => setPaypalLoaded(true);
-            document.body.appendChild(script);
-          }
-        }, [paypalLoaded]);
-    if (isOpen) {
+    // Reset form when dialog opens or when item changes
+    if ((isOpen && !standalone) || standalone) {
       form.reset({
         name: '',
         email: '',
@@ -81,7 +82,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, it
         paymentChoice: 'now',
       });
     }
-  }, [isOpen, itemTitle, form]);
+  }, [isOpen, itemTitle, form, standalone]);
 
   const onSubmit = async (data: BookingFormData) => {
     setIsSubmitting(true);
@@ -165,6 +166,106 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, it
     }
   };
 
+  if (standalone) {
+    return (
+      <div className="booking-form-container">
+        <div className="booking-form-title">Booking / Inquiry Form</div>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="booking-form-field">
+            <label className="booking-form-label">Full Name *</label>
+            <input className="booking-form-input" placeholder="John Doe" {...form.register('name')} />
+          </div>
+          <div className="booking-form-field">
+            <label className="booking-form-label">Email *</label>
+            <input className="booking-form-input" type="email" placeholder="john@example.com" {...form.register('email')} />
+          </div>
+          <div className="booking-form-field">
+            <label className="booking-form-label">Phone</label>
+            <input className="booking-form-input" placeholder="+66 123 456 789" {...form.register('phone')} />
+          </div>
+          <div className="booking-form-field">
+            <label className="booking-form-label">Course / Package</label>
+            <input
+              className="booking-form-input"
+              value={depositMajor ? `${itemTitle} (${formatCurrency(depositMajor, currency)})` : itemTitle}
+              disabled
+            />
+          </div>
+          <div className="booking-form-field">
+            <label className="booking-form-label">Change Currency</label>
+            <select
+              className="booking-form-select"
+              value={currency}
+              onChange={e => setCurrency(e.target.value as 'THB' | 'USD' | 'EUR')}
+            >
+              <option value="THB">THB (Thai Baht)</option>
+              <option value="USD">USD (US Dollar)</option>
+              <option value="EUR">EUR (Euro)</option>
+            </select>
+          </div>
+          <div className="booking-form-field">
+            <label className="booking-form-label">Preferred Date</label>
+            <input className="booking-form-input" type="date" {...form.register('preferred_date')} />
+          </div>
+          <div className="booking-form-field">
+            <label className="booking-form-label">Experience Level</label>
+            <select className="booking-form-select" {...form.register('experience_level')}>
+              <option value="">Select...</option>
+              <option value="none">No diving experience</option>
+              <option value="beginner">Beginner (1-10 dives)</option>
+              <option value="intermediate">Intermediate (10-50 dives)</option>
+              <option value="advanced">Advanced (50+ dives)</option>
+              <option value="professional">Professional diver</option>
+            </select>
+          </div>
+          <div className="booking-form-field">
+            <label className="booking-form-label">Payment Option</label>
+            <div className="booking-form-radio-group">
+              <label className="booking-form-radio-label">
+                <input type="radio" value="stripe" {...form.register('paymentMethod')} defaultChecked /> Pay with Card (Stripe)
+              </label>
+              <label className="booking-form-radio-label">
+                <input type="radio" value="paypal" {...form.register('paymentMethod')} /> Pay with PayPal
+              </label>
+              <label className="booking-form-radio-label">
+                <input type="radio" value="none" {...form.register('paymentMethod')} /> Just an inquiry
+              </label>
+            </div>
+          </div>
+          {/* Payment UI section */}
+          {form.watch('paymentMethod') === 'stripe' && (
+            <div className="payment-section">
+              <Elements stripe={stripePromise} options={{ clientSecret: STRIPE_CLIENT_SECRET }}>
+                <StripePaymentForm onSuccess={() => navigate('/thankyou')} />
+              </Elements>
+            </div>
+          )}
+          {form.watch('paymentMethod') === 'paypal' && (
+            <div className="payment-section">
+              <a
+                className="booking-form-btn paypal-btn"
+                href="https://www.paypal.com/paypalme/prodivingasia/2400thb"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ display: 'block', textAlign: 'center', textDecoration: 'none' }}
+                onClick={() => setTimeout(() => navigate('/thankyou'), 1200)}
+              >
+                Pay 2400 THB with PayPal
+              </a>
+            </div>
+          )}
+          <div className="booking-form-field">
+            <label className="booking-form-label">Comments / Questions</label>
+            <textarea className="booking-form-textarea" rows={3} placeholder="Any special requests or questions?" {...form.register('message')} />
+          </div>
+          <div className="booking-form-actions">
+            <button type="submit" className="booking-form-btn" disabled={isSubmitting}>{isSubmitting ? 'Submitting...' : 'Send Booking'}</button>
+          </div>
+        </form>
+      </div>
+    );
+  }
+  // Default: modal/dialog version
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
