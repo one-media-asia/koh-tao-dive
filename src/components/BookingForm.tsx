@@ -1,3 +1,41 @@
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
+const STRIPE_CLIENT_SECRET = 'cpmt_1TNhaaHfLuEywLiXbQFZEgMa'; // Provided PaymentIntent client secret
+const stripePromise = loadStripe('pk_live_51O...'); // Replace with your real publishable key
+function StripePaymentForm({ onSuccess }: { onSuccess: () => void }) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [processing, setProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setProcessing(true);
+    setError(null);
+    if (!stripe || !elements) return;
+    const result = await stripe.confirmPayment({
+      elements,
+      confirmParams: {},
+      redirect: 'if_required',
+    });
+    setProcessing(false);
+    if (result.error) {
+      setError(result.error.message || 'Payment failed');
+    } else {
+      onSuccess();
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="stripe-form">
+      <PaymentElement />
+      {error && <div style={{ color: 'red', marginTop: 8 }}>{error}</div>}
+      <button className="booking-form-btn" type="submit" disabled={processing || !stripe} style={{ marginTop: 16 }}>
+        {processing ? 'Processing...' : 'Pay with Card (Stripe)'}
+      </button>
+    </form>
+  );
+}
 import React, { useState, useEffect } from 'react';
 import './BookingForm.css';
 import { useForm } from 'react-hook-form';
@@ -214,16 +252,31 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, it
               <label className="booking-form-label">Payment Option</label>
               <div className="booking-form-radio-group">
                 <label className="booking-form-radio-label">
-                  <input type="radio" value="now" {...form.register('paymentChoice')} defaultChecked /> Pay deposit now
+                  <input type="radio" value="stripe" {...form.register('paymentMethod')} defaultChecked /> Pay with Card (Stripe)
                 </label>
                 <label className="booking-form-radio-label">
-                  <input type="radio" value="link" {...form.register('paymentChoice')} /> Send payment link to my email
+                  <input type="radio" value="paypal" {...form.register('paymentMethod')} /> Pay with PayPal
                 </label>
                 <label className="booking-form-radio-label">
-                  <input type="radio" value="none" {...form.register('paymentChoice')} /> Just an inquiry
+                  <input type="radio" value="none" {...form.register('paymentMethod')} /> Just an inquiry
                 </label>
               </div>
             </div>
+            {/* Payment UI section */}
+            {form.watch('paymentMethod') === 'stripe' && (
+              <div className="payment-section">
+                <Elements stripe={stripePromise} options={{ clientSecret: STRIPE_CLIENT_SECRET }}>
+                  <StripePaymentForm onSuccess={() => navigate('/thankyou')} />
+                </Elements>
+              </div>
+            )}
+            {form.watch('paymentMethod') === 'paypal' && (
+              <div className="payment-section">
+                <button className="booking-form-btn paypal-btn" onClick={() => setTimeout(() => navigate('/thankyou'), 1200)}>
+                  Pay with PayPal (Simulated)
+                </button>
+              </div>
+            )}
             <div className="booking-form-field">
               <label className="booking-form-label">Comments / Questions</label>
               <textarea className="booking-form-textarea" rows={3} placeholder="Any special requests or questions?" {...form.register('message')} />
