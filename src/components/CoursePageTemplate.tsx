@@ -144,7 +144,7 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
   const heroImageUrl = heroImage || images[0];
 
   const { currency, exchangeRates, convertCurrency } = useCurrency();
-  const priceConverted = convertCurrency(thbAmount, 'THB');
+  const thbPriceConverted = convertCurrency(thbAmount, 'THB');
 
   // Scroll to contact section
   const openBookNow = () => {
@@ -247,7 +247,7 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
                   <div className="space-y-1">
                     <p className="text-2xl font-bold text-sky-600">฿{thbAmount.toLocaleString(localeTag)}
                       {currency !== 'THB' && (
-                        <span className="ml-2 text-base text-blue-700">({priceConverted})</span>
+                        <span className="ml-2 text-base text-blue-700">({thbPriceConverted})</span>
                       )}
                     </p>
                     <div className="text-xs text-muted-foreground mt-1">
