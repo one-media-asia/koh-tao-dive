@@ -170,6 +170,9 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen = false, onClose, item
     return (
       <div className="booking-form-container">
         <div className="booking-form-title">Booking / Inquiry Form</div>
+        <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
+          <strong>WhatsApp:</strong> <a href="https://wa.me/31638697279" target="_blank" rel="noopener noreferrer">+31 6 38697279</a>
+        </div>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="booking-form-field">
             <label className="booking-form-label">Full Name *</label>
