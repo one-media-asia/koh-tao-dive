@@ -74,7 +74,7 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
 
 
 
-  const { setShowBookNow, BookNowModalComponent } = useBookNowModal();
+  const { openBookNow, BookNowModalComponent } = useBookNowModal();
   const { content, isLoading } = usePageContent({
     pageSlug,
     locale,
@@ -268,9 +268,9 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
                 <Button
                   className="w-full"
                   onClick={() => {
-                    // If course is bookable, open modal; otherwise, scroll to contact
+                    // If course is bookable, open modal with course name; otherwise, scroll to contact
                     if (thbAmount > 0) {
-                      openBookNow();
+                      openBookNow(content.hero_title || bookingItemName || '');
                     } else {
                       const contactSection = document.getElementById('contact-section');
                       if (contactSection) {
