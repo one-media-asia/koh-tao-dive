@@ -15,11 +15,15 @@ const COURSE_PRICES: Record<string, number> = {
 
 const PAYPAL_BASE = 'https://paypal.me/prodivingasia';
 
-const BookNowForm: React.FC = () => {
+interface BookNowFormProps {
+  initialCourseTitle?: string;
+}
+
+const BookNowForm: React.FC<BookNowFormProps> = ({ initialCourseTitle }) => {
   const { currency, convertCurrency } = useCurrency();
   const [form, setForm] = useState({
     name: '',
-    course_title: '',
+    course_title: initialCourseTitle || '',
     email: '',
     phone: '',
     accommodation_type: '',

@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
 import BookNowForm from '@/components/BookNowForm';
 
-const BookNowModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, onClose }) => {
+
+interface BookNowModalProps {
+  open: boolean;
+  onClose: () => void;
+  initialCourseTitle?: string;
+}
+
+const BookNowModal: React.FC<BookNowModalProps> = ({ open, onClose, initialCourseTitle }) => {
   if (!open) return null;
   return (
     <div style={{
@@ -31,7 +38,7 @@ const BookNowModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, 
         >
           ×
         </button>
-        <BookNowForm />
+        <BookNowForm initialCourseTitle={initialCourseTitle} />
       </div>
     </div>
   );
