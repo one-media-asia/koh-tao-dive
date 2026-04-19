@@ -74,7 +74,7 @@ const BookNowForm: React.FC<BookNowFormProps> = ({ initialCourseTitle }) => {
     [
       ['access_key', 'e4c4edf6-6e35-456a-87da-b32b961b449a'],
       ['subject', 'New Booking Inquiry from Website'],
-      ['redirect', 'https://divinginasia.com/thank-you.html'],
+      ['redirect', 'https://www.divinginasia.com/thank-you.html'],
       ['name', form.name],
       ['course_title', form.course_title],
       ['email', form.email],
@@ -154,12 +154,12 @@ const BookNowForm: React.FC<BookNowFormProps> = ({ initialCourseTitle }) => {
               <div className="bg-blue-50 rounded p-4 mb-2">
                 <div><strong>Course Price:</strong> {coursePrice.toLocaleString()} THB
                   {currency !== 'THB' && (
-                    <span className="ml-2 text-blue-700">({coursePriceConverted})</span>
+                    <span className="ml-2 text-blue-700">({coursePriceConverted} THB)</span>
                   )}
                 </div>
                 <div><strong>Deposit (20%):</strong> {deposit.toLocaleString()} THB
                   {currency !== 'THB' && (
-                    <span className="ml-2 text-blue-700">({depositConverted})</span>
+                    <span className="ml-2 text-blue-700">({depositConverted} THB)</span>
                   )}
                 </div>
                 <div className="text-sm text-gray-600 mt-1">You can pay the deposit now to secure your spot, or choose to pay later.</div>
