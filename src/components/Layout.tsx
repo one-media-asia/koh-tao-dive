@@ -60,6 +60,8 @@ const Footer: React.FC = () => {
   const { i18n } = useTranslation();
   const isDutch = i18n.language.startsWith('nl');
   const tripUrl = buildTripFooterUrl();
+  const WHATSAPP_NUMBER = '+31 6 38697279';
+  const WHATSAPP_LINK = 'https://wa.me/31638697279';
 
   // handleTripClick just calls trackAffiliateClick
     const handleTripClick = () => {
@@ -110,6 +112,11 @@ const Footer: React.FC = () => {
               <li><a href="https://www.divinginasia.com/agoda-hotels" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">Agoda</a></li>
               {/* Trip.com link removed as requested, Agoda link added */}
               <li><a href="https://www.divinginasia.com/#contact" className="hover:text-white transition">Contact</a></li>
+              <li>
+                <a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className="hover:text-white transition">
+                  WhatsApp: {WHATSAPP_NUMBER}
+                </a>
+              </li>
             </ul>
           </div>
         </div>
