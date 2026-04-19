@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import CourseRecommender from './CourseRecommender';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { useCurrency, CurrencySelector } from '@/hooks/useCurrency';
 import { Button } from '@/components/ui/button';
 import {
   Accordion,
@@ -115,6 +116,7 @@ const Courses = () => {
   };
 
   const localeTag = isDutch ? 'nl-NL' : 'en-US';
+  const { currency, convertCurrency } = useCurrency();
   const formatCurrency = (amount: number, currency: 'THB' | 'USD' | 'EUR') =>
     new Intl.NumberFormat(localeTag, {
       style: 'currency',
@@ -312,6 +314,9 @@ const Courses = () => {
 
         <CourseRecommender />
 
+        <div className="flex justify-end mb-4">
+          <CurrencySelector />
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
           {courses.map((course, index) => (
             <div
@@ -330,8 +335,12 @@ const Courses = () => {
                   </span>
                 </div>
                 <div className="text-right">
-                  <div className="text-3xl font-bold text-blue-600">{formatCurrency(getThbPrice(course.price), 'THB')}</div>
-                  {/* Currency conversion removed */}
+                  <div className="text-3xl font-bold text-blue-600">
+                    {formatCurrency(getThbPrice(course.price), 'THB')}
+                    {currency !== 'THB' && (
+                      <span className="ml-2 text-base text-blue-700">({convertCurrency(getThbPrice(course.price), 'THB')})</span>
+                    )}
+                  </div>
                   <div className="text-sm text-gray-600">{t('courses.perPerson')}</div>
                 </div>
               </div>

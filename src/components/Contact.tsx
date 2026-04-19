@@ -246,17 +246,62 @@ const Contact = () => {
             <h3 className="text-2xl font-bold mb-6 text-center">Booking / Inquiry Form</h3>
             <form action="https://api.web3forms.com/submit" method="POST" className="space-y-4">
               <input type="hidden" name="access_key" value="e4c4edf6-6e35-456a-87da-b32b961b449a" />
+              <input type="hidden" name="redirect" value="https://divinginasia.com/thank-you" />
               <label htmlFor="name" className="block font-semibold">Name</label>
               <input type="text" id="name" name="name" required className="w-full border border-gray-300 rounded px-3 py-2" />
 
               <label htmlFor="email" className="block font-semibold">Email</label>
               <input type="email" id="email" name="email" required className="w-full border border-gray-300 rounded px-3 py-2" />
 
+
               <label htmlFor="phone" className="block font-semibold">Phone</label>
               <input type="text" id="phone" name="phone" className="w-full border border-gray-300 rounded px-3 py-2" />
 
-              <label htmlFor="course_title" className="block font-semibold">Course / Package</label>
+              <label htmlFor="whatsapp" className="block font-semibold">WhatsApp</label>
+              <input type="text" id="whatsapp" name="whatsapp" className="w-full border border-gray-300 rounded px-3 py-2" />
 
+
+              <div className="bg-yellow-100 text-yellow-900 rounded px-3 py-2 mb-2">
+                <strong>Accommodation notice:</strong> If you are not booking our resort, you must provide your travel arrangements below.
+              </div>
+
+              <label htmlFor="booking_resort" className="block font-semibold">Are you booking our resort?</label>
+              <select id="booking_resort" name="booking_resort" className="w-full border border-gray-300 rounded px-3 py-2 text-black" style={{ color: '#222' }} required>
+                <option value="">Select...</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+
+              <div id="travel-arrangements-field">
+                <label htmlFor="travel_arrangements" className="block font-semibold">Travel Arrangements (required if not booking our resort)</label>
+                <input type="text" id="travel_arrangements" name="travel_arrangements" className="w-full border border-gray-300 rounded px-3 py-2 text-black" style={{ color: '#222' }} />
+              </div>
+
+              <script dangerouslySetInnerHTML={{__html: `
+                document.addEventListener('DOMContentLoaded', function() {
+                  var resortSelect = document.getElementById('booking_resort');
+                  var travelField = document.getElementById('travel-arrangements-field');
+                  var travelInput = document.getElementById('travel_arrangements');
+                  function updateTravelField() {
+                    if (resortSelect && travelField && travelInput) {
+                      if (resortSelect.value === 'no') {
+                        travelField.style.display = '';
+                        travelInput.required = true;
+                      } else {
+                        travelField.style.display = 'none';
+                        travelInput.required = false;
+                        travelInput.value = '';
+                      }
+                    }
+                  }
+                  if (resortSelect) {
+                    resortSelect.addEventListener('change', updateTravelField);
+                    updateTravelField();
+                  }
+                });
+              `}} />
+
+              <label htmlFor="course_title" className="block font-semibold">Course / Package</label>
               <input type="text" id="course_title" name="course_title" className="w-full border border-gray-300 rounded px-3 py-2 text-black" style={{ color: '#222' }} />
 
               <label htmlFor="preferred_date" className="block font-semibold">Preferred Date</label>

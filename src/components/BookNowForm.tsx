@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useCurrency, CurrencySelector } from '@/hooks/useCurrency';
 import { supabase } from '@/integrations/supabase/client';
 
 
@@ -15,6 +16,7 @@ const COURSE_PRICES: Record<string, number> = {
 const PAYPAL_BASE = 'https://paypal.me/prodivingasia';
 
 const BookNowForm: React.FC = () => {
+  const { currency, convertCurrency } = useCurrency();
   const [form, setForm] = useState({
     name: '',
     course_title: '',
@@ -33,6 +35,8 @@ const BookNowForm: React.FC = () => {
   const coursePrice = COURSE_PRICES[form.course_title] || 0;
   // For Fun Dive, deposit is always 360; for others, 20%
   const deposit = form.course_title === 'Fun Dive' ? 360 : (coursePrice ? Math.round(coursePrice * 0.2) : 0);
+  const coursePriceConverted = convertCurrency(coursePrice, 'THB');
+  const depositConverted = convertCurrency(deposit, 'THB');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -114,6 +118,9 @@ const BookNowForm: React.FC = () => {
       <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
         <img src="/images/logo.png" alt="Diving In Asia Logo" style={{ maxWidth: 180, height: 'auto' }} />
       </div>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
+        <CurrencySelector />
+      </div>
       <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Booking / Inquiry Form</h2>
       {showThankYou ? (
         <div style={{ background: '#e6ffe6', borderRadius: 8, padding: 32, textAlign: 'center', fontSize: '1.1em', color: '#1a4d1a', marginTop: 24 }}>
@@ -141,8 +148,16 @@ const BookNowForm: React.FC = () => {
             </div>
             {form.course_title && coursePrice > 0 && (
               <div style={{ background: '#f0f8ff', borderRadius: 6, padding: '1rem', marginBottom: 8 }}>
-                <div><strong>Course Price:</strong> {coursePrice.toLocaleString()} THB</div>
-                <div><strong>Deposit (20%):</strong> {deposit.toLocaleString()} THB</div>
+                <div><strong>Course Price:</strong> {coursePrice.toLocaleString()} THB
+                  {currency !== 'THB' && (
+                    <span style={{ marginLeft: 8, color: '#0070ba' }}>({coursePriceConverted})</span>
+                  )}
+                </div>
+                <div><strong>Deposit (20%):</strong> {deposit.toLocaleString()} THB
+                  {currency !== 'THB' && (
+                    <span style={{ marginLeft: 8, color: '#0070ba' }}>({depositConverted})</span>
+                  )}
+                </div>
                 <div style={{ fontSize: '0.95em', color: '#555', marginTop: 4 }}>You can pay the deposit now to secure your spot, or choose to pay later.</div>
               </div>
             )}

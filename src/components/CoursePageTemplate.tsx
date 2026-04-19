@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useCurrency } from '@/hooks/useCurrency';
+import { useCurrency, CurrencySelector } from '@/hooks/useCurrency';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -143,7 +143,8 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
 
   const heroImageUrl = heroImage || images[0];
 
-  const { exchangeRates } = useCurrency();
+  const { currency, exchangeRates, convertCurrency } = useCurrency();
+  const priceConverted = convertCurrency(thbAmount, 'THB');
 
   // Scroll to contact section
   const openBookNow = () => {
@@ -239,16 +240,16 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <div className="text-sm text-muted-foreground mb-2">
-                    {locale === 'nl' ? 'Prijs' : 'Price'}
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm text-muted-foreground">{locale === 'nl' ? 'Prijs' : 'Price'}</span>
+                    <CurrencySelector />
                   </div>
                   <div className="space-y-1">
-                    <p className="text-2xl font-bold text-sky-600">฿{thbAmount.toLocaleString(localeTag)}</p>
-                    {/* Show converted price below if not THB */}
-                    {selectedCurrency && selectedCurrency !== 'THB' && priceConverted && (
-                      <p className="text-base text-muted-foreground">{priceConverted}</p>
-                    )}
-                    {/* Show exchange rates below */}
+                    <p className="text-2xl font-bold text-sky-600">฿{thbAmount.toLocaleString(localeTag)}
+                      {currency !== 'THB' && (
+                        <span className="ml-2 text-base text-blue-700">({priceConverted})</span>
+                      )}
+                    </p>
                     <div className="text-xs text-muted-foreground mt-1">
                       <div>1 THB = {(exchangeRates.USD / exchangeRates.THB).toFixed(3)} USD</div>
                       <div>1 THB = {(exchangeRates.EUR / exchangeRates.THB).toFixed(3)} EUR</div>
@@ -264,8 +265,23 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
                     ? 'Inclusief alle training, materialen, PADI certificering en uitrusting' 
                     : 'Includes all training, materials, PADI certification and equipment'}
                 </p>
-                <Button className="w-full" onClick={openBookNow}>
-                  {locale === 'nl' ? 'Boek / Informeer' : 'Book / Enquire'}
+                <Button
+                  className="w-full"
+                  onClick={() => {
+                    // If course is bookable, open modal; otherwise, scroll to contact
+                    if (thbAmount > 0) {
+                      openBookNow();
+                    } else {
+                      const contactSection = document.getElementById('contact-section');
+                      if (contactSection) {
+                        contactSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }
+                  }}
+                >
+                  {thbAmount > 0
+                    ? (locale === 'nl' ? 'Boek Nu' : 'Book Now')
+                    : (locale === 'nl' ? 'Informeer' : 'Inquire')}
                 </Button>
               </CardContent>
             </Card>

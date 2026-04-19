@@ -246,7 +246,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen = false, onClose, item
           {form.watch('paymentMethod') === 'paypal' && (
             <div className="payment-section">
               <div id="paypal-button-container"></div>
-              <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=" + currency></script>
+              <script src={`https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=${currency}`}></script>
               <script dangerouslySetInnerHTML={{__html:`
                 paypal.Buttons({
                   createOrder: function(data, actions) {

@@ -23,3 +23,20 @@ function updatePrice() {
     depositSection.style.display = 'none';
   }
 }
+
+// Attach event listeners for dynamic price/deposit update
+window.addEventListener('DOMContentLoaded', () => {
+  const courseSelect = document.getElementById('course_title');
+  if (courseSelect) {
+    courseSelect.addEventListener('change', updatePrice);
+    updatePrice();
+  }
+});
+
+<div>
+  <strong>Course Price:</strong> <span id="display-price"></span>
+</div>
+<div id="deposit-section" style="display:none;">
+  <strong>Deposit (20%):</strong> <span id="deposit-amount"></span>
+  <a id="paypal-link" href="#" target="_blank" rel="noopener">Pay Deposit via PayPal</a>
+</div>
