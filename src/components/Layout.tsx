@@ -60,6 +60,8 @@ const Footer: React.FC = () => {
   const { i18n } = useTranslation();
   const isDutch = i18n.language.startsWith('nl');
   const tripUrl = buildTripFooterUrl();
+  const WHATSAPP_NUMBER = '+31 6 38697279';
+  const WHATSAPP_LINK = 'https://wa.me/31638697279';
 
   // handleTripClick just calls trackAffiliateClick
     const handleTripClick = () => {
@@ -110,6 +112,11 @@ const Footer: React.FC = () => {
               <li><a href="https://www.divinginasia.com/agoda-hotels" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">Agoda</a></li>
               {/* Trip.com link removed as requested, Agoda link added */}
               <li><a href="https://www.divinginasia.com/#contact" className="hover:text-white transition">Contact</a></li>
+              <li>
+                <a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className="hover:text-white transition">
+                  WhatsApp: {WHATSAPP_NUMBER}
+                </a>
+              </li>
             </ul>
           </div>
         </div>
@@ -119,6 +126,8 @@ const Footer: React.FC = () => {
           <a href="https://www.onemedia.asia" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 transition font-medium">
             One Media Asia Co, Ltd
           </a>
+          {' | '}
+          <Link to="/BookNow" className="text-blue-400 hover:text-blue-300 transition font-medium ml-2">Book Now</Link>
         </div>
       </div>
     </footer>
@@ -176,6 +185,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       {/* Book Now Modal */}
       <BookNowModal open={showBookNow} onClose={() => setShowBookNow(false)} />
       <main className="flex-1">{children}</main>
+      <Footer />
       <CookieConsent />
       <a
         href={WHATSAPP_LINK}

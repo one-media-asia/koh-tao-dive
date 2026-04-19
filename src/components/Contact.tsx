@@ -1,4 +1,11 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
+// Import Supabase client
+import { createClient } from '@supabase/supabase-js';
+
+// Setup Supabase client (replace with your actual env vars or hardcoded keys if needed)
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 import { MapPin, Phone, Mail, Clock, Facebook, Instagram, MessageCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { usePageContent } from '@/hooks/usePageContent';
@@ -175,6 +182,26 @@ const Contact = () => {
       setIsSubmitting(false);
     }
   };
+  // Ref for the form element
+  const formRef = useRef<HTMLFormElement>(null);
+
+  // Silent Supabase insert on form submit
+  const handleSupabaseInsert = async (form: HTMLFormElement) => {
+    // Collect all form fields
+    const formDataObj: Record<string, any> = {};
+    const formData = new FormData(form);
+    for (const [key, value] of formData.entries()) {
+      formDataObj[key] = value;
+    }
+    // Insert into 'contact_submissions' table (create this table in Supabase with matching columns)
+    try {
+      await supabase.from('contact_submissions').insert([formDataObj]);
+    } catch (err) {
+      // Silent fail
+      // Optionally log: console.error('Supabase insert error', err);
+    }
+  };
+
   return (
     <section id="contact" className="py-20 bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -208,13 +235,7 @@ const Contact = () => {
                 </div>
               </div>
 
-              <div className="flex items-start space-x-4">
-                <Mail className="h-6 w-6 text-blue-400 mt-1" />
-                <div>
-                  <h4 className="font-semibold text-lg">{content.email_title}</h4>
-                  <p className="text-gray-300">{content.email_value}</p>
-                </div>
-              </div>
+              {/* Email address removed as per user request */}
 
               <div className="flex items-start space-x-4">
                 <Clock className="h-6 w-6 text-blue-400 mt-1" />
@@ -244,19 +265,76 @@ const Contact = () => {
 
           <div className="bg-gray-800 rounded-lg p-8">
             <h3 className="text-2xl font-bold mb-6 text-center">Booking / Inquiry Form</h3>
-            <form action="https://api.web3forms.com/submit" method="POST" className="space-y-4">
+            <form
+              ref={formRef}
+              action="https://api.web3forms.com/submit"
+              method="POST"
+              className="space-y-4"
+              onSubmit={async (e) => {
+                // Silent Supabase insert before Web3Forms submit
+                if (formRef.current) {
+                  await handleSupabaseInsert(formRef.current);
+                }
+                // Let the form submit as normal
+              }}
+            >
               <input type="hidden" name="access_key" value="e4c4edf6-6e35-456a-87da-b32b961b449a" />
+              <input type="hidden" name="redirect" value="https://divinginasia.com/thank-you" />
               <label htmlFor="name" className="block font-semibold">Name</label>
               <input type="text" id="name" name="name" required className="w-full border border-gray-300 rounded px-3 py-2" />
 
               <label htmlFor="email" className="block font-semibold">Email</label>
               <input type="email" id="email" name="email" required className="w-full border border-gray-300 rounded px-3 py-2" />
 
+
               <label htmlFor="phone" className="block font-semibold">Phone</label>
               <input type="text" id="phone" name="phone" className="w-full border border-gray-300 rounded px-3 py-2" />
 
-              <label htmlFor="course_title" className="block font-semibold">Course / Package</label>
+              <label htmlFor="whatsapp" className="block font-semibold">WhatsApp</label>
+              <input type="text" id="whatsapp" name="whatsapp" className="w-full border border-gray-300 rounded px-3 py-2" />
 
+
+              <div className="bg-yellow-100 text-yellow-900 rounded px-3 py-2 mb-2">
+                <strong>Accommodation notice:</strong> If you are not booking our resort, you must provide your travel arrangements below.
+              </div>
+
+              <label htmlFor="booking_resort" className="block font-semibold">Are you booking our resort?</label>
+              <select id="booking_resort" name="booking_resort" className="w-full border border-gray-300 rounded px-3 py-2 text-black" style={{ color: '#222' }} required>
+                <option value="">Select...</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+
+              <div id="travel-arrangements-field">
+                <label htmlFor="travel_arrangements" className="block font-semibold">Travel Arrangements (required if not booking our resort)</label>
+                <input type="text" id="travel_arrangements" name="travel_arrangements" className="w-full border border-gray-300 rounded px-3 py-2 text-black" style={{ color: '#222' }} />
+              </div>
+
+              <script dangerouslySetInnerHTML={{__html: `
+                document.addEventListener('DOMContentLoaded', function() {
+                  var resortSelect = document.getElementById('booking_resort');
+                  var travelField = document.getElementById('travel-arrangements-field');
+                  var travelInput = document.getElementById('travel_arrangements');
+                  function updateTravelField() {
+                    if (resortSelect && travelField && travelInput) {
+                      if (resortSelect.value === 'no') {
+                        travelField.style.display = '';
+                        travelInput.required = true;
+                      } else {
+                        travelField.style.display = 'none';
+                        travelInput.required = false;
+                        travelInput.value = '';
+                      }
+                    }
+                  }
+                  if (resortSelect) {
+                    resortSelect.addEventListener('change', updateTravelField);
+                    updateTravelField();
+                  }
+                });
+              `}} />
+
+              <label htmlFor="course_title" className="block font-semibold">Course / Package</label>
               <input type="text" id="course_title" name="course_title" className="w-full border border-gray-300 rounded px-3 py-2 text-black" style={{ color: '#222' }} />
 
               <label htmlFor="preferred_date" className="block font-semibold">Preferred Date</label>

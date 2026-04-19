@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import './BookingForm.css';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useNavigate } from 'react-router-dom';
 import { Calendar, User, Mail, Phone, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,18 +27,33 @@ const bookingSchema = z.object({
 type BookingFormData = z.infer<typeof bookingSchema>;
 
 interface BookingFormProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen?: boolean;
+  onClose?: () => void;
   itemType: 'course' | 'dive';
   itemTitle: string;
   depositMajor?: number;
   depositCurrency?: string;
+  paymentMethod?: 'stripe' | 'paypal';
+  standalone?: boolean; // If true, render as a styled standalone form (not modal)
 }
 
-const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, itemTitle, depositMajor, depositCurrency }) => {
+const BookingForm: React.FC<BookingFormProps> = ({ isOpen = false, onClose, itemType, itemTitle, depositMajor, depositCurrency, paymentMethod, standalone = false }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const apiBase = (import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || '').trim().replace(/\/+$/, '');
+  const [currency, setCurrency] = useState<'THB' | 'USD' | 'EUR'>(depositCurrency === 'USD' || depositCurrency === 'EUR' ? depositCurrency : 'THB');
+  const navigate = useNavigate();
+  const apiBase = (import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || '').trim().replace(/\/+$|^\/+/, '');
   const apiUrl = (path: string) => (apiBase ? `${apiBase}${path}` : path);
+
+  // Simple conversion rates (replace with real rates if needed)
+  const rates = { THB: 1, USD: 0.027, EUR: 0.025 };
+  const formatCurrency = (amount: number, currency: 'THB' | 'USD' | 'EUR') => {
+    if (!amount) return '';
+    return currency === 'THB'
+      ? `${amount} THB`
+      : currency === 'USD'
+      ? `$${(amount * rates.USD).toFixed(2)} USD`
+      : `€${(amount * rates.EUR).toFixed(2)} EUR`;
+  };
 
   const form = useForm<BookingFormData>({
     resolver: zodResolver(bookingSchema),
@@ -53,7 +70,8 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, it
 
   // Reset form whenever dialog opens with a new course/item selection
   useEffect(() => {
-    if (isOpen) {
+    // Reset form when dialog opens or when item changes
+    if ((isOpen && !standalone) || standalone) {
       form.reset({
         name: '',
         email: '',
@@ -64,7 +82,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, it
         paymentChoice: 'now',
       });
     }
-  }, [isOpen, itemTitle, form]);
+  }, [isOpen, itemTitle, form, standalone]);
 
   const onSubmit = async (data: BookingFormData) => {
     setIsSubmitting(true);
@@ -121,6 +139,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, it
         toast.error('Booking saved to email, but not to admin database.');
       }
 
+            // After successful payment, redirect to thank you page
       if (response.ok && responseData.success) {
         if (responseData.warning) {
           toast.warning(`Booking saved, but email notification needs attention: ${responseData.warning}`);
@@ -133,6 +152,12 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, it
         console.error('Booking notification error:', errMsg, responseData);
         toast.error(`Failed to send booking: ${errMsg}. Please try again.`);
       }
+      // Example: After successful payment, redirect to thank you page
+      const handlePaymentSuccess = () => {
+        navigate('/thankyou');
+      };
+
+      // Pass handlePaymentSuccess to your payment logic (Stripe/PayPal integration)
     } catch (error) {
       console.error('Booking submission failed:', error);
       toast.error(`Failed to send booking: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -141,183 +166,196 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen, onClose, itemType, it
     }
   };
 
+  if (standalone) {
+    return (
+      <div className="booking-form-container">
+        <div className="booking-form-title">Booking / Inquiry Form</div>
+        <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
+          <strong>WhatsApp:</strong> <a href="https://wa.me/31638697279" target="_blank" rel="noopener noreferrer">+31 6 38697279</a>
+        </div>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="booking-form-field">
+            <label className="booking-form-label">Full Name *</label>
+            <input className="booking-form-input" placeholder="John Doe" {...form.register('name')} />
+          </div>
+          <div className="booking-form-field">
+            <label className="booking-form-label">Email *</label>
+            <input className="booking-form-input" type="email" placeholder="john@example.com" {...form.register('email')} />
+          </div>
+          <div className="booking-form-field">
+            <label className="booking-form-label">Phone</label>
+            <input className="booking-form-input" placeholder="+66 123 456 789" {...form.register('phone')} />
+          </div>
+          <div className="booking-form-field">
+            <label className="booking-form-label">Course / Package</label>
+            <input
+              className="booking-form-input"
+              value={depositMajor ? `${itemTitle} (${formatCurrency(depositMajor, currency)})` : itemTitle}
+              disabled
+            />
+          </div>
+          <div className="booking-form-field">
+            <label className="booking-form-label">Select Currency</label>
+            <select
+              className="booking-form-select"
+              value={currency}
+              onChange={e => setCurrency(e.target.value as 'THB' | 'USD' | 'EUR')}
+            >
+              <option value="THB">THB (Thai Baht)</option>
+              <option value="USD">USD (US Dollar)</option>
+              <option value="EUR">EUR (Euro)</option>
+            </select>
+          </div>
+          <div className="booking-form-field">
+            <label className="booking-form-label">Preferred Date</label>
+            <input className="booking-form-input" type="date" {...form.register('preferred_date')} />
+          </div>
+          <div className="booking-form-field">
+            <label className="booking-form-label">Experience Level</label>
+            <select className="booking-form-select" {...form.register('experience_level')}>
+              <option value="">Select...</option>
+              <option value="none">No diving experience</option>
+              <option value="beginner">Beginner (1-10 dives)</option>
+              <option value="intermediate">Intermediate (10-50 dives)</option>
+              <option value="advanced">Advanced (50+ dives)</option>
+              <option value="professional">Professional diver</option>
+            </select>
+          </div>
+          <div className="booking-form-field">
+            <label className="booking-form-label">Payment Option</label>
+            <div className="booking-form-radio-group">
+              <label className="booking-form-radio-label">
+                <input type="radio" value="stripe" {...form.register('paymentMethod')} defaultChecked /> Pay with Card (Stripe)
+              </label>
+              <label className="booking-form-radio-label">
+                <input type="radio" value="paypal" {...form.register('paymentMethod')} /> Pay with PayPal
+              </label>
+              <label className="booking-form-radio-label">
+                <input type="radio" value="none" {...form.register('paymentMethod')} /> Just an inquiry
+              </label>
+            </div>
+          </div>
+          {/* Payment UI section */}
+          {form.watch('paymentMethod') === 'stripe' && (
+            <div className="payment-section">
+              <Elements stripe={stripePromise} options={{ clientSecret: STRIPE_CLIENT_SECRET }}>
+                <StripePaymentForm onSuccess={() => navigate('/thankyou')} />
+              </Elements>
+            </div>
+          )}
+          {form.watch('paymentMethod') === 'paypal' && (
+            <div className="payment-section">
+              <div id="paypal-button-container"></div>
+              <script src={`https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=${currency}`}></script>
+              <script dangerouslySetInnerHTML={{__html:`
+                paypal.Buttons({
+                  createOrder: function(data, actions) {
+                    return actions.order.create({
+                      purchase_units: [{
+                        amount: {
+                          value: '${depositMajor || 2400}',
+                          currency_code: '${currency}'
+                        }
+                      }]
+                    });
+                  },
+                  onApprove: function(data, actions) {
+                    return actions.order.capture().then(function(details) {
+                      window.location.href = 'https://www.divinginasia.com/thank-you.html';
+                    });
+                  }
+                }).render('#paypal-button-container');
+              `}} />
+            </div>
+          )}
+          <div className="booking-form-field">
+            <label className="booking-form-label">Comments / Questions</label>
+            <textarea className="booking-form-textarea" rows={3} placeholder="Any special requests or questions?" {...form.register('message')} />
+          </div>
+          <div className="booking-form-actions">
+            <button type="submit" className="booking-form-btn" disabled={isSubmitting}>{isSubmitting ? 'Submitting...' : 'Send Booking'}</button>
+          </div>
+        </form>
+      </div>
+    );
+  }
+  // Default: modal/dialog version
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-bold">
-            Book {itemType === 'course' ? 'Course' : 'Dive'}: {itemTitle}
-          </DialogTitle>
-          <DialogDescription>
-            Fill out the form below and we'll get back to you within 24 hours.
-          </DialogDescription>
-        </DialogHeader>
-
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2">
-                    <User className="h-4 w-4" /> Full Name *
-                  </FormLabel>
-                  <FormControl>
-                    <Input placeholder="John Doe" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2">
-                    <Mail className="h-4 w-4" /> Email *
-                  </FormLabel>
-                  <FormControl>
-                    <Input type="email" placeholder="john@example.com" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2">
-                    <Phone className="h-4 w-4" /> Phone
-                  </FormLabel>
-                  <FormControl>
-                    <Input placeholder="+66 123 456 789" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="preferred_date"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" /> Preferred Date
-                  </FormLabel>
-                  <FormControl>
-                    <Input type="date" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="experience_level"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Experience Level</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value || ''}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select your experience level" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="none">No diving experience</SelectItem>
-                      <SelectItem value="beginner">Beginner (1-10 dives)</SelectItem>
-                      <SelectItem value="intermediate">Intermediate (10-50 dives)</SelectItem>
-                      <SelectItem value="advanced">Advanced (50+ dives)</SelectItem>
-                      <SelectItem value="professional">Professional diver</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="paymentChoice"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Payment option</FormLabel>
-                  <FormControl>
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <label className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          value="now"
-                          checked={field.value === 'now'}
-                          onChange={() => field.onChange('now')}
-                        />
-                        <span className="ml-2">Pay deposit now</span>
-                      </label>
-
-                      <label className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          value="link"
-                          checked={field.value === 'link'}
-                          onChange={() => field.onChange('link')}
-                        />
-                        <span className="ml-2">Send payment link to my email</span>
-                      </label>
-
-                      <label className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          value="none"
-                          checked={field.value === 'none'}
-                          onChange={() => field.onChange('none')}
-                        />
-                        <span className="ml-2">Just an inquiry (no deposit)</span>
-                      </label>
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="message"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2">
-                    <MessageSquare className="h-4 w-4" /> Message
-                  </FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder="Any special requests or questions?" 
-                      rows={3}
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="flex gap-3 pt-4">
-              <Button type="button" variant="outline" onClick={onClose} className="flex-1">
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isSubmitting} className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground">
-                {isSubmitting ? 'Submitting...' : 'Submit Inquiry'}
-              </Button>
+      <DialogContent>
+        <div className="booking-form-container">
+          <div className="booking-form-title">Booking / Inquiry Form</div>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="booking-form-field">
+              <label className="booking-form-label">Full Name *</label>
+              <input className="booking-form-input" placeholder="John Doe" {...form.register('name')} />
+            </div>
+            <div className="booking-form-field">
+              <label className="booking-form-label">Email *</label>
+              <input className="booking-form-input" type="email" placeholder="john@example.com" {...form.register('email')} />
+            </div>
+            <div className="booking-form-field">
+              <label className="booking-form-label">Phone</label>
+              <input className="booking-form-input" placeholder="+66 123 456 789" {...form.register('phone')} />
+            </div>
+            <div className="booking-form-field">
+              <label className="booking-form-label">Course / Package</label>
+              <input className="booking-form-input" value={itemTitle} disabled />
+            </div>
+            <div className="booking-form-field">
+              <label className="booking-form-label">Preferred Date</label>
+              <input className="booking-form-input" type="date" {...form.register('preferred_date')} />
+            </div>
+            <div className="booking-form-field">
+              <label className="booking-form-label">Experience Level</label>
+              <select className="booking-form-select" {...form.register('experience_level')}>
+                <option value="">Select...</option>
+                <option value="none">No diving experience</option>
+                <option value="beginner">Beginner (1-10 dives)</option>
+                <option value="intermediate">Intermediate (10-50 dives)</option>
+                <option value="advanced">Advanced (50+ dives)</option>
+                <option value="professional">Professional diver</option>
+              </select>
+            </div>
+            <div className="booking-form-field">
+              <label className="booking-form-label">Payment Option</label>
+              <div className="booking-form-radio-group">
+                <label className="booking-form-radio-label">
+                  <input type="radio" value="stripe" {...form.register('paymentMethod')} defaultChecked /> Pay with Card (Stripe)
+                </label>
+                <label className="booking-form-radio-label">
+                  <input type="radio" value="paypal" {...form.register('paymentMethod')} /> Pay with PayPal
+                </label>
+                <label className="booking-form-radio-label">
+                  <input type="radio" value="none" {...form.register('paymentMethod')} /> Just an inquiry
+                </label>
+              </div>
+            </div>
+            {/* Payment UI section */}
+            {form.watch('paymentMethod') === 'stripe' && (
+              <div className="payment-section">
+                <Elements stripe={stripePromise} options={{ clientSecret: STRIPE_CLIENT_SECRET }}>
+                  <StripePaymentForm onSuccess={() => navigate('/thankyou')} />
+                </Elements>
+              </div>
+            )}
+            {form.watch('paymentMethod') === 'paypal' && (
+              <div className="payment-section">
+                <button className="booking-form-btn paypal-btn" onClick={() => setTimeout(() => navigate('/thankyou'), 1200)}>
+                  Pay with PayPal (Simulated)
+                </button>
+              </div>
+            )}
+            <div className="booking-form-field">
+              <label className="booking-form-label">Comments / Questions</label>
+              <textarea className="booking-form-textarea" rows={3} placeholder="Any special requests or questions?" {...form.register('message')} />
+            </div>
+            <div className="booking-form-actions">
+              <button type="button" className="booking-form-btn outline" onClick={onClose}>Cancel</button>
+              <button type="submit" className="booking-form-btn" disabled={isSubmitting}>{isSubmitting ? 'Submitting...' : 'Send Booking'}</button>
             </div>
           </form>
-        </Form>
+        </div>
       </DialogContent>
     </Dialog>
   );

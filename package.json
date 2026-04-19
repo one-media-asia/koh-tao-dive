@@ -10,6 +10,8 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@adminjs/express": "^6.1.1",
+    "@adminjs/sequelize": "^4.1.1",
     "@emailjs/browser": "^4.4.1",
     "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-accordion": "^1.2.0",
@@ -51,6 +53,7 @@
     "@tiptap/extension-underline": "^2.0.0",
     "@tiptap/react": "^2.0.3",
     "@tiptap/starter-kit": "^2.0.0",
+    "adminjs": "^7.8.17",
     "aws-amplify": "^6.16.2",
     "body-parser": "^2.2.2",
     "class-variance-authority": "^0.7.1",
@@ -83,6 +86,7 @@
     "react-router-dom": "^7.13.2",
     "recharts": "^2.12.7",
     "resend": "^6.10.0",
+    "sequelize": "^6.37.8",
     "sonner": "^1.5.0",
     "sqlite3": "^6.0.1",
     "tailwind-merge": "^2.5.2",
