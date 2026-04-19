@@ -23,6 +23,7 @@ import Admin from './pages/Admin';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Account from './pages/Account';
+import BookingStandalonePage from './pages/BookNow';
 
 import OpenWater from './pages/OpenWater';
 import Advanced from './pages/Advanced';
@@ -232,6 +233,7 @@ const App = () => (
               <Route path="/specialty/wreck-diver" element={<WreckDiver />} />
               <Route path="/specialty/enriched-air-diver" element={<EnrichedAirDiver />} />
               <Route path="/thankyou" element={<ThankYou />} />
+              <Route path="/BookNow" element={<BookingStandalonePage />} />
               <Route path="/specialty/night-diver" element={<NightDiver />} />
               <Route path="/specialty/peak-performance-buoyancy" element={<PeakPerformanceBuoyancy />} />
               <Route path="/specialty/search-recovery" element={<SearchRecovery />} />
@@ -303,6 +305,7 @@ const App = () => (
               <Route path="/WeatherKohTao" element={<WeatherKohTao />} />
               <Route path="/facebook" element={<FacebookFeedPage />} />
               <Route path="/booking-to-jira" element={<RequireAdmin><BookingToJiraForm /></RequireAdmin>} />
+              <Route path="/BookNow" element={<BookingStandalonePage />} />
               {/* <Route path="/booknow-site" element={<BookNowSite />} /> */}
               <Route path="*" element={<NotFound />} />
             </Routes>
