@@ -1,4 +1,5 @@
 // Production Express server for serving Vite build and API
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 
