@@ -245,26 +245,27 @@ const BookingForm: React.FC<BookingFormProps> = ({ isOpen = false, onClose, item
           )}
           {form.watch('paymentMethod') === 'paypal' && (
             <div className="payment-section">
-              <a
-                className="booking-form-btn paypal-btn"
-                href={
-                  currency === 'THB'
-                    ? 'https://www.paypal.com/paypalme/prodivingasia/2400'
-                    : currency === 'USD'
-                    ? 'https://www.paypal.com/paypalme/prodivingasia/65usd'
-                    : 'https://www.paypal.com/paypalme/prodivingasia/60eur'
-                }
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ display: 'block', textAlign: 'center', textDecoration: 'none' }}
-                onClick={() => setTimeout(() => navigate('/thankyou'), 1200)}
-              >
-                {currency === 'THB'
-                  ? 'Pay 2400 THB with PayPal'
-                  : currency === 'USD'
-                  ? 'Pay 65 USD with PayPal'
-                  : 'Pay 60 EUR with PayPal'}
-              </a>
+              <div id="paypal-button-container"></div>
+              <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=" + currency></script>
+              <script dangerouslySetInnerHTML={{__html:`
+                paypal.Buttons({
+                  createOrder: function(data, actions) {
+                    return actions.order.create({
+                      purchase_units: [{
+                        amount: {
+                          value: '${depositMajor || 2400}',
+                          currency_code: '${currency}'
+                        }
+                      }]
+                    });
+                  },
+                  onApprove: function(data, actions) {
+                    return actions.order.capture().then(function(details) {
+                      window.location.href = 'https://www.divinginasia.com/thank-you.html';
+                    });
+                  }
+                }).render('#paypal-button-container');
+              `}} />
             </div>
           )}
           <div className="booking-form-field">
