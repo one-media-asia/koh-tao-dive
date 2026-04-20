@@ -20,6 +20,7 @@
     <img src="/images/logo.png" alt="Diving In Asia Logo" class="thankyou-logo" />
     <h1>Thank You!</h1>
     <p>Your booking/inquiry has been received.<br>We will get back to you as soon as possible.</p>
+    <div id="booking-details" style="margin-bottom:1.5rem;"></div>
     <div style="margin:2rem 0 1rem 0;padding:1rem;background:#e6f7ff;border-radius:6px;color:#005fa3;">
       <strong>Next Steps:</strong><br>
       We will contact you soon with payment instructions.<br>
@@ -30,11 +31,42 @@
         <li><strong>Revolut</strong></li>
         <li><strong>Wise Bank Transfer</strong></li>
       </ul>
+      <div style="margin:1.5rem 0 1rem 0;text-align:center;">
+        <a href="https://paypal.me/prodivingasia" target="_blank" rel="noopener" style="background:#0070ba;color:#fff;padding:0.7rem 1.5rem;border:none;border-radius:6px;font-size:1.1rem;font-weight:600;cursor:pointer;display:inline-block;text-decoration:none;">
+          Pay with PayPal
+        </a>
+        <div style="font-size:0.95rem;color:#555;margin-top:0.5rem;">(You will be able to enter the amount on the next page. Please pay in <b>THB (Thai Baht)</b>.)</div>
+      </div>
       <strong>For urgent questions or to confirm your booking instantly, message us on WhatsApp:</strong><br>
-      <a href="https://wa.me/" target="_blank" rel="noopener" style="color:#25d366;font-weight:bold;">+66 63 923 0132</a>
+      <a href="https://wa.me/62081353833289" target="_blank" rel="noopener" style="color:#25d366;font-weight:bold;">+62 0813 5383 3289</a>
     </div>
-    <a href="/">Return to Home</a>
+    <!-- Return to Home button removed as requested -->
     <div class="team">— Diving In Asia Team —</div>
   </div>
+  <script>
+    // Parse URL parameters and display booking details
+    function getBookingParams() {
+      const params = new URLSearchParams(window.location.search);
+      return {
+        item: params.get('item'),
+        type: params.get('type'),
+        price: params.get('price'),
+        currency: params.get('currency')
+      };
+    }
+
+    function showBookingDetails() {
+      const { item, type, price, currency } = getBookingParams();
+      if (item || type || price || currency) {
+        let html = '<strong>Booking Details:</strong><br><ul style="list-style:none;padding:0;text-align:left;max-width:300px;margin:0 auto;">';
+        if (item) html += `<li><b>Item:</b> ${decodeURIComponent(item)}</li>`;
+        if (type) html += `<li><b>Type:</b> ${decodeURIComponent(type)}</li>`;
+        if (price) html += `<li><b>Price:</b> ${decodeURIComponent(price)}${currency ? ' ' + decodeURIComponent(currency) : ''}</li>`;
+        html += '</ul>';
+        document.getElementById('booking-details').innerHTML = html;
+      }
+    }
+    showBookingDetails();
+  </script>
 </body>
 </html>
