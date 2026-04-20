@@ -15,11 +15,15 @@ const COURSE_PRICES: Record<string, number> = {
 
 const PAYPAL_BASE = 'https://paypal.me/prodivingasia';
 
-const BookNowForm: React.FC = () => {
+interface BookNowFormProps {
+  initialCourseTitle?: string;
+}
+
+const BookNowForm: React.FC<BookNowFormProps> = ({ initialCourseTitle }) => {
   const { currency, convertCurrency } = useCurrency();
   const [form, setForm] = useState({
     name: '',
-    course_title: '',
+    course_title: initialCourseTitle || '',
     email: '',
     phone: '',
     accommodation_type: '',
@@ -70,7 +74,7 @@ const BookNowForm: React.FC = () => {
     [
       ['access_key', 'e4c4edf6-6e35-456a-87da-b32b961b449a'],
       ['subject', 'New Booking Inquiry from Website'],
-      ['redirect', 'https://divinginasia.com/thank-you.html'],
+      ['redirect', 'https://www.divinginasia.com/thank-you.html'],
       ['name', form.name],
       ['course_title', form.course_title],
       ['email', form.email],
@@ -114,30 +118,30 @@ const BookNowForm: React.FC = () => {
   };
 
   return (
-    <div className="form-container" style={{ maxWidth: 500, margin: '2rem auto', background: '#fff', color: '#222', padding: '2.5rem', borderRadius: 10, boxShadow: '0 2px 12px #0002' }}>
-      <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-        <img src="/images/logo.png" alt="Diving In Asia Logo" style={{ maxWidth: 180, height: 'auto' }} />
+    <div className="form-container max-w-lg mx-auto my-8 bg-white text-gray-900 p-10 rounded-xl shadow-lg">
+      <div className="text-center mb-4">
+        <img src="/images/logo.png" alt="Diving In Asia Logo" className="mx-auto max-w-[180px] h-auto" />
       </div>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
+      <div className="flex justify-end mb-2">
         <CurrencySelector />
       </div>
-      <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Booking / Inquiry Form</h2>
+      <h2 className="text-center mb-6 text-2xl font-bold">Booking / Inquiry Form</h2>
       {showThankYou ? (
-        <div style={{ background: '#e6ffe6', borderRadius: 8, padding: 32, textAlign: 'center', fontSize: '1.1em', color: '#1a4d1a', marginTop: 24 }}>
+        <div className="bg-green-50 rounded-lg p-8 text-center text-lg text-green-900 mt-6">
           <p>You have chosen not to pay now. That's fine, we will contact you to discuss your arrangements.</p>
-          <p style={{ marginTop: 16 }}>Thank you – Team Asia</p>
+          <p className="mt-4">Thank you – Team Asia</p>
         </div>
       ) : (
         <>
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {/* ...existing code... */}
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <label htmlFor="name" style={{ marginBottom: 4, fontWeight: 500 }}>Name</label>
-              <input type="text" id="name" name="name" required value={form.name} onChange={handleChange} style={{ width: '100%', padding: '0.5rem', borderRadius: 4, border: '1px solid #ccc' }} />
+            <div className="flex flex-col">
+              <label htmlFor="name" className="mb-1 font-medium">Name</label>
+              <input type="text" id="name" name="name" required value={form.name} onChange={handleChange} className="w-full p-2 rounded border border-gray-300" />
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <label htmlFor="course_title" style={{ marginBottom: 4, fontWeight: 500 }}>Course</label>
-              <select id="course_title" name="course_title" required value={form.course_title} onChange={handleChange} style={{ width: '100%', padding: '0.5rem', borderRadius: 4, border: '1px solid #ccc' }}>
+            <div className="flex flex-col">
+              <label htmlFor="course_title" className="mb-1 font-medium">Course</label>
+              <select id="course_title" name="course_title" required value={form.course_title} onChange={handleChange} className="w-full p-2 rounded border border-gray-300">
                 <option value="">Select...</option>
                 <option value="Open Water">Open Water</option>
                 <option value="Advanced Open Water">Advanced Open Water</option>
@@ -147,32 +151,32 @@ const BookNowForm: React.FC = () => {
               </select>
             </div>
             {form.course_title && coursePrice > 0 && (
-              <div style={{ background: '#f0f8ff', borderRadius: 6, padding: '1rem', marginBottom: 8 }}>
+              <div className="bg-blue-50 rounded p-4 mb-2">
                 <div><strong>Course Price:</strong> {coursePrice.toLocaleString()} THB
                   {currency !== 'THB' && (
-                    <span style={{ marginLeft: 8, color: '#0070ba' }}>({coursePriceConverted})</span>
+                    <span className="ml-2 text-blue-700">({coursePriceConverted} THB)</span>
                   )}
                 </div>
                 <div><strong>Deposit (20%):</strong> {deposit.toLocaleString()} THB
                   {currency !== 'THB' && (
-                    <span style={{ marginLeft: 8, color: '#0070ba' }}>({depositConverted})</span>
+                    <span className="ml-2 text-blue-700">({depositConverted} THB)</span>
                   )}
                 </div>
-                <div style={{ fontSize: '0.95em', color: '#555', marginTop: 4 }}>You can pay the deposit now to secure your spot, or choose to pay later.</div>
+                <div className="text-sm text-gray-600 mt-1">You can pay the deposit now to secure your spot, or choose to pay later.</div>
               </div>
             )}
             {/* ...existing code... */}
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <label htmlFor="email" style={{ marginBottom: 4, fontWeight: 500 }}>Email</label>
-              <input type="email" id="email" name="email" required value={form.email} onChange={handleChange} style={{ width: '100%', padding: '0.5rem', borderRadius: 4, border: '1px solid #ccc' }} />
+            <div className="flex flex-col">
+              <label htmlFor="email" className="mb-1 font-medium">Email</label>
+              <input type="email" id="email" name="email" required value={form.email} onChange={handleChange} className="w-full p-2 rounded border border-gray-300" />
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <label htmlFor="phone" style={{ marginBottom: 4, fontWeight: 500 }}>Phone</label>
-              <input type="text" id="phone" name="phone" value={form.phone} onChange={handleChange} style={{ width: '100%', padding: '0.5rem', borderRadius: 4, border: '1px solid #ccc' }} />
+            <div className="flex flex-col">
+              <label htmlFor="phone" className="mb-1 font-medium">Phone</label>
+              <input type="text" id="phone" name="phone" value={form.phone} onChange={handleChange} className="w-full p-2 rounded border border-gray-300" />
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <label htmlFor="accommodation_type" style={{ marginBottom: 4, fontWeight: 500 }}>Accommodation Type</label>
-              <select id="accommodation_type" name="accommodation_type" value={form.accommodation_type} onChange={handleChange} style={{ width: '100%', padding: '0.5rem', borderRadius: 4, border: '1px solid #ccc' }}>
+            <div className="flex flex-col">
+              <label htmlFor="accommodation_type" className="mb-1 font-medium">Accommodation Type</label>
+              <select id="accommodation_type" name="accommodation_type" value={form.accommodation_type} onChange={handleChange} className="w-full p-2 rounded border border-gray-300">
                 <option value="">Select...</option>
                 <option value="standard">Standard Room</option>
                 <option value="deluxe">Deluxe Room</option>
@@ -180,13 +184,13 @@ const BookNowForm: React.FC = () => {
                 <option value="other">Other / Not sure</option>
               </select>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <label htmlFor="arrival_date" style={{ marginBottom: 4, fontWeight: 500 }}>Arrival Date</label>
-              <input type="date" id="arrival_date" name="arrival_date" value={form.arrival_date} onChange={handleChange} style={{ width: '100%', padding: '0.5rem', borderRadius: 4, border: '1px solid #ccc' }} />
+            <div className="flex flex-col">
+              <label htmlFor="arrival_date" className="mb-1 font-medium">Arrival Date</label>
+              <input type="date" id="arrival_date" name="arrival_date" value={form.arrival_date} onChange={handleChange} className="w-full p-2 rounded border border-gray-300" />
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <label htmlFor="diving_experience" style={{ marginBottom: 4, fontWeight: 500 }}>Diving Experience</label>
-              <select id="diving_experience" name="diving_experience" value={form.diving_experience} onChange={handleChange} style={{ width: '100%', padding: '0.5rem', borderRadius: 4, border: '1px solid #ccc' }}>
+            <div className="flex flex-col">
+              <label htmlFor="diving_experience" className="mb-1 font-medium">Diving Experience</label>
+              <select id="diving_experience" name="diving_experience" value={form.diving_experience} onChange={handleChange} className="w-full p-2 rounded border border-gray-300">
                 <option value="">Select...</option>
                 <option value="none">No diving experience</option>
                 <option value="beginner">Beginner (1-10 dives)</option>
@@ -195,27 +199,27 @@ const BookNowForm: React.FC = () => {
                 <option value="professional">Professional diver</option>
               </select>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <label htmlFor="message" style={{ marginBottom: 4, fontWeight: 500 }}>Comments / Questions</label>
-              <textarea id="message" name="message" rows={3} placeholder="Let us know any special requests, questions, or details..." value={form.message} onChange={handleChange} style={{ width: '100%', padding: '0.5rem', borderRadius: 4, border: '1px solid #ccc' }} />
+            <div className="flex flex-col">
+              <label htmlFor="message" className="mb-1 font-medium">Comments / Questions</label>
+              <textarea id="message" name="message" rows={3} placeholder="Let us know any special requests, questions, or details..." value={form.message} onChange={handleChange} className="w-full p-2 rounded border border-gray-300" />
             </div>
-            {error && <div style={{ color: 'red', marginTop: 8 }}>{error}</div>}
+            {error && <div className="text-red-600 mt-2">{error}</div>}
             {!showPayOptions && (
-              <button type="submit" disabled={loading} style={{ marginTop: '1.5rem', padding: '0.75rem 1.5rem', background: '#0070ba', color: '#fff', border: 'none', borderRadius: 4, fontSize: '1rem', cursor: loading ? 'not-allowed' : 'pointer', width: '100%', opacity: loading ? 0.7 : 1 }}>
+              <button type="submit" disabled={loading} className="mt-6 py-3 px-6 bg-blue-700 text-white rounded w-full text-lg font-semibold disabled:opacity-70 disabled:cursor-not-allowed">
                 {loading ? 'Submitting...' : 'Submit Booking'}
               </button>
             )}
           </form>
           {/* Payment options modal/section */}
           {showPayOptions && form.course_title && coursePrice > 0 && (
-            <div style={{ marginTop: 24, background: '#f8f8f8', borderRadius: 8, padding: 24, textAlign: 'center', boxShadow: '0 1px 6px #0001' }}>
-              <h3 style={{ marginBottom: 12 }}>Secure Your Spot</h3>
-              <div style={{ marginBottom: 8 }}>Pay a <strong>20% deposit ({deposit.toLocaleString()} THB)</strong> now via PayPal to confirm your booking, or choose to pay later.</div>
-              <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginTop: 16 }}>
-                <button onClick={handlePayNow} disabled={loading} style={{ background: '#0070ba', color: '#fff', border: 'none', borderRadius: 4, padding: '0.75rem 1.5rem', fontSize: '1rem', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}>
+            <div className="mt-6 bg-gray-50 rounded-lg p-6 text-center shadow">
+              <h3 className="mb-3 text-lg font-semibold">Secure Your Spot</h3>
+              <div className="mb-2">Pay a <strong>20% deposit ({deposit.toLocaleString()} THB)</strong> now via PayPal to confirm your booking, or choose to pay later.</div>
+              <div className="flex gap-4 justify-center mt-4">
+                <button onClick={handlePayNow} disabled={loading} className="bg-blue-700 text-white rounded px-6 py-3 text-lg font-semibold disabled:opacity-70 disabled:cursor-not-allowed">
                   {loading ? 'Processing...' : 'Pay Now (PayPal)'}
                 </button>
-                <button onClick={handleNotNow} disabled={loading} style={{ background: '#aaa', color: '#fff', border: 'none', borderRadius: 4, padding: '0.75rem 1.5rem', fontSize: '1rem', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}>
+                <button onClick={handleNotNow} disabled={loading} className="bg-gray-400 text-white rounded px-6 py-3 text-lg font-semibold disabled:opacity-70 disabled:cursor-not-allowed">
                   {loading ? 'Processing...' : 'Not Now'}
                 </button>
               </div>

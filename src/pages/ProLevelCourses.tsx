@@ -97,11 +97,7 @@ const ProLevelCourses: React.FC = () => {
             ))}
           </div>
 
-          <section className="mt-16">
-            <h2 className="text-2xl font-bold mb-4">{content.footer_title}</h2>
-            <p className="text-muted-foreground mb-6">{content.footer_body}</p>
-            <Button onClick={() => window.open('/booknow.html', '_blank')}>{content.footer_cta}</Button>
-          </section>
+          {/* Footer section removed; global Footer from Layout will be used */}
         </div>
       </section>
     </div>
