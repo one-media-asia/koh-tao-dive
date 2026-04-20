@@ -25,10 +25,13 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'dist')));
 
 
-const { createClient } = require('@supabase/supabase-js');
-const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY;
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { realtime: { enabled: false } });
+
+// SQLite setup
+const sqlite3 = require('sqlite3').verbose();
+const dbPath = path.resolve(process.cwd(), 'admin.db');
+function getDb() {
+  return new sqlite3.Database(dbPath);
+}
 
 
 
@@ -230,22 +233,52 @@ const findBookingRecordById = async (id) => {
   }
 };
 
-// Routes
 
-app.get('/api/bookings', async (req, res) => {
-  const adminUser = await requireAdmin(req, res);
-  if (!adminUser) return;
-  try {
-    const { data, error } = await supabase
-      .from('bookings')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (error) {
-      return res.status(500).json({ error: error.message });
-    }
-    return res.json(data);
-  } catch (err) {
-    return res.status(500).json({ error: err.message });
+// SQLite-backed API for admin pages manager (CRUD for page_content)
+app.get('/api/pages', (req, res) => {
+  const db = getDb();
+  db.all('SELECT * FROM page_content', [], (err, rows) => {
+    db.close();
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows);
+  });
+});
+
+app.post('/api/pages', (req, res) => {
+  const db = getDb();
+  const { upsert, insert } = req.body || {};
+  if (Array.isArray(upsert)) {
+    // Upsert (insert or update) multiple rows
+    const results = [];
+    db.serialize(() => {
+      const stmt = db.prepare(`INSERT INTO page_content (page_slug, section_key, locale, content_type, content_value) VALUES (?, ?, ?, ?, ?)
+        ON CONFLICT(page_slug, section_key, locale) DO UPDATE SET content_type=excluded.content_type, content_value=excluded.content_value`);
+      upsert.forEach(row => {
+        stmt.run(row.page_slug, row.section_key, row.locale, row.content_type, row.content_value);
+        results.push(row);
+      });
+      stmt.finalize(() => {
+        db.close();
+        res.json(results);
+      });
+    });
+  } else if (Array.isArray(insert)) {
+    // Insert new row(s)
+    const results = [];
+    db.serialize(() => {
+      const stmt = db.prepare('INSERT INTO page_content (page_slug, section_key, locale, content_type, content_value) VALUES (?, ?, ?, ?, ?)');
+      insert.forEach(row => {
+        stmt.run(row.page_slug, row.section_key, row.locale, row.content_type, row.content_value);
+        results.push(row);
+      });
+      stmt.finalize(() => {
+        db.close();
+        res.json(results.length === 1 ? results[0] : results);
+      });
+    });
+  } else {
+    db.close();
+    res.status(400).json({ error: 'Invalid request body' });
   }
 });
 
