@@ -5,12 +5,13 @@ interface BookingModalProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (data: any) => void;
+  course?: string;
 }
 
 
 const LOCAL_STORAGE_KEY = 'bookingModalForm';
 
-const BookingModal: React.FC<BookingModalProps> = ({ open, onClose, onSubmit }) => {
+const BookingModal: React.FC<BookingModalProps> = ({ open, onClose, onSubmit, course }) => {
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -18,37 +19,30 @@ const BookingModal: React.FC<BookingModalProps> = ({ open, onClose, onSubmit }) 
     date: '',
     experience: '',
     message: '',
+    course: course || '',
   });
 
-  // Load saved form data when modal opens
+  // Load saved form data when modal opens, and pre-fill course
   useEffect(() => {
     if (open) {
       const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+      let initialForm = {
+        name: '',
+        email: '',
+        phone: '',
+        date: '',
+        experience: '',
+        message: '',
+        course: course || '',
+      };
       if (saved) {
         try {
-          setForm(JSON.parse(saved));
-        } catch {
-          setForm({
-            name: '',
-            email: '',
-            phone: '',
-            date: '',
-            experience: '',
-            message: '',
-          });
-        }
-      } else {
-        setForm({
-          name: '',
-          email: '',
-          phone: '',
-          date: '',
-          experience: '',
-          message: '',
-        });
+          initialForm = { ...initialForm, ...JSON.parse(saved) };
+        } catch {}
       }
+      setForm(initialForm);
     }
-  }, [open]);
+  }, [open, course]);
 
   if (!open) return null;
 
@@ -84,6 +78,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ open, onClose, onSubmit }) 
           <input name="phone" value={form.phone} onChange={handleChange} placeholder="Phone" className="w-full border p-1.5 sm:p-2 rounded text-gray-900 text-sm sm:text-base" />
           <input name="date" value={form.date} onChange={handleChange} placeholder="Preferred Date" className="w-full border p-1.5 sm:p-2 rounded text-gray-900 text-sm sm:text-base" type="date" />
           <input name="experience" value={form.experience} onChange={handleChange} placeholder="Experience Level" className="w-full border p-1.5 sm:p-2 rounded text-gray-900 text-sm sm:text-base" />
+          <input name="course" value={form.course} onChange={handleChange} placeholder="Course" className="w-full border p-1.5 sm:p-2 rounded text-gray-900 text-sm sm:text-base" required />
           <textarea name="message" value={form.message} onChange={handleChange} placeholder="Message" className="w-full border p-1.5 sm:p-2 rounded text-gray-900 text-sm sm:text-base" />
           <div className="flex justify-end gap-2 mt-2 sm:mt-4">
             <button type="button" onClick={onClose} className="px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-200 rounded text-gray-900 text-sm sm:text-base">Cancel</button>
