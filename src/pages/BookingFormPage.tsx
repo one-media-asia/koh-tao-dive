@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import BookingForm from '@/components/BookingForm';
 import CurrencyExchange from '@/components/CurrencyExchange';
+import { useNavigate } from 'react-router-dom';
 
 function useQuery() {
   const { search } = typeof window !== 'undefined' ? window.location : { search: '' };
@@ -37,6 +38,23 @@ const BookingFormPage: React.FC = () => {
         </div>
       </div>
     </Layout>
+  );
+};
+
+const CourseCard = ({ course }) => {
+  const navigate = useNavigate();
+
+  const handleBook = () => {
+    navigate(
+      `/booking?course=${encodeURIComponent(course.slug)}&price=${course.price}&currency=${course.currency}`
+    );
+  };
+
+  return (
+    <div>
+      {/* ...course description... */}
+      <button onClick={handleBook}>Book</button>
+    </div>
   );
 };
 
