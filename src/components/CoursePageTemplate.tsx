@@ -146,10 +146,6 @@ const CoursePageTemplate: React.FC<CoursePageProps> = ({
   const { currency, exchangeRates, convertCurrency } = useCurrency();
   const thbPriceConverted = convertCurrency(thbAmount, 'THB');
 
-  // Scroll to contact section
-  const openBookNow = () => {
-    setShowBookNow(true);
-  };
 
   return (
     <div className="min-h-screen bg-background">
