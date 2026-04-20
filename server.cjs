@@ -234,6 +234,7 @@ const findBookingRecordById = async (id) => {
 };
 
 
+
 // SQLite-backed API for admin pages manager (CRUD for page_content)
 app.get('/api/pages', (req, res) => {
   const db = getDb();
@@ -280,6 +281,15 @@ app.post('/api/pages', (req, res) => {
     db.close();
     res.status(400).json({ error: 'Invalid request body' });
   }
+});
+
+// Serve static files
+const staticPath = path.join(__dirname, 'dist');
+app.use(express.static(staticPath));
+
+// Catch-all route to serve index.html for SPA client-side routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(staticPath, 'index.html'));
 });
 
 // NOTE: Airtable-backed booking creation removed. Use the Supabase-backed
