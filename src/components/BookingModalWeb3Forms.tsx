@@ -7,7 +7,7 @@ const BookingModalWeb3Forms: React.FC = () => {
   const [price, setPrice] = useState('');
 
   // Set courseTitle from URL on mount
-  React.useEffect(() => {
+  useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const item = params.get('item');
     setCourseTitle(item ? decodeURIComponent(item) : '');
