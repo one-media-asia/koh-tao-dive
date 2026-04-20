@@ -5,61 +5,87 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Booking Form</title>
   <style>
-    body { font-family: sans-serif; background: #f8f8f8; }
-    .form-container { max-width: 400px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px #0001; }
-    label { display: block; margin-top: 1rem; font-weight: bold; }
-    input, select, textarea { width: 100%; padding: 0.5rem; margin-top: 0.25rem; border: 1px solid #ccc; border-radius: 4px; }
-    button { margin-top: 1.5rem; padding: 0.75rem 1.5rem; background: #0070ba; color: #fff; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; }
-    button:hover { background: #005fa3; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f8f8f8; }
+    .form-container { max-width: 400px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 24px #0002; }
+    .modal-logo { display:block; margin:0 auto 1.5rem auto; max-width:120px; }
+    .modal-title { text-align:center; color:#0070ba; margin-bottom:0.5rem; font-size:1.5rem; font-weight:600; }
+    .modal-desc { text-align:center; color:#444; margin-bottom:1.5rem; font-size:1.1rem; }
+    label { display: block; margin-top: 1rem; font-weight: 500; color:#222; }
+    input, select, textarea { width: 100%; padding: 0.6rem; margin-top: 0.25rem; border: 1px solid #bbb; border-radius: 6px; font-size:1rem; }
+    button, .modal-btn { margin-top: 1.5rem; padding: 0.75rem 1.5rem; background: linear-gradient(90deg,#0070ba,#00c6fb); color: #fff; border: none; border-radius: 6px; font-size: 1rem; cursor: pointer; transition: background 0.2s; font-weight:600; }
+    button:hover, .modal-btn:hover { background: linear-gradient(90deg,#005fa3,#009ecf); }
+    .modal-btn { width:100%; margin-top:0; margin-bottom:1rem; }
+    #booking-modal { display:none; position:fixed; z-index:1000; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; animation:fadeIn 0.3s; }
+    #booking-modal.show { display:flex; animation:fadeIn 0.3s; }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+    .modal-content { background:#fff; padding:2rem 1.2rem; border-radius:14px; max-width:420px; width:95%; position:relative; box-shadow:0 4px 24px #0003; animation:slideUp 0.3s; }
+    @keyframes slideUp { from { transform:translateY(40px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+    #booking-modal-close { position:absolute;top:10px;right:10px;background:none;border:none;font-size:2rem;cursor:pointer;color:#888;transition:color 0.2s; }
+    #booking-modal-close:hover { color:#0070ba; }
+    .confirmation-message { text-align:center; color:#0070ba; font-size:1.2rem; margin-top:1.5rem; }
+    @media (max-width:600px) {
+      .form-container, .modal-content { padding:1rem 0.5rem; }
+      .modal-content { max-width:98vw; }
+    }
   </style>
 </head>
 <body>
   <div class="form-container">
-    <h2>Booking / Inquiry Form</h2>
-    <a href="https://buy.stripe.com/aFacN5bN2bP25si1a55os00" target="_blank" rel="noopener" style="display:block;width:100%;margin-bottom:1em;text-align:center;background:#635bff;color:#fff;padding:0.75em 0;border-radius:4px;font-size:1.1em;text-decoration:none;font-weight:bold;">Pay with Card (Stripe)</a>
-    <button class="book-now-btn" style="width:100%">Book Now / Inquiry</button>
+    <img src="/images/logo.png" alt="Diving In Asia Logo" class="modal-logo" />
+    <div class="modal-title">Booking / Inquiry Form</div>
+    <div class="modal-desc">Please fill out the form below to book your course or send us an inquiry. We’ll get back to you as soon as possible!</div>
+    <button class="modal-btn book-now-btn">Book Now / Inquiry</button>
     <!-- Modal Structure -->
-    <div id="booking-modal" style="display:none;position:fixed;z-index:1000;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;">
-      <div style="background:#fff;padding:2rem;border-radius:8px;max-width:400px;width:90%;position:relative;box-shadow:0 2px 16px #0003;">
-        <button id="booking-modal-close" style="position:absolute;top:10px;right:10px;background:none;border:none;font-size:1.5rem;cursor:pointer;">&times;</button>
-        <form id="booking-form">
+    <div id="booking-modal">
+      <div class="modal-content">
+        <button id="booking-modal-close">&times;</button>
+        <form id="booking-form" action="https://api.web3forms.com/submit" method="POST" accept-charset="UTF-8" autocomplete="on">
+          <input type="hidden" name="access_key" value="e4c4edf6-6e35-456a-87da-b32b961b449a">
+          <input type="hidden" name="subject" value="New Booking Inquiry from Website">
+          <input type="hidden" name="redirect" value="/thankyou.html">
           <label for="name">Name</label>
           <input type="text" id="name" name="name" required>
+          <label for="course_title">Course</label>
+          <select id="course_title" name="course_title" required>
+            <option value="">Select...</option>
+            <option value="Open Water">Open Water</option>
+            <option value="Advanced Open Water">Advanced Open Water</option>
+            <option value="Rescue Diver">Rescue Diver</option>
+            <option value="Divemaster">Divemaster</option>
+            <option value="Fun Dive">Fun Dive</option>
+          </select>
           <label for="email">Email</label>
           <input type="email" id="email" name="email" required>
           <label for="phone">Phone</label>
           <input type="text" id="phone" name="phone">
-          <label for="course_title">Course / Package</label>
-          <input type="text" id="course_title" name="course_title" required>
-          <label for="preferred_date">Preferred Date</label>
-          <input type="date" id="preferred_date" name="preferred_date">
-          <label for="experience_level">Experience Level</label>
-          <select id="experience_level" name="experience_level">
+          <label for="accommodation_type">Accommodation Type</label>
+          <select id="accommodation_type" name="accommodation_type">
             <option value="">Select...</option>
-            <option value="beginner">Beginner</option>
-            <option value="intermediate">Intermediate</option>
-            <option value="professional">Professional</option>
+            <option value="standard">Standard Room</option>
+            <option value="deluxe">Deluxe Room</option>
+            <option value="suite">Suite</option>
+            <option value="other">Other / Not sure</option>
+          </select>
+          <label for="arrival_date">Arrival Date</label>
+          <input type="date" id="arrival_date" name="arrival_date">
+          <label for="diving_experience">Diving Experience</label>
+          <select id="diving_experience" name="diving_experience">
+            <option value="">Select...</option>
+            <option value="none">No diving experience</option>
+            <option value="beginner">Beginner (1-10 dives)</option>
+            <option value="intermediate">Intermediate (10-50 dives)</option>
+            <option value="advanced">Advanced (50+ dives)</option>
+            <option value="professional">Professional diver</option>
           </select>
           <label for="message">Comments / Questions</label>
-          <textarea id="message" name="message" rows="4" required></textarea>
-          <button type="submit">Book & Pay with Card</button>
+          <textarea id="message" name="message" rows="3" placeholder="Let us know any special requests, questions, or details..."></textarea>
+          <button type="submit">Submit Booking</button>
+          <a href="https://buy.stripe.com/aFacN5bN2bP25si1a55os00" target="_blank" rel="noopener" style="display:block;width:100%;margin:1em auto 0 auto;text-align:center;background:#635bff;color:#fff;padding:0.9em 0;border-radius:4px;font-size:1.1em;text-decoration:none;font-weight:bold;">Pay with Card (Stripe)</a>
         </form>
-        <div id="stripe-error" style="color:red;margin-top:1em;"></div>
+        <div id="confirmation-message" class="confirmation-message" style="display:none;"></div>
       </div>
     </div>
   </div>
 </body>
 <script src="/public/booking-modal.js"></script>
-<script>
-// Simple Stripe Payment Link redirect after form submit
-document.addEventListener('DOMContentLoaded', function() {
-  const form = document.getElementById('booking-form');
-  if (!form) return;
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    // Optionally, collect form data here if you want to send it somewhere
-    window.location.href = 'https://buy.stripe.com/aFacN5bN2bP25si1a55os00';
-  });
-});
-</script>
 </html>

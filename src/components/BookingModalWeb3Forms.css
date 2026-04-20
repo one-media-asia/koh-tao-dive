@@ -1,0 +1,62 @@
+/* Booking Form Styles */
+.booking-form-container {
+  background: #fff;
+  padding: 2.5rem 2rem;
+  border-radius: 12px;
+  max-width: 480px;
+  width: 100%;
+  margin: 2.5rem auto;
+  box-shadow: 0 4px 24px #0002;
+}
+.booking-form-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.booking-form-logo {
+  max-width: 140px;
+  height: auto;
+  margin-bottom: 8px;
+}
+.booking-form-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 0.5rem 0 0.2rem 0;
+  color: #0070ba;
+}
+.booking-form-desc {
+  color: #444;
+  font-size: 1.05rem;
+  margin-bottom: 0.5rem;
+}
+.booking-form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+.booking-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.booking-form-field label {
+  font-weight: 500;
+}
+.booking-form-field input,
+.booking-form-field select,
+.booking-form-field textarea {
+  padding: 0.7rem;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+.booking-form-submit {
+  margin-top: 0.5rem;
+  padding: 0.9rem;
+  background: linear-gradient(90deg,#0070ba,#00c6fb);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
