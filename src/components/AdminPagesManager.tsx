@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+// import { supabase } from '@/integrations/supabase/client';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
@@ -277,24 +277,20 @@ const AdminPagesManager: React.FC = () => {
 
   const fetchData = async () => {
     setLoading(true);
-    if (!supabase) {
-      setError('Supabase is not configured for Admin Pages Manager. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
-      setLoading(false);
-      return;
-    }
-
-    const { data, error } = await supabase
-      .from('page_content')
-      .select('id,page_slug,section_key,locale,content_type,content_value,updated_at')
-      .order('page_slug', { ascending: true })
-      .order('section_key', { ascending: true })
-      .order('locale', { ascending: true });
-    if (error) {
-      setError(error.message);
-    } else {
+    try {
+      const adminLoginToken = window.localStorage.getItem('admin_login_token');
+      if (!adminLoginToken) throw new Error('Not authenticated');
+      const res = await fetch('/api/pages', {
+        headers: { 'x-admin-login-token': adminLoginToken },
+      });
+      if (!res.ok) throw new Error('Failed to fetch pages');
+      const data = await res.json();
       setData(data as PageContentRow[]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch pages');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -394,11 +390,6 @@ const AdminPagesManager: React.FC = () => {
   }, [data, pageSectionKeys, selectedLocale, selectedPageSlug]);
 
   const handleSavePage = async () => {
-    if (!supabase) {
-      alert('Supabase is not configured.');
-      return;
-    }
-
     if (!selectedPageSlug) {
       alert('Please select a page first.');
       return;
@@ -413,8 +404,6 @@ const AdminPagesManager: React.FC = () => {
       );
 
       return {
-        // Preserve existing slug format when present (legacy short slugs or canonical paths)
-        // so updates target existing rows instead of forcing new inserts.
         page_slug: existing?.page_slug || getCanonicalPageSlug(selectedPageSlug),
         section_key: sectionKey,
         locale: selectedLocale,
@@ -433,38 +422,38 @@ const AdminPagesManager: React.FC = () => {
     }
 
     setSavingPage(true);
-
-    const { data: savedRows, error } = await supabase
-      .from('page_content')
-      .upsert(rowsToUpsert, { onConflict: 'page_slug,section_key,locale' })
-      .select('id,page_slug,section_key,locale,content_type,content_value,updated_at');
-
-    setSavingPage(false);
-
-    if (error) {
-      alert('Error saving page: ' + error.message);
-      return;
-    }
-
-    if (savedRows) {
-      const incoming = savedRows as PageContentRow[];
-      const incomingIds = new Set(incoming.map((row) => row.id));
-
-      setData((prev) => {
-        const kept = prev.filter((row) => !incomingIds.has(row.id));
-        const merged = [...kept, ...incoming];
-        merged.sort((a, b) => {
-          const pageCmp = a.page_slug.localeCompare(b.page_slug);
-          if (pageCmp !== 0) return pageCmp;
-          const sectionCmp = a.section_key.localeCompare(b.section_key);
-          if (sectionCmp !== 0) return sectionCmp;
-          return a.locale.localeCompare(b.locale);
-        });
-        return merged;
+    try {
+      const adminLoginToken = window.localStorage.getItem('admin_login_token');
+      if (!adminLoginToken) throw new Error('Not authenticated');
+      const res = await fetch('/api/pages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-admin-login-token': adminLoginToken },
+        body: JSON.stringify({ upsert: rowsToUpsert }),
       });
+      if (!res.ok) throw new Error('Failed to save page sections');
+      const savedRows = await res.json();
+      if (savedRows) {
+        const incoming = savedRows as PageContentRow[];
+        const incomingIds = new Set(incoming.map((row) => row.id));
+        setData((prev) => {
+          const kept = prev.filter((row) => !incomingIds.has(row.id));
+          const merged = [...kept, ...incoming];
+          merged.sort((a, b) => {
+            const pageCmp = a.page_slug.localeCompare(b.page_slug);
+            if (pageCmp !== 0) return pageCmp;
+            const sectionCmp = a.section_key.localeCompare(b.section_key);
+            if (sectionCmp !== 0) return sectionCmp;
+            return a.locale.localeCompare(b.locale);
+          });
+          return merged;
+        });
+      }
+      alert(`Saved ${rowsToUpsert.length} sections for ${selectedPageSlug} (${selectedLocale}).`);
+    } catch (err) {
+      alert('Error saving page: ' + (err instanceof Error ? err.message : String(err)));
+    } finally {
+      setSavingPage(false);
     }
-
-    alert(`Saved ${rowsToUpsert.length} sections for ${selectedPageSlug} (${selectedLocale}).`);
   };
 
   const handleEdit = (row: PageContentRow) => {
@@ -474,15 +463,13 @@ const AdminPagesManager: React.FC = () => {
   };
 
   const handleSave = async (row: PageContentRow) => {
-    if (!supabase) {
-      alert('Supabase is not configured.');
-      return;
-    }
-
-    const { error } = await supabase
-      .from('page_content')
-      .upsert(
-        {
+    try {
+      const adminLoginToken = window.localStorage.getItem('admin_login_token');
+      if (!adminLoginToken) throw new Error('Not authenticated');
+      const res = await fetch('/api/pages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-admin-login-token': adminLoginToken },
+        body: JSON.stringify({ upsert: [{
           ...row,
           content_value: normalizeMediaLikeValue(
             row.section_key,
@@ -490,12 +477,9 @@ const AdminPagesManager: React.FC = () => {
             editContent
           ),
           content_type: editContentType || row.content_type || 'text',
-        },
-        { onConflict: 'id' }
-      );
-    if (error) {
-      alert('Error saving: ' + error.message);
-    } else {
+        }] }),
+      });
+      if (!res.ok) throw new Error('Failed to save row');
       setData((prev) => prev.map((r) => (r.id === row.id ? { ...r, content_value: editContent, content_type: editContentType || r.content_type } : r)));
       setRecentlyEdited((prev) => ({ ...prev, [row.id]: true }));
       setTimeout(() => {
@@ -506,6 +490,8 @@ const AdminPagesManager: React.FC = () => {
         });
       }, 2500);
       setEditingId(null);
+    } catch (err) {
+      alert('Error saving: ' + (err instanceof Error ? err.message : String(err)));
     }
   };
 
@@ -520,54 +506,50 @@ const AdminPagesManager: React.FC = () => {
       return;
     }
 
-    if (!supabase) {
-      alert('Supabase is not configured.');
-      return;
-    }
-
     setIsAddingRow(true);
-
-    const { data: inserted, error } = await supabase
-      .from('page_content')
-      .insert({
-        page_slug,
-        section_key,
-        locale: newLocale,
-        content_type,
-        content_value: normalizeMediaLikeValue(section_key, content_type, content_value),
-      })
-      .select('id,page_slug,section_key,locale,content_type,content_value,updated_at')
-      .single();
-
-    setIsAddingRow(false);
-
-    if (error) {
-      alert('Error adding row: ' + error.message);
-      return;
-    }
-
-    if (inserted) {
-      setData((prev) => {
-        const next = [inserted as PageContentRow, ...prev];
-        next.sort((a, b) => {
-          const pageCmp = a.page_slug.localeCompare(b.page_slug);
-          if (pageCmp !== 0) return pageCmp;
-          const sectionCmp = a.section_key.localeCompare(b.section_key);
-          if (sectionCmp !== 0) return sectionCmp;
-          return a.locale.localeCompare(b.locale);
-        });
-        return next;
+    try {
+      const adminLoginToken = window.localStorage.getItem('admin_login_token');
+      if (!adminLoginToken) throw new Error('Not authenticated');
+      const res = await fetch('/api/pages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-admin-login-token': adminLoginToken },
+        body: JSON.stringify({ insert: [{
+          page_slug,
+          section_key,
+          locale: newLocale,
+          content_type,
+          content_value: normalizeMediaLikeValue(section_key, content_type, content_value),
+        }] }),
       });
-      setRecentlyEdited((prev) => ({ ...prev, [inserted.id]: true }));
-      setTimeout(() => {
-        setRecentlyEdited((prev) => {
-          const next = { ...prev };
-          delete next[inserted.id];
+      if (!res.ok) throw new Error('Failed to add row');
+      const inserted = await res.json();
+      if (inserted && inserted.id) {
+        setData((prev) => {
+          const next = [inserted as PageContentRow, ...prev];
+          next.sort((a, b) => {
+            const pageCmp = a.page_slug.localeCompare(b.page_slug);
+            if (pageCmp !== 0) return pageCmp;
+            const sectionCmp = a.section_key.localeCompare(b.section_key);
+            if (sectionCmp !== 0) return sectionCmp;
+            return a.locale.localeCompare(b.locale);
+          });
           return next;
         });
-      }, 2500);
-      setNewSectionKey('');
-      setNewContentValue('');
+        setRecentlyEdited((prev) => ({ ...prev, [inserted.id]: true }));
+        setTimeout(() => {
+          setRecentlyEdited((prev) => {
+            const next = { ...prev };
+            delete next[inserted.id];
+            return next;
+          });
+        }, 2500);
+        setNewSectionKey('');
+        setNewContentValue('');
+      }
+    } catch (err) {
+      alert('Error adding row: ' + (err instanceof Error ? err.message : String(err)));
+    } finally {
+      setIsAddingRow(false);
     }
   };
 

@@ -7,7 +7,7 @@ import FunDiveBooking from './FunDiveBooking';
 import FinanceSection from './FinanceSection';
 import BookingsCalendar from './BookingsCalendar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { supabase } from '@/integrations/supabase/client';
+// import { supabase } from '@/integrations/supabase/client';
 
 interface Booking {
   total_payable_now?: number | null;
@@ -97,26 +97,17 @@ const AdminBookings: React.FC = () => {
     setTimeout(() => setCopyStatus((prev) => ({ ...prev, [book.id]: '' })), 2000);
   };
 
+  // Use only admin login token for authentication
   const adminAuthedFetch = async (url: string, init?: RequestInit) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    const token = session?.access_token;
     const adminLoginToken = window.localStorage.getItem('admin_login_token');
-
-    if (!token && !adminLoginToken) {
+    if (!adminLoginToken) {
       throw new Error('No authenticated admin session found');
     }
-
     const headers = new Headers(init?.headers || {});
-    if (token) {
-      headers.set('Authorization', `Bearer ${token}`);
-    }
-    if (adminLoginToken) {
-      headers.set('x-admin-login-token', adminLoginToken);
-    }
+    headers.set('x-admin-login-token', adminLoginToken);
     if (!headers.has('Content-Type')) {
       headers.set('Content-Type', 'application/json');
     }
-
     return fetch(url, { ...init, headers });
   };
 
@@ -149,11 +140,10 @@ const AdminBookings: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        const token = session?.access_token;
-        if (!token) throw new Error('Not authenticated');
+        const adminLoginToken = window.localStorage.getItem('admin_login_token');
+        if (!adminLoginToken) throw new Error('Not authenticated');
         const res = await fetch('/api/bookings', {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { 'x-admin-login-token': adminLoginToken },
         });
         if (!res.ok) throw new Error('Failed to fetch bookings');
         const data = await res.json();
