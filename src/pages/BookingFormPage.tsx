@@ -49,7 +49,7 @@ const CourseCard = ({ course }) => {
       `/booking?course=${encodeURIComponent(course.slug)}&price=${course.price}&currency=${course.currency}`
     );
   };
-
+//
   return (
     <div>
       {/* ...course description... */}
